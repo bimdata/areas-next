@@ -1,7 +1,13 @@
-import { clamp } from "./utils.js";
+import { clamp, sum } from "./utils.js";
 
 const template = document.createElement('template');
 template.innerHTML = `
+<areas-zone></areas-zone>
+<areas-separator></areas-separator>
+<areas-zone></areas-zone>
+<areas-separator></areas-separator>
+<areas-zone></areas-zone>
+<areas-separator></areas-separator>
 <areas-zone></areas-zone>
 <areas-separator></areas-separator>
 <areas-zone></areas-zone>
@@ -33,8 +39,10 @@ class AreasContainer extends HTMLElement {
   }
 
   connectedCallback() {
-    const separator = this.shadowRoot.querySelector("areas-separator");
-    separator.addEventListener("move", e => this.onSeparatorMove(e));
+    const separators = this.shadowRoot.querySelectorAll("areas-separator");
+    separators.forEach(
+      separator => separator.addEventListener("move", e => this.onSeparatorMove(e))
+    );
   }
 
   getAttributeRatios() {
@@ -73,12 +81,11 @@ class AreasContainer extends HTMLElement {
   set ratios(value) {
     this._ratios = value;
 
-    const [zone1, zone2] = this.shadowRoot.querySelectorAll("areas-zone");
+    const zones = this.shadowRoot.querySelectorAll("areas-zone");
 
-    const [ ratio1, ratio2 ] = this.ratios;
-
-    zone1.style.width = `max(0px, ${ratio1}% - ${this.separatorWidth/2}px)`;
-    zone2.style.width = `max(0px, ${ratio2}% - ${this.separatorWidth/2}px)`;
+    zones.forEach((zone, i) => {
+      zone.style.width = `max(0px, ${this.ratios[i]}% - ${this.separatorWidth * (zones.length - 1) / zones.length}px)`;
+    });
   }
 
   static get observedAttributes() {
@@ -100,15 +107,36 @@ class AreasContainer extends HTMLElement {
 
     const { width } = this.getBoundingClientRect();
 
-    let [ ratio1, ratio2 ] = this.ratios;
+    const separator = e.currentTarget;
+
+    const separatorIndex = Array.from(separator.parentNode.children).filter(isElementSeparator).indexOf(separator);
+
+    let ratio1 = this.ratios[separatorIndex];
+    let ratio2 = this.ratios[separatorIndex + 1];
 
     const deltaPercentage = movementX / width * 100;
 
-    ratio1 = clamp(ratio1 + deltaPercentage, 0, 100);
-    ratio2 = clamp(ratio2 - deltaPercentage, 0, 100);
+    const sumPreAreasRatio = separatorIndex === 0 ? 0 : this.ratios.slice(0, separatorIndex).reduce(sum, 0);
+    const sumPostAreasRatio =
+    separatorIndex === this.ratios.length - 2
+      ? 0
+      : this.ratios.slice(separatorIndex + 2).reduce(sum, 0);
 
-    this.ratios = [ratio1, ratio2];
+    const maxRatio = 100 - (sumPreAreasRatio + sumPostAreasRatio);
+
+    ratio1 = clamp(ratio1 + deltaPercentage, 0, maxRatio);
+    ratio2 = clamp(ratio2 - deltaPercentage, 0, maxRatio);
+
+    const ratios = this.ratios;
+
+    ratios.splice(separatorIndex, 2, ratio1, ratio2);
+
+    this.ratios = ratios;
   }
+}
+
+function isElementSeparator(element) {
+return element.tagName.toLowerCase() === "areas-separator";
 }
 
 window.customElements.define("areas-container", AreasContainer);
