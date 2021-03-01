@@ -1,0 +1,1 @@
+# Areas Web Component
