@@ -1,4 +1,4 @@
-import { clamp, sum } from "./utils.js";
+import { clamp, sum, validateContainer } from "./utils.js";
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -23,17 +23,26 @@ class AreasContainer extends HTMLElement {
   }
 
   connectedCallback() {
-    this.separatorSize = this.getAttribute("separator-size") ?? "2";
-    this.direction = this.getAttribute("direction") ?? "row";
+    this.separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
+    this.layout = this.getAttributeLayout();
+    this.ratios = this.layout.children.map(child => child.ratio);
+    this.direction = this.layout.direction ?? "row";
 
-    this.ratios = this.getAttributeRatios() ?? this.getDefaultRatios();
+    const childrenLength = this.layout.children.length;
 
-    const zoneLength = this.ratios.length;
+    this.layout.children.forEach((children, i) => {
+      if (children.type === "zone") {
+        const zone = document.createElement("areas-zone");
 
-    this.ratios.forEach((ratio, i) => {
-      const zone = document.createElement("areas-zone");
-      this.shadowRoot.appendChild(zone);
-      if (i !== zoneLength - 1) {
+        this.shadowRoot.appendChild(zone);
+      } else {
+        const container = document.createElement("areas-container");
+        container.setAttribute("separator-size", this.separatorSize);
+        container.setAttribute("layout", JSON.stringify(children));
+
+        this.shadowRoot.appendChild(container);
+      }
+      if (i !== childrenLength - 1) {
         const separator = document.createElement("areas-separator");
         if (this.direction === "column") {
           separator.style.height = `${this.separatorSize}px`;
@@ -52,47 +61,37 @@ class AreasContainer extends HTMLElement {
     this.setZoneStyles();
   }
 
-  getAttributeRatios() {
-    const attributeRatios = this.getAttribute("ratios");
-    if (!attributeRatios) return undefined;
-
+  getAttributeLayout() {
+    const layoutString = this.getAttribute("layout");
+    let layout = null;
     try {
-      const parsedAttributeRatios = JSON.parse(attributeRatios);
-
-      if (!Array.isArray(parsedAttributeRatios)) {
-        console.warn("AREAS - 'ratios' attribute must be an array of number.");
-        return;
-      } else if (parsedAttributeRatios.reduce((acc, cur) => acc + cur, 0) !== 100) {
-        console.warn("AREAS - Zone ratios sum must be 100.");
-        return;
-      } else {
-        return parsedAttributeRatios
-      }
-    } catch(err) {
-      console.warn(err);
-      return;
+      layout = JSON.parse(layoutString);
+    } catch (err) {
+      throw new Error("AREAS - Invalid layout. Layout attribute must be a valid JSON object.");
     }
+
+    this.validateLayout(layout);
+
+    return layout;
   }
 
-  getDefaultRatios() {
-    const zones = this.shadowRoot.querySelectorAll("areas-zone");
-    const ratios = new Array(zones.length).fill(undefined).map(() => 100 / zones.length);
-    return ratios;
+  validateLayout(layout) {
+    validateContainer(layout);
   }
 
   setZoneStyles() {
-    const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone")); // TODO cache it !
+    const children = Array.from(this.shadowRoot.querySelectorAll("areas-container, areas-zone")); // TODO cache it !
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
-      const zoneSpaceRatio = (height - this.separatorSize * (zones.length - 1)) / height;
-      zones.forEach(zone => {
-        zone.style.height = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
+      const childSpaceRatio = (height - this.separatorSize * (children.length - 1)) / height;
+      children.forEach(child => {
+        child.style.height = `max(0px, ${this.ratios[children.indexOf(child)] * childSpaceRatio}%)`;
       });
     } else {
       const { width } = this.getBoundingClientRect();
-      const zoneSpaceRatio = (width - this.separatorSize * (zones.length - 1)) / width;
-      zones.forEach(zone => {
-        zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
+      const childSpaceRatio = (width - this.separatorSize * (children.length - 1)) / width;
+      children.forEach(child => {
+        child.style.width = `max(0px, ${this.ratios[children.indexOf(child)] * childSpaceRatio}%)`;
       });
     }
   }

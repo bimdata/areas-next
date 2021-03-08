@@ -1,6 +1,9 @@
 const template = document.createElement('template');
 template.innerHTML = `
-<div>Zone</div>
+<div>
+  Zone
+  <!-- Content will be dynamically inserted here using zone id -->
+</div>
 <style>
 :host {
   box-sizing: border-box;

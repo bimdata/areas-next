@@ -9,6 +9,34 @@
   <script type="module" src="./src/main.js"></script>
 </head>
 <body>
-  <areas-container separator-size="4" direction="row" ratios="[20, 20, 20, 30, 10]"></areas-container>
+  <areas-container
+    separator-size="4"
+
+    layout='{
+      "type": "container",
+      "direction": "row",
+      "children": [
+        {
+          "type": "zone",
+          "ratio": 20
+        },
+        {
+          "type": "container",
+          "direction": "row",
+          "ratio": 80,
+          "children": [
+            {
+              "type": "zone",
+              "ratio": 40
+            },
+            {
+              "type": "zone",
+              "ratio": 60
+            }
+          ]
+        }
+      ]
+    }'>
+  </areas-container>
 </body>
 </html>
