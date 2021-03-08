@@ -1,4 +1,4 @@
-import { clamp, sum, validateContainer } from "./utils.js";
+import { clamp, sum, validateLayout, validateContainer } from "./utils.js";
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -24,25 +24,23 @@ class AreasContainer extends HTMLElement {
 
   connectedCallback() {
     this.separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
-    this.layout = this.getAttributeLayout();
+    this.layout = validateLayout(this.getAttribute("layout"));
     this.ratios = this.layout.children.map(child => child.ratio);
     this.direction = this.layout.direction ?? "row";
 
-    const childrenLength = this.layout.children.length;
-
-    this.layout.children.forEach((children, i) => {
-      if (children.type === "zone") {
+    this.layout.children.forEach((child, i, children) => {
+      if (child.type === "zone") {
         const zone = document.createElement("areas-zone");
 
         this.shadowRoot.appendChild(zone);
       } else {
         const container = document.createElement("areas-container");
         container.setAttribute("separator-size", this.separatorSize);
-        container.setAttribute("layout", JSON.stringify(children));
+        container.setAttribute("layout", JSON.stringify(child));
 
         this.shadowRoot.appendChild(container);
       }
-      if (i !== childrenLength - 1) {
+      if (i !== children.length - 1) {
         const separator = document.createElement("areas-separator");
         if (this.direction === "column") {
           separator.style.height = `${this.separatorSize}px`;
@@ -57,29 +55,15 @@ class AreasContainer extends HTMLElement {
         this.shadowRoot.appendChild(separator);
       }
     });
-
-    this.setZoneStyles();
   }
 
-  getAttributeLayout() {
-    const layoutString = this.getAttribute("layout");
-    let layout = null;
-    try {
-      layout = JSON.parse(layoutString);
-    } catch (err) {
-      throw new Error("AREAS - Invalid layout. Layout attribute must be a valid JSON object.");
-    }
-
-    this.validateLayout(layout);
-
-    return layout;
+  initSize() {
+    this.setSize();
+    const containers = Array.from(this.shadowRoot.querySelectorAll("areas-container"));
+    containers.forEach(container => container.initSize());
   }
 
-  validateLayout(layout) {
-    validateContainer(layout);
-  }
-
-  setZoneStyles() {
+  setSize() {
     const children = Array.from(this.shadowRoot.querySelectorAll("areas-container, areas-zone")); // TODO cache it !
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
@@ -168,7 +152,7 @@ class AreasContainer extends HTMLElement {
 
     this.ratios = ratios;
 
-    this.setZoneStyles();
+    this.setSize();
   }
 }
 

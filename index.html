@@ -9,7 +9,7 @@
   <script type="module" src="./src/main.js"></script>
 </head>
 <body>
-  <areas-container
+  <areas-root
     separator-size="4"
 
     layout='{
@@ -22,7 +22,7 @@
         },
         {
           "type": "container",
-          "direction": "row",
+          "direction": "column",
           "ratio": 80,
           "children": [
             {
@@ -30,13 +30,24 @@
               "ratio": 40
             },
             {
-              "type": "zone",
-              "ratio": 60
+              "type": "container",
+              "direction": "row",
+              "ratio": 60,
+              "children": [
+                {
+                  "type": "zone",
+                  "ratio": 40
+                },
+                {
+                  "type": "zone",
+                  "ratio": 60
+                }
+              ]
             }
           ]
         }
       ]
     }'>
-  </areas-container>
+  </areas-root>
 </body>
 </html>

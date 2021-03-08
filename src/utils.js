@@ -6,6 +6,19 @@ function sum(a, b) {
   return a + b;
 }
 
+function validateLayout(layoutString) {
+  let layout = null;
+  try {
+    layout = JSON.parse(layoutString);
+  } catch (err) {
+    throw new Error("AREAS - Invalid layout. Layout attribute must be a valid JSON object.");
+  }
+
+  validateContainer(layout);
+
+  return layout;
+}
+
 function validateZone(zone) {
   if (typeof zone !== "object") {
     throw new TypeError("AREAS - Invalid zone. Zone must be an object.");
@@ -36,4 +49,4 @@ function validateContainer(container) {
   return container;
 }
 
-export { clamp, sum, validateZone, validateContainer };
+export { clamp, sum, validateLayout, validateZone, validateContainer };
