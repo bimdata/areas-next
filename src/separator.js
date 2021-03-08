@@ -4,13 +4,18 @@ template.innerHTML = `
 :host {
   box-sizing: border-box;
   background-color: black;
+
+  position: relative;
 }
 
 .grabber {
   position: absolute;
+  opacity: 0;
 }
 </style>
 `;
+
+const GRABBER_MARGIN = 4;
 
 class AreasSeparator extends HTMLElement {
   constructor() {
@@ -19,8 +24,26 @@ class AreasSeparator extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: "open" });
     // Create & append template
     shadowRoot.appendChild(template.content.cloneNode(true));
+  }
 
-    shadowRoot.host.addEventListener("mousedown", this.onMouseDown);
+  connectedCallback() {
+    this.direction = this.getAttribute("direction");
+    const grabber = document.createElement("div");
+    grabber.classList.add("grabber");
+
+    if (this.direction === "column") {
+      grabber.style.width = "100%";
+      grabber.style.height = `calc(100% + ${GRABBER_MARGIN * 2}px)`;
+      grabber.style.transform = `translateY(-${GRABBER_MARGIN}px)`;
+    } else {
+      grabber.style.width = `calc(100% + ${GRABBER_MARGIN * 2}px)`;
+      grabber.style.height = "100%";
+      grabber.style.transform = `translateX(-${GRABBER_MARGIN}px)`;
+    }
+
+    this.shadowRoot.appendChild(grabber);
+
+    grabber.addEventListener("mousedown", e => this.onMouseDown(e));
   }
 
   onMouseDown(e) {

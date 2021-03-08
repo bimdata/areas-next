@@ -45,6 +45,7 @@ class AreasContainer extends HTMLElement {
       }
       if (i !== children.length - 1) {
         const separator = document.createElement("areas-separator");
+        separator.setAttribute("direction", this.direction);
         if (this.direction === "column") {
           separator.style.height = `${this.separatorSize}px`;
           separator.style.cursor = "ns-resize";
