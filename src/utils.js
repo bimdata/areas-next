@@ -11,7 +11,9 @@ function validateLayout(layoutString) {
   try {
     layout = JSON.parse(layoutString);
   } catch (err) {
-    throw new Error("AREAS - Invalid layout. Layout attribute must be a valid JSON object.");
+    throw new Error(
+      "AREAS - Invalid layout. Layout attribute must be a valid JSON object."
+    );
   }
 
   validateContainer(layout);
@@ -31,19 +33,32 @@ function validateZone(zone) {
 
 function validateContainer(container) {
   if (typeof container !== "object") {
-    throw new TypeError("AREAS - Invalid container. A container must be an object.");
+    throw new TypeError(
+      "AREAS - Invalid container. A container must be an object."
+    );
   }
   if (container?.type !== "container") {
-    throw new TypeError('AREAS - Invalid container. Container must be of type "container".');
+    throw new TypeError(
+      'AREAS - Invalid container. Container must be of type "container".'
+    );
   }
-  if (!!container?.direction && !["row", "column"].includes(container.direction)) {
-    throw new TypeError('AREAS - Invalid container. Container direction must be of type "row" or "column".');
+  if (
+    !!container?.direction &&
+    !["row", "column"].includes(container.direction)
+  ) {
+    throw new TypeError(
+      'AREAS - Invalid container. Container direction must be of type "row" or "column".'
+    );
   }
   if (container?.children?.length < 2) {
-    throw new TypeError("AREAS - Invalid container. Container children must have at least 2 children.");
+    throw new TypeError(
+      "AREAS - Invalid container. Container children must have at least 2 children."
+    );
   }
   if (container?.children?.reduce((acc, cur) => acc + cur?.ratio, 0) !== 100) {
-    throw new TypeError("AREAS - Invalid container. The sum of container children ratios must be equal to 100.");
+    throw new TypeError(
+      "AREAS - Invalid container. The sum of container children ratios must be equal to 100."
+    );
   }
 
   return container;
