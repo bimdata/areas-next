@@ -23,7 +23,7 @@ class AreasContainer extends HTMLElement {
   }
 
   connectedCallback() {
-    this.separatorWidth = this.getAttribute("separator-width") ?? "2";
+    this.separatorSize = this.getAttribute("separator-size") ?? "2";
     this.direction = this.getAttribute("direction") ?? "row";
 
     this.ratios = this.getAttributeRatios() ?? this.getDefaultRatios();
@@ -35,14 +35,13 @@ class AreasContainer extends HTMLElement {
       this.shadowRoot.appendChild(zone);
       if (i !== zoneLength - 1) {
         const separator = document.createElement("areas-separator");
-        separator.style.width = `${this.separatorWidth}px`;
+        separator.style.width = `${this.separatorSize}px`;
         separator.addEventListener("move", e => this.onSeparatorMove(e));
         this.shadowRoot.appendChild(separator);
       }
     });
 
-    const zones = this.shadowRoot.querySelectorAll("areas-zone");
-    zones.forEach(this.setZoneStyle.bind(this));
+    this.setZoneStyles();
   }
 
   getAttributeRatios() {
@@ -73,24 +72,26 @@ class AreasContainer extends HTMLElement {
     return ratios;
   }
 
-  setZoneStyle(zone) {
+  setZoneStyles() {
     const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone")); // TODO cache it !
     const { width } = this.getBoundingClientRect();
-    const ratio = (width - this.separatorWidth * (zones.length - 1)) / width;
-    zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * ratio}%)`;
+    const zoneSpaceRatio = (width - this.separatorSize * (zones.length - 1)) / width;
+    zones.forEach(zone => {
+      zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
+    });
   }
 
   static get observedAttributes() {
-    return [ "separator-width" ];
+    return [ "separator-size" ];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "separator-width") {
-      this.onSeparatorWidthChange(newValue);
+    if (name === "separator-size") {
+      this.onSeparatorSizeChange(newValue);
     }
   }
 
-  onSeparatorWidthChange(value) {
+  onSeparatorSizeChange(value) {
     this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
       separator.style.width = `${value}px`;
     });
@@ -132,8 +133,8 @@ class AreasContainer extends HTMLElement {
 
     this.ratios = ratios;
 
-    const zones = this.shadowRoot.querySelectorAll("areas-zone");
-    zones.forEach(this.setZoneStyle.bind(this));
+
+    this.setZoneStyles();
   }
 }
 
