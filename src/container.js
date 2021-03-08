@@ -33,7 +33,6 @@ class AreasContainer extends HTMLElement {
     this.ratios.forEach((ratio, i) => {
       const zone = document.createElement("areas-zone");
       this.shadowRoot.appendChild(zone);
-      this.setZoneStyle(zone);
       if (i !== zoneLength - 1) {
         const separator = document.createElement("areas-separator");
         separator.style.width = `${this.separatorWidth}px`;
@@ -41,6 +40,9 @@ class AreasContainer extends HTMLElement {
         this.shadowRoot.appendChild(separator);
       }
     });
+
+    const zones = this.shadowRoot.querySelectorAll("areas-zone");
+    zones.forEach(this.setZoneStyle.bind(this));
   }
 
   getAttributeRatios() {
@@ -49,7 +51,6 @@ class AreasContainer extends HTMLElement {
 
     try {
       const parsedAttributeRatios = JSON.parse(attributeRatios);
-      const zones = this.shadowRoot.querySelectorAll("areas-zone");
 
       if (!Array.isArray(parsedAttributeRatios)) {
         console.warn("AREAS - 'ratios' attribute must be an array of number.");
@@ -74,7 +75,9 @@ class AreasContainer extends HTMLElement {
 
   setZoneStyle(zone) {
     const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone")); // TODO cache it !
-    zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)]}% - ${this.separatorWidth * (zones.length - 1) / zones.length}px)`;
+    const { width } = this.getBoundingClientRect();
+    const ratio = (width - this.separatorWidth * (zones.length - 1)) / width;
+    zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * ratio}%)`;
   }
 
   static get observedAttributes() {
@@ -88,7 +91,9 @@ class AreasContainer extends HTMLElement {
   }
 
   onSeparatorWidthChange(value) {
-    this.shadowRoot.querySelector("areas-separator").style.width = `${value}px`;
+    this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
+      separator.style.width = `${value}px`;
+    });
   }
 
   onSeparatorMove(e) {
