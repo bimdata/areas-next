@@ -12,4 +12,4 @@ npm run dev
 
 You then need to serve the index.html file using the server of your choice.
 
-Then drink coffee: ::coffee:: ::coffee::
+Then drink coffee: :coffee: :coffee: :coffee:
