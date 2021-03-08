@@ -3,8 +3,6 @@ template.innerHTML = `
 <style>
 :host {
   box-sizing: border-box;
-  width: 2px;
-  cursor: ew-resize;
   background-color: black;
 }
 
@@ -22,35 +20,12 @@ class AreasSeparator extends HTMLElement {
     // Create & append template
     shadowRoot.appendChild( template.content.cloneNode(true) );
 
-    const separator = document.createElement("div"); // TODO naming
-
     shadowRoot.host.addEventListener("mousedown", this.onMouseDown);
   }
 
-  static get observedAttributes() {
-    return [ 'width' ];
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "width") {
-      this.onWidthChanged(oldValue, newValue);
-    }
-  }
-
-  onWidthChanged(oldValue, newValue) {
-    this.shadowRoot;
-  }
-
   onMouseDown(e) {
-    // this.activeSeparatorIndex = separatorIndex;
     e.preventDefault();
     e.stopPropagation();
-    // TODO areas cursor not defined !
-    // this.areas.cursor = `--areas-global-cursor: ${
-    //   this.direction === "row"
-    //     ? "var(--areas-vertical-resize-cursor, ew-resize)"
-    //     : "var(--areas-horizontal-resize-cursor, ns-resize)"
-    // }`;
 
     document.addEventListener("mousemove", this.mouseMoveListener = e => this.drag(e));
     document.addEventListener("mouseup", e => this.stopDrag(e));
@@ -62,9 +37,7 @@ class AreasSeparator extends HTMLElement {
     }));
   }
 
-  stopDrag(e) {
-    // this.activeSeparatorIndex = null;
-    // this.areas.cursor = null;
+  stopDrag() {
     document.removeEventListener("mousemove", this.mouseMoveListener);
   }
 }

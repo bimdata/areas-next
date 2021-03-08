@@ -35,7 +35,15 @@ class AreasContainer extends HTMLElement {
       this.shadowRoot.appendChild(zone);
       if (i !== zoneLength - 1) {
         const separator = document.createElement("areas-separator");
-        separator.style.width = `${this.separatorSize}px`;
+        if (this.direction === "column") {
+          separator.style.height = `${this.separatorSize}px`;
+          separator.style.cursor = "ns-resize";
+          this.style.flexDirection = "column";
+        } else {
+          separator.style.width = `${this.separatorSize}px`;
+          separator.style.cursor = "ew-resize";
+          this.style.flexDirection = "row";
+        }
         separator.addEventListener("move", e => this.onSeparatorMove(e));
         this.shadowRoot.appendChild(separator);
       }
@@ -74,11 +82,19 @@ class AreasContainer extends HTMLElement {
 
   setZoneStyles() {
     const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone")); // TODO cache it !
-    const { width } = this.getBoundingClientRect();
-    const zoneSpaceRatio = (width - this.separatorSize * (zones.length - 1)) / width;
-    zones.forEach(zone => {
-      zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
-    });
+    if (this.direction === "column") {
+      const { height } = this.getBoundingClientRect();
+      const zoneSpaceRatio = (height - this.separatorSize * (zones.length - 1)) / height;
+      zones.forEach(zone => {
+        zone.style.height = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
+      });
+    } else {
+      const { width } = this.getBoundingClientRect();
+      const zoneSpaceRatio = (width - this.separatorSize * (zones.length - 1)) / width;
+      zones.forEach(zone => {
+        zone.style.width = `max(0px, ${this.ratios[zones.indexOf(zone)] * zoneSpaceRatio}%)`;
+      });
+    }
   }
 
   static get observedAttributes() {
@@ -93,28 +109,48 @@ class AreasContainer extends HTMLElement {
 
   onSeparatorSizeChange(value) {
     this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
-      separator.style.width = `${value}px`;
+      if (this.direction === "column") {
+        separator.style.height = `${value}px`;
+      } else {
+        separator.style.width = `${value}px`;
+      }
+
     });
   }
 
   onSeparatorMove(e) {
     const separator = e.currentTarget;
-    const { x, width: separatorWidth } = separator.getBoundingClientRect();
 
-    const { clientX } = e.detail;
+    let deltaPercentage = null;
 
-    const separatorPosition = x + separatorWidth / 2;
+    if (this.direction === "column") {
+      const { y, height: separatorHeight } = separator.getBoundingClientRect();
+      const { clientY } = e.detail;
 
-    const movementX = clientX - separatorPosition;
+      const separatorPosition = y + separatorHeight / 2;
 
-    const { width } = this.getBoundingClientRect();
+      const movementY = clientY - separatorPosition;
+
+      const { height } = this.getBoundingClientRect();
+
+      deltaPercentage = movementY / height * 100;
+    } else {
+      const { x, width: separatorWidth } = separator.getBoundingClientRect();
+      const { clientX } = e.detail;
+
+      const separatorPosition = x + separatorWidth / 2;
+
+      const movementX = clientX - separatorPosition;
+
+      const { width } = this.getBoundingClientRect();
+
+      deltaPercentage = movementX / width * 100;
+    }
 
     const separatorIndex = Array.from(separator.parentNode.children).filter(isElementSeparator).indexOf(separator);
 
     let ratio1 = this.ratios[separatorIndex];
     let ratio2 = this.ratios[separatorIndex + 1];
-
-    const deltaPercentage = movementX / width * 100;
 
     const sumPreAreasRatio = separatorIndex === 0 ? 0 : this.ratios.slice(0, separatorIndex).reduce(sum, 0);
     const sumPostAreasRatio =
@@ -132,7 +168,6 @@ class AreasContainer extends HTMLElement {
     ratios.splice(separatorIndex, 2, ratio1, ratio2);
 
     this.ratios = ratios;
-
 
     this.setZoneStyles();
   }
