@@ -1,6 +1,6 @@
-import { clamp, sum, validateLayout, validateContainer } from "./utils.js";
+import { clamp, sum, validateLayout } from "./utils.js";
 
-const template = document.createElement('template');
+const template = document.createElement("template");
 template.innerHTML = `
 <style>
 :host {
@@ -17,9 +17,9 @@ class AreasContainer extends HTMLElement {
   constructor() {
     super();
     // Create & attach shadow DOM
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({ mode: "open" });
     // Create & append template
-    shadowRoot.appendChild( template.content.cloneNode(true) );
+    shadowRoot.appendChild(template.content.cloneNode(true));
   }
 
   connectedCallback() {
@@ -59,29 +59,39 @@ class AreasContainer extends HTMLElement {
 
   initSize() {
     this.setSize();
-    const containers = Array.from(this.shadowRoot.querySelectorAll("areas-container"));
+    const containers = Array.from(
+      this.shadowRoot.querySelectorAll("areas-container")
+    );
     containers.forEach(container => container.initSize());
   }
 
   setSize() {
-    const children = Array.from(this.shadowRoot.querySelectorAll("areas-container, areas-zone")); // TODO cache it !
+    const children = Array.from(
+      this.shadowRoot.querySelectorAll("areas-container, areas-zone")
+    ); // TODO cache it !
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
-      const childSpaceRatio = (height - this.separatorSize * (children.length - 1)) / height;
+      const childSpaceRatio =
+        (height - this.separatorSize * (children.length - 1)) / height;
       children.forEach(child => {
-        child.style.height = `max(0px, ${this.ratios[children.indexOf(child)] * childSpaceRatio}%)`;
+        child.style.height = `max(0px, ${
+          this.ratios[children.indexOf(child)] * childSpaceRatio
+        }%)`;
       });
     } else {
       const { width } = this.getBoundingClientRect();
-      const childSpaceRatio = (width - this.separatorSize * (children.length - 1)) / width;
+      const childSpaceRatio =
+        (width - this.separatorSize * (children.length - 1)) / width;
       children.forEach(child => {
-        child.style.width = `max(0px, ${this.ratios[children.indexOf(child)] * childSpaceRatio}%)`;
+        child.style.width = `max(0px, ${
+          this.ratios[children.indexOf(child)] * childSpaceRatio
+        }%)`;
       });
     }
   }
 
   static get observedAttributes() {
-    return [ "separator-size" ];
+    return ["separator-size"];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -97,7 +107,6 @@ class AreasContainer extends HTMLElement {
       } else {
         separator.style.width = `${value}px`;
       }
-
     });
   }
 
@@ -116,7 +125,7 @@ class AreasContainer extends HTMLElement {
 
       const { height } = this.getBoundingClientRect();
 
-      deltaPercentage = movementY / height * 100;
+      deltaPercentage = (movementY / height) * 100;
     } else {
       const { x, width: separatorWidth } = separator.getBoundingClientRect();
       const { clientX } = e.detail;
@@ -127,19 +136,24 @@ class AreasContainer extends HTMLElement {
 
       const { width } = this.getBoundingClientRect();
 
-      deltaPercentage = movementX / width * 100;
+      deltaPercentage = (movementX / width) * 100;
     }
 
-    const separatorIndex = Array.from(separator.parentNode.children).filter(isElementSeparator).indexOf(separator);
+    const separatorIndex = Array.from(separator.parentNode.children)
+      .filter(isElementSeparator)
+      .indexOf(separator);
 
     let ratio1 = this.ratios[separatorIndex];
     let ratio2 = this.ratios[separatorIndex + 1];
 
-    const sumPreAreasRatio = separatorIndex === 0 ? 0 : this.ratios.slice(0, separatorIndex).reduce(sum, 0);
+    const sumPreAreasRatio =
+      separatorIndex === 0
+        ? 0
+        : this.ratios.slice(0, separatorIndex).reduce(sum, 0);
     const sumPostAreasRatio =
-    separatorIndex === this.ratios.length - 2
-      ? 0
-      : this.ratios.slice(separatorIndex + 2).reduce(sum, 0);
+      separatorIndex === this.ratios.length - 2
+        ? 0
+        : this.ratios.slice(separatorIndex + 2).reduce(sum, 0);
 
     const maxRatio = 100 - (sumPreAreasRatio + sumPostAreasRatio);
 
@@ -157,7 +171,7 @@ class AreasContainer extends HTMLElement {
 }
 
 function isElementSeparator(element) {
-return element.tagName.toLowerCase() === "areas-separator";
+  return element.tagName.toLowerCase() === "areas-separator";
 }
 
 window.customElements.define("areas-container", AreasContainer);

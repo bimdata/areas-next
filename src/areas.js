@@ -4,7 +4,7 @@ class AreasRoot extends HTMLElement {
   constructor() {
     super();
     // Create & attach shadow DOM
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
   }
 
   connectedCallback() {

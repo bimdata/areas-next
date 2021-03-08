@@ -1,4 +1,4 @@
-const template = document.createElement('template');
+const template = document.createElement("template");
 template.innerHTML = `
 <style>
 :host {
@@ -16,9 +16,9 @@ class AreasSeparator extends HTMLElement {
   constructor() {
     super();
     // Create & attach shadow DOM
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({ mode: "open" });
     // Create & append template
-    shadowRoot.appendChild( template.content.cloneNode(true) );
+    shadowRoot.appendChild(template.content.cloneNode(true));
 
     shadowRoot.host.addEventListener("mousedown", this.onMouseDown);
   }
@@ -27,14 +27,19 @@ class AreasSeparator extends HTMLElement {
     e.preventDefault();
     e.stopPropagation();
 
-    document.addEventListener("mousemove", this.mouseMoveListener = e => this.drag(e));
+    document.addEventListener(
+      "mousemove",
+      (this.mouseMoveListener = e => this.drag(e))
+    );
     document.addEventListener("mouseup", e => this.stopDrag(e));
   }
 
   drag(e) {
-    this.dispatchEvent(new CustomEvent("move", {
-      detail: e
-    }));
+    this.dispatchEvent(
+      new CustomEvent("move", {
+        detail: e,
+      })
+    );
   }
 
   stopDrag() {

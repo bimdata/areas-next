@@ -1,4 +1,4 @@
-const template = document.createElement('template');
+const template = document.createElement("template");
 template.innerHTML = `
 <div>
   Zone
@@ -16,11 +16,10 @@ class AreasZone extends HTMLElement {
   constructor() {
     super();
     // Create & attach shadow DOM
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({ mode: "open" });
     // Create & append template
-    shadowRoot.appendChild( template.content.cloneNode(true) );
+    shadowRoot.appendChild(template.content.cloneNode(true));
   }
-
 }
 
 window.customElements.define("areas-zone", AreasZone);
