@@ -28,6 +28,9 @@ class AreasContainer extends HTMLElement {
     this.ratios = this.layout.children.map(child => child.ratio);
     this.direction = this.layout.direction ?? "row";
 
+    this.resizeObserver = new ResizeObserver(() => this.setSize());
+    this.resizeObserver.observe(this);
+
     this.layout.children.forEach((child, i, children) => {
       if (child.type === "zone") {
         const zone = document.createElement("areas-zone");
@@ -55,6 +58,10 @@ class AreasContainer extends HTMLElement {
         this.shadowRoot.appendChild(separator);
       }
     });
+  }
+
+  disconnectedCallback() {
+    this.resizeObserver.disconnect();
   }
 
   initSize() {
