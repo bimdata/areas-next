@@ -6,8 +6,11 @@ template.innerHTML = `
 </div>
 <style>
 :host {
+  display: block;
   box-sizing: border-box;
   background-color: cornsilk;
+  width: 100%;
+  height: 100%;
 }
 </style>
 `;

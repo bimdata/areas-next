@@ -13,13 +13,18 @@ class AreasRoot extends HTMLElement {
     const layout = validateLayout(this.getAttribute("layout"));
     const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
 
-    const container = document.createElement("areas-container"); // TODO handle simple zone layout
-    container.setAttribute("separator-size", separatorSize);
-    container.setAttribute("layout", JSON.stringify(layout));
+    if (layout.type === "container") {
+      const container = document.createElement("areas-container");
+      container.setAttribute("separator-size", separatorSize);
+      container.setAttribute("layout", JSON.stringify(layout));
 
-    this.shadowRoot.appendChild(container);
-
-    container.initSize();
+      this.shadowRoot.appendChild(container);
+      container.initSize();
+    } else {
+      const zone = document.createElement("areas-zone");
+      zone.setAttribute("id", this.zoneId++);
+      this.shadowRoot.appendChild(zone);
+    }
 
     // TODO for development only
     window.areas = this;
