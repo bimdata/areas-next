@@ -21,7 +21,7 @@ class AreasRoot extends HTMLElement {
 
     container.initSize();
 
-    // TODO for develoment only
+    // TODO for development only
     window.areas = this;
   }
 

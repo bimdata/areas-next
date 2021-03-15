@@ -23,13 +23,19 @@ class AreasContainer extends HTMLElement {
   }
 
   connectedCallback() {
+    this.resizeObserver = new ResizeObserver(() => this.setSize());
+    this.resizeObserver.observe(this);
+
+    if (this.alreadyConnectedOnce) {
+      return;
+    } else {
+      this.alreadyConnectedOnce = true;
+    }
+
     this.separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
     this.layout = validateLayout(this.getAttribute("layout"));
     this.ratios = this.layout.children.map(child => child.ratio);
     this.direction = this.layout.direction ?? "row";
-
-    this.resizeObserver = new ResizeObserver(() => this.setSize());
-    this.resizeObserver.observe(this);
 
     this.layout.children.forEach((child, i, children) => {
       if (child.type === "zone") {
@@ -62,6 +68,13 @@ class AreasContainer extends HTMLElement {
     });
   }
 
+  disconnectedCallback() {
+    this.resizeObserver.disconnect();
+  }
+
+  /**
+   * @returns { HTMLElement }
+   */
   get root() {
     const parentHost = this.shadowRoot.host.parentNode.host;
     return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
@@ -96,9 +109,9 @@ class AreasContainer extends HTMLElement {
    * @param { HTMLElement } zone
    */
   deleteZone(zone) {
+    const index = this.children.indexOf(zone);
     if (this.children.length > 2) {
       // delete and share ratios to siblings
-      const index = this.children.indexOf(zone);
       const separators = this.shadowRoot.querySelectorAll("areas-separator");
 
       let separator = null;
@@ -131,16 +144,23 @@ class AreasContainer extends HTMLElement {
       this.shadowRoot.removeChild(zone);
       this.shadowRoot.removeChild(separator);
 
-      this._children = null;
-
       this.setSize();
     } else {
-      // TODO delete container and adopt children by container parent
-    }
-  }
+      const sibling = this.children[index === 1 ? 0 : 1];
 
-  disconnectedCallback() {
-    this.resizeObserver.disconnect();
+      sibling.style.height = null;
+      sibling.style.width = null;
+
+      /** @type { HTMLElement} */
+      const parentContainer = this.shadowRoot.host.parentNode.host;
+      if (parentContainer.tagName === "AREAS-CONTAINER") {
+        parentContainer.shadowRoot.replaceChild(sibling, this);
+        parentContainer.setSize();
+      } else {
+        // root
+        this.root.shadowRoot.replaceChild(sibling, this);
+      }
+    }
   }
 
   initSize() {
@@ -152,6 +172,7 @@ class AreasContainer extends HTMLElement {
   }
 
   setSize() {
+    this._children = null;
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
       const childSpaceRatio =

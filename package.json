@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "predev": "rm -rf dist",
-    "dev": "esbuild src/main.js --bundle --outfile=dist/areas.js --watch"
+    "dev": "esbuild src/main.js --bundle --outfile=dist/areas.js --sourcemap --watch"
   },
   "repository": {
     "type": "git",
