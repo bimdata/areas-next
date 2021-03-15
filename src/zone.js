@@ -19,6 +19,8 @@ class AreasZone extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: "open" });
     // Create & append template
     shadowRoot.appendChild(template.content.cloneNode(true));
+
+    // TODO zone may not be usefull as their unique goal is to have an unique id which is set by the container...
   }
 }
 

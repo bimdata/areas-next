@@ -34,6 +34,7 @@ class AreasContainer extends HTMLElement {
     this.layout.children.forEach((child, i, children) => {
       if (child.type === "zone") {
         const zone = document.createElement("areas-zone");
+        zone.setAttribute("id", this.root.zoneId++);
 
         this.shadowRoot.appendChild(zone);
       } else {
@@ -59,6 +60,11 @@ class AreasContainer extends HTMLElement {
         this.shadowRoot.appendChild(separator);
       }
     });
+  }
+
+  get root() {
+    const parentHost = this.shadowRoot.host.parentNode.host;
+    return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
   }
 
   disconnectedCallback() {

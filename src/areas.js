@@ -5,6 +5,8 @@ class AreasRoot extends HTMLElement {
     super();
     // Create & attach shadow DOM
     this.attachShadow({ mode: "open" });
+
+    this.zoneId = 1;
   }
 
   connectedCallback() {
