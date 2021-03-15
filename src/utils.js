@@ -16,7 +16,13 @@ function validateLayout(layoutString) {
     );
   }
 
-  validateContainer(layout);
+  if (layout?.type === "container") {
+    validateContainer(layout);
+  } else if (layout?.type !== "zone") {
+    throw new TypeError(
+      "AREAS - Layout first child must be a zone or a container."
+    );
+  }
 
   return layout;
 }

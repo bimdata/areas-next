@@ -1,3 +1,4 @@
+/* eslint-disable */
 import AreasSeparator from "./separator.js";
 import AreasZone from "./zone.js";
 import AreasContainer from "./container.js";

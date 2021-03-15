@@ -23,13 +23,19 @@ class AreasContainer extends HTMLElement {
   }
 
   connectedCallback() {
+    this.resizeObserver = new ResizeObserver(() => this.setSize());
+    this.resizeObserver.observe(this);
+
+    if (this.alreadyConnectedOnce) {
+      return;
+    } else {
+      this.alreadyConnectedOnce = true;
+    }
+
     this.separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
     this.layout = validateLayout(this.getAttribute("layout"));
     this.ratios = this.layout.children.map(child => child.ratio);
     this.direction = this.layout.direction ?? "row";
-
-    this.resizeObserver = new ResizeObserver(() => this.setSize());
-    this.resizeObserver.observe(this);
 
     this.layout.children.forEach((child, i, children) => {
       if (child.type === "zone") {
@@ -62,13 +68,99 @@ class AreasContainer extends HTMLElement {
     });
   }
 
+  disconnectedCallback() {
+    this.resizeObserver.disconnect();
+  }
+
+  /**
+   * @returns { HTMLElement }
+   */
   get root() {
     const parentHost = this.shadowRoot.host.parentNode.host;
     return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
   }
 
-  disconnectedCallback() {
-    this.resizeObserver.disconnect();
+  get children() {
+    if (!this._children) {
+      this._children = Array.from(
+        this.shadowRoot.querySelectorAll("areas-container, areas-zone")
+      );
+    }
+
+    return this._children;
+  }
+
+  getZone(zoneId) {
+    for (let child of this.children) {
+      if (child.tagName === "AREAS-ZONE") {
+        if (child.getAttribute("id") === zoneId.toString()) {
+          return child;
+        }
+      } else {
+        const zone = child.getZone(zoneId);
+        if (zone) {
+          return zone;
+        }
+      }
+    }
+  }
+
+  /**
+   * @param { HTMLElement } zone
+   */
+  deleteZone(zone) {
+    const index = this.children.indexOf(zone);
+    if (this.children.length > 2) {
+      // delete and share ratios to siblings
+      const separators = this.shadowRoot.querySelectorAll("areas-separator");
+
+      let separator = null;
+
+      const zoneRatio = this.ratios[index];
+
+      if (index === 0) {
+        // first
+        const siblingRatio = this.ratios[1];
+        this.ratios.splice(index, 2, siblingRatio + zoneRatio);
+        separator = separators[index];
+      } else if (index === this.children.length - 1) {
+        // last
+        const siblingRatio = this.ratios[index - 1];
+        this.ratios.splice(index - 1, 2, siblingRatio + zoneRatio);
+        separator = separators[index - 1];
+      } else {
+        // middle
+        const previousSiblingRatio = this.ratios[index - 1];
+        const nextSiblingRatio = this.ratios[index + 1];
+        this.ratios.splice(
+          index - 1,
+          3,
+          previousSiblingRatio + Math.floor(zoneRatio / 2),
+          nextSiblingRatio + Math.ceil(zoneRatio / 2)
+        );
+        separator = separators[index];
+      }
+
+      this.shadowRoot.removeChild(zone);
+      this.shadowRoot.removeChild(separator);
+
+      this.setSize();
+    } else {
+      const sibling = this.children[index === 1 ? 0 : 1];
+
+      sibling.style.height = null;
+      sibling.style.width = null;
+
+      /** @type { HTMLElement} */
+      const parentContainer = this.shadowRoot.host.parentNode.host;
+      if (parentContainer.tagName === "AREAS-CONTAINER") {
+        parentContainer.shadowRoot.replaceChild(sibling, this);
+        parentContainer.setSize();
+      } else {
+        // root
+        this.root.shadowRoot.replaceChild(sibling, this);
+      }
+    }
   }
 
   initSize() {
@@ -80,25 +172,23 @@ class AreasContainer extends HTMLElement {
   }
 
   setSize() {
-    const children = Array.from(
-      this.shadowRoot.querySelectorAll("areas-container, areas-zone")
-    ); // TODO cache it !
+    this._children = null;
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (height - this.separatorSize * (children.length - 1)) / height;
-      children.forEach(child => {
+        (height - this.separatorSize * (this.children.length - 1)) / height;
+      this.children.forEach(child => {
         child.style.height = `max(0px, ${
-          this.ratios[children.indexOf(child)] * childSpaceRatio
+          this.ratios[this.children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     } else {
       const { width } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (width - this.separatorSize * (children.length - 1)) / width;
-      children.forEach(child => {
+        (width - this.separatorSize * (this.children.length - 1)) / width;
+      this.children.forEach(child => {
         child.style.width = `max(0px, ${
-          this.ratios[children.indexOf(child)] * childSpaceRatio
+          this.ratios[this.children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     }
