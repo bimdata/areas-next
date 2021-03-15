@@ -67,6 +67,78 @@ class AreasContainer extends HTMLElement {
     return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
   }
 
+  get children() {
+    if (!this._children) {
+      this._children = Array.from(
+        this.shadowRoot.querySelectorAll("areas-container, areas-zone")
+      );
+    }
+
+    return this._children;
+  }
+
+  getZone(zoneId) {
+    for (let child of this.children) {
+      if (child.tagName === "AREAS-ZONE") {
+        if (child.getAttribute("id") === zoneId.toString()) {
+          return child;
+        }
+      } else {
+        const zone = child.getZone(zoneId);
+        if (zone) {
+          return zone;
+        }
+      }
+    }
+  }
+
+  /**
+   * @param { HTMLElement } zone
+   */
+  deleteZone(zone) {
+    if (this.children.length > 2) {
+      // delete and share ratios to siblings
+      const index = this.children.indexOf(zone);
+      const separators = this.shadowRoot.querySelectorAll("areas-separator");
+
+      let separator = null;
+
+      const zoneRatio = this.ratios[index];
+
+      if (index === 0) {
+        // first
+        const siblingRatio = this.ratios[1];
+        this.ratios.splice(index, 2, siblingRatio + zoneRatio);
+        separator = separators[index];
+      } else if (index === this.children.length - 1) {
+        // last
+        const siblingRatio = this.ratios[index - 1];
+        this.ratios.splice(index - 1, 2, siblingRatio + zoneRatio);
+        separator = separators[index - 1];
+      } else {
+        // middle
+        const previousSiblingRatio = this.ratios[index - 1];
+        const nextSiblingRatio = this.ratios[index + 1];
+        this.ratios.splice(
+          index - 1,
+          3,
+          previousSiblingRatio + Math.floor(zoneRatio / 2),
+          nextSiblingRatio + Math.ceil(zoneRatio / 2)
+        );
+        separator = separators[index];
+      }
+
+      this.shadowRoot.removeChild(zone);
+      this.shadowRoot.removeChild(separator);
+
+      this._children = null;
+
+      this.setSize();
+    } else {
+      // TODO delete container and adopt children by container parent
+    }
+  }
+
   disconnectedCallback() {
     this.resizeObserver.disconnect();
   }
@@ -80,25 +152,22 @@ class AreasContainer extends HTMLElement {
   }
 
   setSize() {
-    const children = Array.from(
-      this.shadowRoot.querySelectorAll("areas-container, areas-zone")
-    ); // TODO cache it !
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (height - this.separatorSize * (children.length - 1)) / height;
-      children.forEach(child => {
+        (height - this.separatorSize * (this.children.length - 1)) / height;
+      this.children.forEach(child => {
         child.style.height = `max(0px, ${
-          this.ratios[children.indexOf(child)] * childSpaceRatio
+          this.ratios[this.children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     } else {
       const { width } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (width - this.separatorSize * (children.length - 1)) / width;
-      children.forEach(child => {
+        (width - this.separatorSize * (this.children.length - 1)) / width;
+      this.children.forEach(child => {
         child.style.width = `max(0px, ${
-          this.ratios[children.indexOf(child)] * childSpaceRatio
+          this.ratios[this.children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     }
