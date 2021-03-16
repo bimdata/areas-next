@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./index.css" />
     <script type="module" src="./dist/areas.js"></script>
   </head>
-  <body>
+  <body onload="init()">
     <areas-root
       separator-size="2"
       layout='{
@@ -20,12 +20,48 @@
           "ratio": 20
         },
         {
-          "type": "zone",
-          "ratio": 80
+          "type": "container",
+          "direction": "column",
+          "ratio": 80,
+          "children": [
+            {
+              "type": "zone",
+              "ratio": 40
+            },
+            {
+              "type": "container",
+              "direction": "row",
+              "ratio": 60,
+              "children": [
+                {
+                  "type": "zone",
+                  "ratio": 40
+                },
+                {
+                  "type": "zone",
+                  "ratio": 30
+                },
+                {
+                  "type": "zone",
+                  "ratio": 30
+                }
+              ]
+            }
+          ]
         }
       ]
     }'
     >
     </areas-root>
+    <script>
+      function init() {
+        const areas = document.querySelector("areas-root");
+
+        const image = new Image(90, 90);
+        image.src = "./assets/mascot-drag-icon.png";
+
+        areas.setDragImage(image, 45, 45);
+      }
+    </script>
   </body>
 </html>

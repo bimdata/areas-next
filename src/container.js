@@ -41,6 +41,7 @@ class AreasContainer extends HTMLElement {
       if (child.type === "zone") {
         const zone = document.createElement("areas-zone");
         zone.setAttribute("id", this.root.zoneId++);
+        zone.setAttribute("draggable", true);
 
         this.shadowRoot.appendChild(zone);
       } else {
@@ -159,6 +160,10 @@ class AreasContainer extends HTMLElement {
       } else {
         // root
         this.root.shadowRoot.replaceChild(sibling, this);
+        if (sibling.tagName === "AREAS-ZONE") {
+          // simple zone layout
+          sibling.removeAttribute("draggable");
+        }
       }
     }
   }

@@ -30,6 +30,27 @@ class AreasRoot extends HTMLElement {
     window.areas = this;
   }
 
+  swapZones(zoneId1, zoneId2) {
+    if (typeof zoneId1 !== "number" || typeof zoneId2 !== "number") {
+      throw new TypeError("AREAS - swapZones only accept numbers.");
+    }
+
+    const zone1 = this.getZone(zoneId1);
+    const zone2 = this.getZone(zoneId2);
+
+    if (zone1 && zone2) {
+      const zone1Content = zone1.content;
+      const zone2Content = zone2.content;
+
+      zone1.shadowRoot.replaceChild(zone2Content, zone1Content);
+      zone2.shadowRoot.appendChild(zone1Content);
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   deleteZone(zoneId) {
     if (typeof zoneId !== "number") {
       throw new TypeError("AREAS - deleteZone only accept number.");
@@ -59,6 +80,25 @@ class AreasRoot extends HTMLElement {
     } else {
       return child.getZone(zoneId);
     }
+  }
+
+  setDragImage(img, xOffset = 0, yOffset = 0) {
+    if (!(img instanceof HTMLImageElement)) {
+      throw new TypeError(
+        "AREAS - first argument of setDragImage must be an HTMLImageElement."
+      );
+    }
+    if (typeof xOffset !== "number" || typeof yOffset !== "number") {
+      throw new TypeError(
+        'AREAS - setDragImage "xOffset" and "yOffset" must be numbers (or undefined).'
+      );
+    }
+
+    this.dragImage = {
+      img,
+      xOffset,
+      yOffset,
+    };
   }
 }
 
