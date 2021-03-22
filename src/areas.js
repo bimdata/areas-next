@@ -1,4 +1,5 @@
 import { validateLayout } from "./utils.js";
+import { Container } from "./container.js";
 
 class AreasRoot extends HTMLElement {
   constructor() {
@@ -6,23 +7,23 @@ class AreasRoot extends HTMLElement {
     // Create & attach shadow DOM
     this.attachShadow({ mode: "open" });
 
-    this.zoneId = 1;
+    this.nextZoneId = 1;
   }
 
   connectedCallback() {
     const layout = validateLayout(this.getAttribute("layout"));
+
+    this.setZoneIds(layout);
+
     const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
 
     if (layout.type === "container") {
-      const container = document.createElement("areas-container");
-      container.setAttribute("separator-size", separatorSize);
-      container.setAttribute("layout", JSON.stringify(layout));
+      const container = Container.make(layout, separatorSize);
 
       this.shadowRoot.appendChild(container);
-      container.initSize();
     } else {
       const zone = document.createElement("areas-zone");
-      zone.setAttribute("id", this.zoneId++);
+      zone.setAttribute("id", layout.id);
       this.shadowRoot.appendChild(zone);
     }
 
@@ -60,13 +61,148 @@ class AreasRoot extends HTMLElement {
       if (this.shadowRoot.firstElementChild === zone) {
         throw new Error("AREAS - Cannot delete root zone.");
       } else {
-        const zoneContainer = zone.parentNode.host;
-        zoneContainer.deleteZone(zone);
+        zone.container.deleteZone(zone);
       }
       return true;
     } else {
       return false;
     }
+  }
+
+  splitZone(zoneId, way, percentage = 50, insertNewAfter = true) {
+    const zone = this.getZone(zoneId);
+    if (!zone) return false;
+
+    if (!["vertical", "horizontal"].includes(way)) {
+      throw new TypeError(
+        `AREAS - Cannot split area this way. Only accept "vertical" or "horizontal", get "${way}".`
+      );
+    }
+
+    if (percentage > 100 || percentage < 0) {
+      throw new TypeError(
+        "AREAS - splitZone percentage must be a number between 0 and 100."
+      );
+    }
+
+    const oldZoneRatio = insertNewAfter ? percentage : 100 - percentage;
+    const newZoneRatio = insertNewAfter ? 100 - percentage : percentage;
+
+    const direction = way === "vertical" ? "column" : "row";
+
+    const separatorSize = +this.getAttribute("separator-size") ?? 2;
+
+    const container = zone.container;
+    if (!container) {
+      // zone is root
+      this.shadowRoot.removeChild(zone);
+
+      const oldZone = {
+        content: zone,
+        type: "zone",
+        ratio: oldZoneRatio,
+      };
+
+      const newZone = {
+        type: "zone",
+        ratio: newZoneRatio,
+        id: this.nextZoneId++,
+      };
+
+      const containerChildren = [oldZone];
+
+      if (insertNewAfter) {
+        containerChildren.push(newZone);
+      } else {
+        containerChildren.unshift(newZone);
+      }
+
+      const layout = {
+        type: "container",
+        direction,
+        children: containerChildren,
+      };
+
+      this.shadowRoot.appendChild(Container.make(layout, separatorSize));
+    } else {
+      // zone is in container
+      if (container.direction === direction) {
+        // Split in same direction
+        const zoneIndex = container.children.indexOf(zone);
+        const zoneRatio = container.ratios[zoneIndex];
+
+        const firstRatio = Math.floor((zoneRatio * percentage) / 100);
+        const secondRatio = zoneRatio - firstRatio;
+
+        container.ratios.splice(zoneIndex, 1, firstRatio, secondRatio);
+
+        const separator = container.makeSeparator();
+        const newZone = container.makeZone(this.nextZoneId++);
+        if (insertNewAfter) {
+          const zoneNextSibling = zone.nextSibling;
+          if (zoneNextSibling) {
+            container.shadowRoot.insertBefore(newZone, zoneNextSibling);
+            container.shadowRoot.insertBefore(separator, newZone);
+          } else {
+            container.shadowRoot.appendChild(separator);
+            container.shadowRoot.appendChild(newZone);
+          }
+        } else {
+          container.shadowRoot.insertBefore(separator, zone);
+          container.shadowRoot.insertBefore(newZone, separator);
+        }
+
+        container.setSize();
+      } else {
+        // Split in cross direction
+        const oldZone = {
+          content: zone,
+          type: "zone",
+          ratio: oldZoneRatio,
+        };
+
+        const newZone = {
+          type: "zone",
+          ratio: newZoneRatio,
+          id: this.nextZoneId++,
+        };
+
+        const containerChildren = [oldZone];
+
+        if (insertNewAfter) {
+          containerChildren.push(newZone);
+        } else {
+          containerChildren.unshift(newZone);
+        }
+
+        const layout = {
+          type: "container",
+          direction,
+          children: containerChildren,
+        };
+
+        const zoneWidth = zone.style.width;
+        const zoneHeight = zone.style.height;
+
+        zone.style.width = null;
+        zone.style.height = null;
+
+        const nextSibling = zone.nextSibling;
+
+        // WARNING : this removes the zone from its current location
+        const childContainer = Container.make(layout, separatorSize);
+
+        childContainer.style.width = zoneWidth;
+        childContainer.style.height = zoneHeight;
+
+        if (nextSibling) {
+          container.shadowRoot.insertBefore(childContainer, nextSibling);
+        } else {
+          container.shadowRoot.appendChild(childContainer);
+        }
+      }
+    }
+    return true;
   }
 
   getZone(zoneId) {
@@ -76,9 +212,21 @@ class AreasRoot extends HTMLElement {
     const child = this.shadowRoot.firstElementChild;
     if (child.tagName === "AREAS-ZONE") {
       // simple zone layout
-      return child.getAttribute("id") === zoneId ? child : undefined;
+      return Number(child.getAttribute("id")) === zoneId ? child : undefined;
     } else {
       return child.getZone(zoneId);
+    }
+  }
+
+  setZoneIds(layout) {
+    if (layout.type === "zone") {
+      if (layout.id === null || layout.id === undefined) {
+        layout.id = this.nextZoneId++;
+      } else if (layout.id >= this.nextZoneId) {
+        this.nextZoneId = layout.id + 1;
+      }
+    } else {
+      layout.children.forEach(child => this.setZoneIds(child));
     }
   }
 

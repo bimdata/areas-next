@@ -1,4 +1,4 @@
-import { clamp, sum, validateLayout } from "./utils.js";
+import { clamp, sum } from "./utils.js";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -25,48 +25,6 @@ class AreasContainer extends HTMLElement {
   connectedCallback() {
     this.resizeObserver = new ResizeObserver(() => this.setSize());
     this.resizeObserver.observe(this);
-
-    if (this.alreadyConnectedOnce) {
-      return;
-    } else {
-      this.alreadyConnectedOnce = true;
-    }
-
-    this.separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
-    this.layout = validateLayout(this.getAttribute("layout"));
-    this.ratios = this.layout.children.map(child => child.ratio);
-    this.direction = this.layout.direction ?? "row";
-
-    this.layout.children.forEach((child, i, children) => {
-      if (child.type === "zone") {
-        const zone = document.createElement("areas-zone");
-        zone.setAttribute("id", this.root.zoneId++);
-        zone.setAttribute("draggable", true);
-
-        this.shadowRoot.appendChild(zone);
-      } else {
-        const container = document.createElement("areas-container");
-        container.setAttribute("separator-size", this.separatorSize);
-        container.setAttribute("layout", JSON.stringify(child));
-
-        this.shadowRoot.appendChild(container);
-      }
-      if (i !== children.length - 1) {
-        const separator = document.createElement("areas-separator");
-        separator.setAttribute("direction", this.direction);
-        if (this.direction === "column") {
-          separator.style.height = `${this.separatorSize}px`;
-          separator.style.cursor = "ns-resize";
-          this.style.flexDirection = "column";
-        } else {
-          separator.style.width = `${this.separatorSize}px`;
-          separator.style.cursor = "ew-resize";
-          this.style.flexDirection = "row";
-        }
-        separator.addEventListener("move", e => this.onSeparatorMove(e));
-        this.shadowRoot.appendChild(separator);
-      }
-    });
   }
 
   disconnectedCallback() {
@@ -82,13 +40,9 @@ class AreasContainer extends HTMLElement {
   }
 
   get children() {
-    if (!this._children) {
-      this._children = Array.from(
-        this.shadowRoot.querySelectorAll("areas-container, areas-zone")
-      );
-    }
-
-    return this._children;
+    return Array.from(
+      this.shadowRoot.querySelectorAll("areas-container, areas-zone")
+    );
   }
 
   getZone(zoneId) {
@@ -110,8 +64,9 @@ class AreasContainer extends HTMLElement {
    * @param { HTMLElement } zone
    */
   deleteZone(zone) {
-    const index = this.children.indexOf(zone);
-    if (this.children.length > 2) {
+    const children = this.children;
+    const index = children.indexOf(zone);
+    if (children.length > 2) {
       // delete and share ratios to siblings
       const separators = this.shadowRoot.querySelectorAll("areas-separator");
 
@@ -124,7 +79,7 @@ class AreasContainer extends HTMLElement {
         const siblingRatio = this.ratios[1];
         this.ratios.splice(index, 2, siblingRatio + zoneRatio);
         separator = separators[index];
-      } else if (index === this.children.length - 1) {
+      } else if (index === children.length - 1) {
         // last
         const siblingRatio = this.ratios[index - 1];
         this.ratios.splice(index - 1, 2, siblingRatio + zoneRatio);
@@ -147,7 +102,7 @@ class AreasContainer extends HTMLElement {
 
       this.setSize();
     } else {
-      const sibling = this.children[index === 1 ? 0 : 1];
+      const sibling = children[index === 1 ? 0 : 1];
 
       sibling.style.height = null;
       sibling.style.width = null;
@@ -168,55 +123,27 @@ class AreasContainer extends HTMLElement {
     }
   }
 
-  initSize() {
-    this.setSize();
-    const containers = Array.from(
-      this.shadowRoot.querySelectorAll("areas-container")
-    );
-    containers.forEach(container => container.initSize());
-  }
-
   setSize() {
-    this._children = null;
+    const children = this.children;
     if (this.direction === "column") {
       const { height } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (height - this.separatorSize * (this.children.length - 1)) / height;
-      this.children.forEach(child => {
+        (height - this.separatorSize * (children.length - 1)) / height;
+      children.forEach(child => {
         child.style.height = `max(0px, ${
-          this.ratios[this.children.indexOf(child)] * childSpaceRatio
+          this.ratios[children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     } else {
       const { width } = this.getBoundingClientRect();
       const childSpaceRatio =
-        (width - this.separatorSize * (this.children.length - 1)) / width;
-      this.children.forEach(child => {
+        (width - this.separatorSize * (children.length - 1)) / width;
+      children.forEach(child => {
         child.style.width = `max(0px, ${
-          this.ratios[this.children.indexOf(child)] * childSpaceRatio
+          this.ratios[children.indexOf(child)] * childSpaceRatio
         }%)`;
       });
     }
-  }
-
-  static get observedAttributes() {
-    return ["separator-size"];
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "separator-size") {
-      this.onSeparatorSizeChange(newValue);
-    }
-  }
-
-  onSeparatorSizeChange(value) {
-    this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
-      if (this.direction === "column") {
-        separator.style.height = `${value}px`;
-      } else {
-        separator.style.width = `${value}px`;
-      }
-    });
   }
 
   onSeparatorMove(e) {
@@ -277,12 +204,72 @@ class AreasContainer extends HTMLElement {
 
     this.setSize();
   }
+
+  makeSeparator() {
+    const separator = document.createElement("areas-separator");
+    separator.setAttribute("direction", this.direction);
+    if (this.direction === "column") {
+      separator.style.height = `${this.separatorSize}px`;
+      separator.style.cursor = "ns-resize";
+    } else {
+      separator.style.width = `${this.separatorSize}px`;
+      separator.style.cursor = "ew-resize";
+    }
+    separator.addEventListener("move", e => this.onSeparatorMove(e));
+
+    return separator;
+  }
+
+  makeZone(id) {
+    const zone = document.createElement("areas-zone");
+    zone.setAttribute("id", id);
+    zone.setAttribute("draggable", true);
+
+    return zone;
+  }
 }
 
 function isElementSeparator(element) {
   return element.tagName.toLowerCase() === "areas-separator";
 }
 
+const Container = {
+  make(layout, separatorSize = 2) {
+    const container = document.createElement("areas-container");
+
+    container.separatorSize = separatorSize;
+
+    container.ratios = layout.children.map(child => child.ratio);
+    container.direction = layout.direction ?? "row";
+
+    layout.children.forEach((child, i, children) => {
+      if (child.type === "zone") {
+        if (child.content) {
+          // existing zone
+          container.shadowRoot.appendChild(child.content);
+        } else {
+          // new
+          container.shadowRoot.appendChild(container.makeZone(child.id));
+        }
+      } else {
+        const childContainer = Container.make(child, separatorSize);
+
+        container.shadowRoot.appendChild(childContainer);
+      }
+      if (i !== children.length - 1) {
+        if (container.direction === "column") {
+          container.style.flexDirection = "column";
+        } else {
+          container.style.flexDirection = "row";
+        }
+        container.shadowRoot.appendChild(container.makeSeparator());
+      }
+    });
+
+    return container;
+  },
+};
+
 window.customElements.define("areas-container", AreasContainer);
 
-export default AreasContainer;
+export { AreasContainer as default, Container };
