@@ -29,10 +29,6 @@ class AreasZone extends HTMLElement {
     this._dragging = false;
     this._dragover = false;
 
-    // TODO zone may not be usefull as their unique goal is to have an unique id which is set by the container...
-  }
-
-  connectedCallback() {
     this.addEventListener("dragstart", e => this.onDragStart(e));
     this.addEventListener("dragleave", e => this.onDragLeave(e));
     this.addEventListener("dragenter", e => this.onDragEnter(e));
@@ -73,6 +69,11 @@ class AreasZone extends HTMLElement {
 
   get content() {
     return this.shadowRoot.querySelector(".content");
+  }
+
+  get container() {
+    const parent = this.parentNode?.host;
+    return parent.tagName === "AREAS-CONTAINER" ? parent : undefined;
   }
 
   /**
@@ -144,7 +145,7 @@ class AreasZone extends HTMLElement {
     if (name === "id") {
       this.shadowRoot.querySelector(
         ".content"
-      ).textContent = `Zone ${newValue}`;
+      ).textContent = `Content ${newValue}`;
     }
   }
   // TODO DEV ONLY STOP
