@@ -8,6 +8,7 @@ class AreasRoot extends HTMLElement {
     this.attachShadow({ mode: "open" });
 
     this.nextZoneId = 1;
+    this._mode = null;
   }
 
   connectedCallback() {
@@ -71,6 +72,43 @@ class AreasRoot extends HTMLElement {
       this.setAttribute("locked", "");
     } else {
       this.removeAttribute("locked", true);
+    }
+  }
+  get mode() {
+    return this._mode;
+  }
+
+  set mode(mode) {
+    if (!this.parentElement) {
+      throw new Error("AREAS - Areas must be attached to set mode.");
+    }
+    if (!["delete", "swap", "split", null].includes(mode)) {
+      throw new Error(
+        `AREAS - mode only accept "delete", "swap", "split" and null, get ${mode}`
+      );
+    }
+
+    this._mode = mode;
+
+    this.zones.forEach(zone => zone.setAttribute("draggable", false)); // TODO may be done another better way :P
+
+    switch (mode) {
+      case "swap": {
+        this.zones.forEach(zone => zone.setAttribute("draggable", true));
+        break;
+      }
+      default: {
+        // TODO
+      }
+    }
+  }
+
+  get zones() {
+    const zone = this.shadowRoot.querySelector("areas-zone");
+    if (zone) {
+      return zone;
+    } else {
+      return this.shadowRoot.querySelector("areas-container").zones;
     }
   }
 

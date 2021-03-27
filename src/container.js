@@ -65,6 +65,17 @@ class AreasContainer extends HTMLElement {
     });
   }
 
+  /**
+   * Returs all zones in this container and in its container descendants.
+   */
+  get zones() {
+    const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone"));
+    const containers = this.shadowRoot.querySelectorAll("areas-container");
+    containers.forEach(container => zones.push(...container.zones));
+
+    return zones;
+  }
+
   getZone(zoneId) {
     for (let child of this.children) {
       if (child.tagName === "AREAS-ZONE") {
@@ -248,7 +259,6 @@ class AreasContainer extends HTMLElement {
   makeZone(id) {
     const zone = document.createElement("areas-zone");
     zone.setAttribute("id", id);
-    zone.setAttribute("draggable", true);
 
     return zone;
   }
