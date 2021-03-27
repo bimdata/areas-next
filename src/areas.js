@@ -11,20 +11,24 @@ class AreasRoot extends HTMLElement {
   }
 
   connectedCallback() {
-    const layout = validateLayout(this.getAttribute("layout"));
+    if (this.hasAttribute("layout")) {
+      const layout = validateLayout(this.getAttribute("layout"));
 
-    this.setZoneIds(layout);
+      this.removeAttribute("layout"); // After validation, the layout attribute is removed because changing it will have no effect.
 
-    const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
+      this.setZoneIds(layout);
 
-    if (layout.type === "container") {
-      const container = Container.make(layout, separatorSize, this.locked);
+      const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
 
-      this.shadowRoot.appendChild(container);
-    } else {
-      const zone = document.createElement("areas-zone");
-      zone.setAttribute("id", layout.id);
-      this.shadowRoot.appendChild(zone);
+      if (layout.type === "container") {
+        const container = Container.make(layout, separatorSize, this.locked);
+
+        this.shadowRoot.appendChild(container);
+      } else {
+        const zone = document.createElement("areas-zone");
+        zone.setAttribute("id", layout.id);
+        this.shadowRoot.appendChild(zone);
+      }
     }
 
     // TODO for development only
