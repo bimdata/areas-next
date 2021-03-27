@@ -45,6 +45,26 @@ class AreasContainer extends HTMLElement {
     );
   }
 
+  get locked() {
+    return this._locked;
+  }
+
+  set locked(value) {
+    this._locked = value;
+
+    this.shadowRoot
+      .querySelectorAll("areas-container")
+      .forEach(container => (container.locked = value));
+
+    this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
+      if (this.direction === "column") {
+        separator.style.cursor = value ? null : "ns-resize";
+      } else {
+        separator.style.cursor = value ? null : "ew-resize";
+      }
+    });
+  }
+
   getZone(zoneId) {
     for (let child of this.children) {
       if (child.tagName === "AREAS-ZONE") {
@@ -147,6 +167,7 @@ class AreasContainer extends HTMLElement {
   }
 
   onSeparatorMove(e) {
+    if (this.locked) return;
     const separator = e.currentTarget;
 
     let deltaPercentage = null;
@@ -210,10 +231,14 @@ class AreasContainer extends HTMLElement {
     separator.setAttribute("direction", this.direction);
     if (this.direction === "column") {
       separator.style.height = `${this.separatorSize}px`;
-      separator.style.cursor = "ns-resize";
+      if (!this.locked) {
+        separator.style.cursor = "ns-resize";
+      }
     } else {
       separator.style.width = `${this.separatorSize}px`;
-      separator.style.cursor = "ew-resize";
+      if (!this.locked) {
+        separator.style.cursor = "ew-resize";
+      }
     }
     separator.addEventListener("move", e => this.onSeparatorMove(e));
 
@@ -234,10 +259,11 @@ function isElementSeparator(element) {
 }
 
 const Container = {
-  make(layout, separatorSize = 2) {
+  make(layout, separatorSize = 2, locked = false) {
     const container = document.createElement("areas-container");
 
     container.separatorSize = separatorSize;
+    container._locked = locked;
 
     container.ratios = layout.children.map(child => child.ratio);
     container.direction = layout.direction ?? "row";
@@ -252,7 +278,7 @@ const Container = {
           container.shadowRoot.appendChild(container.makeZone(child.id));
         }
       } else {
-        const childContainer = Container.make(child, separatorSize);
+        const childContainer = Container.make(child, separatorSize, locked);
 
         container.shadowRoot.appendChild(childContainer);
       }

@@ -18,7 +18,7 @@ class AreasRoot extends HTMLElement {
     const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
 
     if (layout.type === "container") {
-      const container = Container.make(layout, separatorSize);
+      const container = Container.make(layout, separatorSize, this.locked);
 
       this.shadowRoot.appendChild(container);
     } else {
@@ -29,6 +29,45 @@ class AreasRoot extends HTMLElement {
 
     // TODO for development only
     window.areas = this;
+  }
+
+  static get observedAttributes() {
+    return ["locked"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "locked") {
+      if (newValue !== "" && newValue !== null) {
+        throw new Error(
+          "AREAS - locked attribute may be used as boolean attribute with no value."
+        );
+      }
+      const container = this.shadowRoot.querySelector("areas-container");
+      if (!container) return;
+
+      if (newValue === null) {
+        // remove lock
+        container.locked = false;
+      } else {
+        // lock containers
+        container.locked = true;
+      }
+    }
+  }
+
+  get locked() {
+    return this.hasAttribute("locked");
+  }
+
+  set locked(value) {
+    if (typeof value !== "boolean") {
+      throw new Error("AREAS - locked only accepts booleans.");
+    }
+    if (value) {
+      this.setAttribute("locked", "");
+    } else {
+      this.removeAttribute("locked", true);
+    }
   }
 
   swapZones(zoneId1, zoneId2) {
