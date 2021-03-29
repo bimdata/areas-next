@@ -1,5 +1,6 @@
 import { validateLayout } from "./utils.js";
-import { makeContainerFactory } from "./container.js";
+import makeContainerFactory from "./container/container.factory.js";
+import makeZoneFactory from "./zone/zone.factory.js";
 
 class AreasRoot extends HTMLElement {
   constructor() {
@@ -11,6 +12,14 @@ class AreasRoot extends HTMLElement {
     this._mode = null;
 
     this.Container = makeContainerFactory(this);
+    this.Zone = makeZoneFactory(this);
+
+    this.modeAttributes = new Map([
+      ["split-v", "splittable-v"],
+      ["split-h", "splittable-h"],
+      ["swap", "draggable"],
+      ["delete", "deletable"],
+    ]);
   }
 
   connectedCallback() {
@@ -21,19 +30,12 @@ class AreasRoot extends HTMLElement {
 
       this.setZoneIds(layout);
 
-      const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
-
       if (layout.type === "container") {
-        const container = this.Container.make(
-          layout,
-          separatorSize,
-          this.locked
-        );
+        const container = this.Container.make(layout);
 
         this.shadowRoot.appendChild(container);
       } else {
-        const zone = document.createElement("areas-zone");
-        zone.setAttribute("id", layout.id);
+        const zone = this.Zone.make(layout.id);
         this.shadowRoot.appendChild(zone);
       }
     }
@@ -80,43 +82,34 @@ class AreasRoot extends HTMLElement {
       this.removeAttribute("locked", true);
     }
   }
+
   get mode() {
     return this._mode;
+  }
+
+  get modeAttribute() {
+    return this.modeAttributes.get(this.mode);
   }
 
   set mode(mode) {
     if (!this.parentElement) {
       throw new Error("AREAS - Areas must be attached to set mode.");
     }
-    if (!["delete", "swap", "split", null].includes(mode)) {
+    if (!["delete", "swap", "split-v", "split-h", null].includes(mode)) {
       throw new Error(
-        `AREAS - mode only accept "delete", "swap", "split" and null, get ${mode}`
+        `AREAS - mode only accept "delete", "swap", "split-v", "split-h" and null, get ${mode}`
       );
     }
 
     this._mode = mode;
 
-    this.zones.forEach(zone => zone.removeAttribute("draggable"));
-    this.zones.forEach(zone => zone.removeAttribute("deletable"));
-    this.zones.forEach(zone => zone.removeAttribute("splittable"));
+    this.zones.forEach(zone =>
+      Array.from(this.modeAttributes.values()).forEach(attribute =>
+        zone.removeAttribute(attribute)
+      )
+    );
 
-    switch (mode) {
-      case "swap": {
-        this.zones.forEach(zone => zone.setAttribute("draggable", true));
-        break;
-      }
-      case "delete": {
-        this.zones.forEach(zone => zone.setAttribute("deletable", ""));
-        break;
-      }
-      case "split": {
-        this.zones.forEach(zone => zone.setAttribute("splittable", ""));
-        break;
-      }
-      default: {
-        // TODO
-      }
-    }
+    this.zones.forEach(zone => zone.setAttribute(this.modeAttribute, true));
   }
 
   get zones() {
@@ -126,6 +119,10 @@ class AreasRoot extends HTMLElement {
     } else {
       return this.shadowRoot.querySelector("areas-container").zones;
     }
+  }
+
+  get separatorSize() {
+    return +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
   }
 
   swapZones(zoneId1, zoneId2) {
@@ -233,8 +230,8 @@ class AreasRoot extends HTMLElement {
 
         container.ratios.splice(zoneIndex, 1, firstRatio, secondRatio);
 
-        const separator = container.makeSeparator();
-        const newZone = container.makeZone(this.nextZoneId++, this.mode);
+        const separator = container.Separator.make();
+        const newZone = this.Zone.make(this.nextZoneId++);
         if (insertNewAfter) {
           const zoneNextSibling = zone.nextSibling;
           if (zoneNextSibling) {

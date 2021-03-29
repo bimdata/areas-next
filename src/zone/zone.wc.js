@@ -43,10 +43,16 @@ template.innerHTML = `
   cursor: grab;
 }
 
-:host([splittable]:hover) .overlay {
+:host([splittable-v]:hover) .overlay {
   display: block;
   background-color: blue;  /* TODO may be configurable with custom CSS prop ... */
-  cursor: copy;
+  cursor: row-resize;
+}
+
+:host([splittable-h]:hover) .overlay {
+  display: block;
+  background-color: blue;  /* TODO may be configurable with custom CSS prop ... */
+  cursor: col-resize;
 }
 </style>
 `;
@@ -92,14 +98,6 @@ class AreasZone extends HTMLElement {
     } else {
       this.style.backgroundColor = "cornsilk";
     }
-  }
-
-  /**
-   * @returns { HTMLElement }
-   */
-  get root() {
-    const parentHost = this.shadowRoot.host.parentNode.host;
-    return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
   }
 
   get content() {
@@ -167,9 +165,12 @@ class AreasZone extends HTMLElement {
 
   onClick(e) {
     const zoneId = Number(this.getAttribute("id"));
-    if (this.hasAttribute("splittable")) {
-      const way = this.root.splitDirection || "vertical"; // TODO think about it
-      const insertNewAfter = this.root.splitInsert === "after"; // TODO think about it
+    if (
+      this.hasAttribute("splittable-v") ||
+      this.hasAttribute("splittable-h")
+    ) {
+      const way = this.hasAttribute("splittable-v") ? "vertical" : "horizontal";
+      const insertNewAfter = this.root.splitInsert === "after";
 
       const { offsetX, offsetY } = e;
       let percentage = null;

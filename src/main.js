@@ -1,5 +1,5 @@
 /* eslint-disable */
-import AreasSeparator from "./separator.js";
-import AreasZone from "./zone.js";
-import AreasContainer from "./container.js";
+import AreasSeparator from "./separator/separator.wc.js";
+import AreasZone from "./zone/zone.wc.js";
+import AreasContainer from "./container/container.wc.js";
 import AreasRoot from "./areas.js";

@@ -1,4 +1,4 @@
-import { clamp, sum } from "./utils.js";
+import { clamp, sum } from "../utils.js";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -29,14 +29,6 @@ class AreasContainer extends HTMLElement {
 
   disconnectedCallback() {
     this.resizeObserver.disconnect();
-  }
-
-  /**
-   * @returns { HTMLElement }
-   */
-  get root() {
-    const parentHost = this.shadowRoot.host.parentNode.host;
-    return parentHost.tagName === "AREAS-ROOT" ? parentHost : parentHost.root;
   }
 
   get children() {
@@ -236,95 +228,12 @@ class AreasContainer extends HTMLElement {
 
     this.setSize();
   }
-
-  makeSeparator() {
-    const separator = document.createElement("areas-separator");
-    separator.style.zIndex = 1001; // TODO may be configuratble.
-
-    separator.setAttribute("direction", this.direction);
-    if (this.direction === "column") {
-      separator.style.height = `${this.separatorSize}px`;
-      if (!this.locked) {
-        separator.style.cursor = "ns-resize";
-      }
-    } else {
-      separator.style.width = `${this.separatorSize}px`;
-      if (!this.locked) {
-        separator.style.cursor = "ew-resize";
-      }
-    }
-    separator.addEventListener("move", e => this.onSeparatorMove(e));
-
-    return separator;
-  }
-
-  makeZone(id, mode) {
-    const zone = document.createElement("areas-zone");
-    zone.setAttribute("id", id);
-    switch (mode) {
-      case "split":
-        zone.setAttribute("splittable", "");
-        break;
-      case "delete":
-        zone.setAttribute("deletable", "");
-        break;
-      case "swap":
-        zone.setAttribute("draggable", true);
-        break;
-      default:
-        break;
-    }
-    return zone;
-  }
 }
 
 function isElementSeparator(element) {
   return element.tagName.toLowerCase() === "areas-separator";
 }
-function makeContainerFactory(areas) {
-  const Container = {
-    make(layout, separatorSize = 2, locked = false) {
-      const container = document.createElement("areas-container");
-
-      container.separatorSize = separatorSize;
-      container._locked = locked;
-
-      container.ratios = layout.children.map(child => child.ratio);
-      container.direction = layout.direction ?? "row";
-
-      layout.children.forEach((child, i, children) => {
-        if (child.type === "zone") {
-          if (child.content) {
-            // existing zone
-            container.shadowRoot.appendChild(child.content);
-          } else {
-            // new
-            container.shadowRoot.appendChild(
-              container.makeZone(child.id, areas.mode)
-            );
-          }
-        } else {
-          const childContainer = Container.make(child, separatorSize, locked);
-
-          container.shadowRoot.appendChild(childContainer);
-        }
-        if (i !== children.length - 1) {
-          if (container.direction === "column") {
-            container.style.flexDirection = "column";
-          } else {
-            container.style.flexDirection = "row";
-          }
-          container.shadowRoot.appendChild(container.makeSeparator());
-        }
-      });
-
-      return container;
-    },
-  };
-
-  return Container;
-}
 
 window.customElements.define("areas-container", AreasContainer);
 
-export { AreasContainer as default, makeContainerFactory };
+export default AreasContainer;
