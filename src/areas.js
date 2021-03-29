@@ -90,11 +90,16 @@ class AreasRoot extends HTMLElement {
 
     this._mode = mode;
 
-    this.zones.forEach(zone => zone.setAttribute("draggable", false)); // TODO may be done another better way :P
+    this.zones.forEach(zone => zone.removeAttribute("draggable")); // TODO may be done another better way :P
+    this.zones.forEach(zone => zone.removeAttribute("deletable"));
 
     switch (mode) {
       case "swap": {
         this.zones.forEach(zone => zone.setAttribute("draggable", true));
+        break;
+      }
+      case "delete": {
+        this.zones.forEach(zone => zone.setAttribute("deletable", ""));
         break;
       }
       default: {
@@ -106,7 +111,7 @@ class AreasRoot extends HTMLElement {
   get zones() {
     const zone = this.shadowRoot.querySelector("areas-zone");
     if (zone) {
-      return zone;
+      return [zone];
     } else {
       return this.shadowRoot.querySelector("areas-container").zones;
     }

@@ -239,6 +239,8 @@ class AreasContainer extends HTMLElement {
 
   makeSeparator() {
     const separator = document.createElement("areas-separator");
+    separator.style.zIndex = 1001; // TODO may be configuratble.
+
     separator.setAttribute("direction", this.direction);
     if (this.direction === "column") {
       separator.style.height = `${this.separatorSize}px`;

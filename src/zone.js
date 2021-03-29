@@ -3,8 +3,12 @@ template.innerHTML = `
 <div class="content">
   <!-- Content will be dynamically inserted here using zone id -->
 </div>
+<div class="overlay">
+  <!-- Overlay -->
+</div>
 <style>
 :host {
+  position: relative;
   display: block;
   box-sizing: border-box;
   background-color: cornsilk;
@@ -14,6 +18,29 @@ template.innerHTML = `
 .content {
   width: 100%;
   height: 100%;
+}
+
+.overlay {
+  display: none;
+  position: absolute;
+  opacity: 0.1;
+  z-index: 1000; /* TODO may be configurable ... */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+:host([deletable]:hover) .overlay {
+  display: block;
+  background-color: red;  /* TODO may be configurable with custom CSS prop ... */
+  cursor: crosshair;
+}
+
+:host([draggable]:hover) .overlay {
+  display: block;
+  background-color: green;  /* TODO may be configurable with custom CSS prop ... */
+  cursor: grab;
 }
 </style>
 `;
@@ -30,11 +57,13 @@ class AreasZone extends HTMLElement {
     this._dragover = false;
 
     this.addEventListener("dragstart", e => this.onDragStart(e));
-    this.addEventListener("dragleave", e => this.onDragLeave(e));
+    this.addEventListener("dragleave", () => this.onDragLeave());
     this.addEventListener("dragenter", e => this.onDragEnter(e));
-    this.addEventListener("dragend", e => this.onDragEnd(e));
+    this.addEventListener("dragend", () => this.onDragEnd());
     this.addEventListener("dragover", e => this.onDragOver(e));
     this.addEventListener("drop", e => this.onDrop(e));
+
+    this.addEventListener("click", () => this.onClick());
   }
 
   get dragging() {
@@ -93,10 +122,7 @@ class AreasZone extends HTMLElement {
     }
   }
 
-  /**
-   * @param { DragEvent }
-   */
-  onDragEnd(dragEvent) {
+  onDragEnd() {
     this.dragging = false;
   }
 
@@ -109,10 +135,7 @@ class AreasZone extends HTMLElement {
     }
   }
 
-  /**
-   * @param { DragEvent }
-   */
-  onDragLeave(dragEvent) {
+  onDragLeave() {
     this.dragover = false;
   }
 
@@ -134,6 +157,12 @@ class AreasZone extends HTMLElement {
     const areaId = Number(dragEvent.dataTransfer.getData("areas-zoneid"));
 
     this.root.swapZones(areaId, Number(this.getAttribute("id")));
+  }
+
+  onClick() {
+    if (this.hasAttribute("deletable")) {
+      this.root.deleteZone(Number(this.getAttribute("id")));
+    }
   }
 
   // TODO DEV ONLY START
