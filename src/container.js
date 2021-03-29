@@ -258,10 +258,22 @@ class AreasContainer extends HTMLElement {
     return separator;
   }
 
-  makeZone(id) {
+  makeZone(id, mode) {
     const zone = document.createElement("areas-zone");
     zone.setAttribute("id", id);
-
+    switch (mode) {
+      case "split":
+        zone.setAttribute("splittable", "");
+        break;
+      case "delete":
+        zone.setAttribute("deletable", "");
+        break;
+      case "swap":
+        zone.setAttribute("draggable", true);
+        break;
+      default:
+        break;
+    }
     return zone;
   }
 }
@@ -269,45 +281,50 @@ class AreasContainer extends HTMLElement {
 function isElementSeparator(element) {
   return element.tagName.toLowerCase() === "areas-separator";
 }
+function makeContainerFactory(areas) {
+  const Container = {
+    make(layout, separatorSize = 2, locked = false) {
+      const container = document.createElement("areas-container");
 
-const Container = {
-  make(layout, separatorSize = 2, locked = false) {
-    const container = document.createElement("areas-container");
+      container.separatorSize = separatorSize;
+      container._locked = locked;
 
-    container.separatorSize = separatorSize;
-    container._locked = locked;
+      container.ratios = layout.children.map(child => child.ratio);
+      container.direction = layout.direction ?? "row";
 
-    container.ratios = layout.children.map(child => child.ratio);
-    container.direction = layout.direction ?? "row";
-
-    layout.children.forEach((child, i, children) => {
-      if (child.type === "zone") {
-        if (child.content) {
-          // existing zone
-          container.shadowRoot.appendChild(child.content);
+      layout.children.forEach((child, i, children) => {
+        if (child.type === "zone") {
+          if (child.content) {
+            // existing zone
+            container.shadowRoot.appendChild(child.content);
+          } else {
+            // new
+            container.shadowRoot.appendChild(
+              container.makeZone(child.id, areas.mode)
+            );
+          }
         } else {
-          // new
-          container.shadowRoot.appendChild(container.makeZone(child.id));
-        }
-      } else {
-        const childContainer = Container.make(child, separatorSize, locked);
+          const childContainer = Container.make(child, separatorSize, locked);
 
-        container.shadowRoot.appendChild(childContainer);
-      }
-      if (i !== children.length - 1) {
-        if (container.direction === "column") {
-          container.style.flexDirection = "column";
-        } else {
-          container.style.flexDirection = "row";
+          container.shadowRoot.appendChild(childContainer);
         }
-        container.shadowRoot.appendChild(container.makeSeparator());
-      }
-    });
+        if (i !== children.length - 1) {
+          if (container.direction === "column") {
+            container.style.flexDirection = "column";
+          } else {
+            container.style.flexDirection = "row";
+          }
+          container.shadowRoot.appendChild(container.makeSeparator());
+        }
+      });
 
-    return container;
-  },
-};
+      return container;
+    },
+  };
+
+  return Container;
+}
 
 window.customElements.define("areas-container", AreasContainer);
 
-export { AreasContainer as default, Container };
+export { AreasContainer as default, makeContainerFactory };

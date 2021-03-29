@@ -42,6 +42,12 @@ template.innerHTML = `
   background-color: green;  /* TODO may be configurable with custom CSS prop ... */
   cursor: grab;
 }
+
+:host([splittable]:hover) .overlay {
+  display: block;
+  background-color: blue;  /* TODO may be configurable with custom CSS prop ... */
+  cursor: copy;
+}
 </style>
 `;
 
@@ -63,7 +69,7 @@ class AreasZone extends HTMLElement {
     this.addEventListener("dragover", e => this.onDragOver(e));
     this.addEventListener("drop", e => this.onDrop(e));
 
-    this.addEventListener("click", () => this.onClick());
+    this.addEventListener("click", e => this.onClick(e));
   }
 
   get dragging() {
@@ -159,9 +165,27 @@ class AreasZone extends HTMLElement {
     this.root.swapZones(areaId, Number(this.getAttribute("id")));
   }
 
-  onClick() {
-    if (this.hasAttribute("deletable")) {
-      this.root.deleteZone(Number(this.getAttribute("id")));
+  onClick(e) {
+    const zoneId = Number(this.getAttribute("id"));
+    if (this.hasAttribute("splittable")) {
+      const way = this.root.splitDirection || "vertical"; // TODO think about it
+      const insertNewAfter = this.root.splitInsert === "after"; // TODO think about it
+
+      const { offsetX, offsetY } = e;
+      let percentage = null;
+      if (way === "vertical") {
+        percentage = Math.floor(
+          (100 * offsetY) / this.getBoundingClientRect().height
+        );
+      } else {
+        percentage = Math.floor(
+          (100 * offsetX) / this.getBoundingClientRect().width
+        );
+      }
+
+      this.root.splitZone(zoneId, way, percentage, insertNewAfter);
+    } else if (this.hasAttribute("deletable")) {
+      this.root.deleteZone(zoneId);
     }
   }
 

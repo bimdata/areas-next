@@ -1,5 +1,5 @@
 import { validateLayout } from "./utils.js";
-import { Container } from "./container.js";
+import { makeContainerFactory } from "./container.js";
 
 class AreasRoot extends HTMLElement {
   constructor() {
@@ -9,6 +9,8 @@ class AreasRoot extends HTMLElement {
 
     this.nextZoneId = 1;
     this._mode = null;
+
+    this.Container = makeContainerFactory(this);
   }
 
   connectedCallback() {
@@ -22,7 +24,11 @@ class AreasRoot extends HTMLElement {
       const separatorSize = +this.getAttribute("separator-size") ?? 2; // TODO: handle NaN case
 
       if (layout.type === "container") {
-        const container = Container.make(layout, separatorSize, this.locked);
+        const container = this.Container.make(
+          layout,
+          separatorSize,
+          this.locked
+        );
 
         this.shadowRoot.appendChild(container);
       } else {
@@ -90,8 +96,9 @@ class AreasRoot extends HTMLElement {
 
     this._mode = mode;
 
-    this.zones.forEach(zone => zone.removeAttribute("draggable")); // TODO may be done another better way :P
+    this.zones.forEach(zone => zone.removeAttribute("draggable"));
     this.zones.forEach(zone => zone.removeAttribute("deletable"));
+    this.zones.forEach(zone => zone.removeAttribute("splittable"));
 
     switch (mode) {
       case "swap": {
@@ -100,6 +107,10 @@ class AreasRoot extends HTMLElement {
       }
       case "delete": {
         this.zones.forEach(zone => zone.setAttribute("deletable", ""));
+        break;
+      }
+      case "split": {
+        this.zones.forEach(zone => zone.setAttribute("splittable", ""));
         break;
       }
       default: {
@@ -209,7 +220,7 @@ class AreasRoot extends HTMLElement {
         children: containerChildren,
       };
 
-      this.shadowRoot.appendChild(Container.make(layout, separatorSize));
+      this.shadowRoot.appendChild(this.Container.make(layout, separatorSize));
     } else {
       // zone is in container
       if (container.direction === direction) {
@@ -223,7 +234,7 @@ class AreasRoot extends HTMLElement {
         container.ratios.splice(zoneIndex, 1, firstRatio, secondRatio);
 
         const separator = container.makeSeparator();
-        const newZone = container.makeZone(this.nextZoneId++);
+        const newZone = container.makeZone(this.nextZoneId++, this.mode);
         if (insertNewAfter) {
           const zoneNextSibling = zone.nextSibling;
           if (zoneNextSibling) {
@@ -276,7 +287,7 @@ class AreasRoot extends HTMLElement {
         const nextSibling = zone.nextSibling;
 
         // WARNING : this removes the zone from its current location
-        const childContainer = Container.make(layout, separatorSize);
+        const childContainer = this.Container.make(layout, separatorSize);
 
         childContainer.style.width = zoneWidth;
         childContainer.style.height = zoneHeight;
