@@ -4,6 +4,7 @@ template.innerHTML = `
   <!-- Content will be dynamically inserted here using zone id -->
 </div>
 <div class="overlay">
+  <div class="split-line"></div>
   <!-- Overlay -->
 </div>
 <style>
@@ -31,6 +32,12 @@ template.innerHTML = `
   height: 100%;
 }
 
+.overlay .split-line {
+  display: none;
+  position: absolute;
+  background-color: red;
+}
+
 :host([deletable]:hover) .overlay {
   display: block;
   background-color: red;  /* TODO may be configurable with custom CSS prop ... */
@@ -49,10 +56,24 @@ template.innerHTML = `
   cursor: row-resize;
 }
 
+:host([splittable-v]:hover) .overlay .split-line {
+  display: block;
+  left: 0;
+  width: 100%;
+  height: 2px;
+}
+
 :host([splittable-h]:hover) .overlay {
   display: block;
   background-color: blue;  /* TODO may be configurable with custom CSS prop ... */
   cursor: col-resize;
+}
+
+:host([splittable-h]:hover) .overlay .split-line {
+  display: block;
+  top: 0;
+  width: 2px;
+  height: 100%;
 }
 </style>
 `;
@@ -76,6 +97,8 @@ class AreasZone extends HTMLElement {
     this.addEventListener("drop", e => this.onDrop(e));
 
     this.addEventListener("click", e => this.onClick(e));
+
+    this.addEventListener("mousemove", e => this.onMouseMove(e));
   }
 
   get dragging() {
@@ -169,6 +192,11 @@ class AreasZone extends HTMLElement {
       this.hasAttribute("splittable-v") ||
       this.hasAttribute("splittable-h")
     ) {
+      const splitLine = this.shadowRoot.querySelector(".split-line");
+
+      splitLine.style.top = null;
+      splitLine.style.left = null;
+
       const way = this.hasAttribute("splittable-v") ? "vertical" : "horizontal";
       const insertNewAfter = this.root.splitInsert === "after";
 
@@ -187,6 +215,32 @@ class AreasZone extends HTMLElement {
       this.root.splitZone(zoneId, way, percentage, insertNewAfter);
     } else if (this.hasAttribute("deletable")) {
       this.root.deleteZone(zoneId);
+    }
+  }
+
+  /**
+   * @param { MouseEvent } e
+   */
+  onMouseMove(e) {
+    if (
+      this.hasAttribute("splittable-v") ||
+      this.hasAttribute("splittable-h")
+    ) {
+      const splitLine = this.shadowRoot.querySelector(".split-line");
+
+      const { width, height } = splitLine.getBoundingClientRect();
+
+      splitLine.style.top = null;
+      splitLine.style.left = null;
+
+      const { offsetX, offsetY } = e;
+      if (this.hasAttribute("splittable-v")) {
+        splitLine.style.top = `${offsetY - height / 2}px`;
+      }
+
+      if (this.hasAttribute("splittable-h")) {
+        splitLine.style.left = `${offsetX - width / 2}px`;
+      }
     }
   }
 

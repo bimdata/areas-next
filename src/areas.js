@@ -225,7 +225,7 @@ class AreasRoot extends HTMLElement {
         const zoneIndex = container.children.indexOf(zone);
         const zoneRatio = container.ratios[zoneIndex];
 
-        const firstRatio = Math.floor((zoneRatio * percentage) / 100);
+        const firstRatio = ((zoneRatio * percentage) / 100).toFixed(3);
         const secondRatio = zoneRatio - firstRatio;
 
         container.ratios.splice(zoneIndex, 1, firstRatio, secondRatio);
