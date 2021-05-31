@@ -5,7 +5,7 @@ const GRABBER_MARGIN = 4;
  */
 export default class Separator {
   /**
-   * @param { Container } container
+   * @param { Areas.Container } container
    * @param { number } zIndex
    */
   constructor(container, zIndex = 1001) {
@@ -62,10 +62,10 @@ export default class Separator {
   }
 
   /**
-   * @param { MouseEvent } event
+   * @param { MouseEvent } mouseMoveEvent
    */
-  drag(event) {
-    this.container.onSeparatorMove(this, event);
+  drag(mouseMoveEvent) {
+    this.container.onSeparatorMove(this, mouseMoveEvent);
   }
 
   stopDrag() {

@@ -6,6 +6,9 @@ import style from "./style.js";
 const template = document.createElement("template");
 template.innerHTML = style;
 
+/**
+ * @type { Areas.Areas }
+ */
 class AreasRoot extends HTMLElement {
   constructor() {
     super();

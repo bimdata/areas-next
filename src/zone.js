@@ -4,8 +4,8 @@ template.innerHTML = `
   <!-- Content will be dynamically inserted here using zone id -->
 </div>
 <div class="overlay">
-  <div class="split-line"></div>
   <!-- Overlay -->
+  <div class="split-line"></div>
 </div>
 `;
 
@@ -13,6 +13,11 @@ template.innerHTML = `
  * @type { Areas.Zone }
  */
 export default class Zone {
+  /**
+   * @param { Areas.Areas } areas
+   * @param { number } id
+   * @param { Areas.Container } container
+   */
   constructor(areas, id, container = null) {
     this.areas = areas;
     this.id = id;

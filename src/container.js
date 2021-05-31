@@ -2,7 +2,14 @@ import Zone from "../zone.js";
 import Separator from "../separator.js";
 import { clamp, sum } from "../utils.js";
 
+/**
+ * @type { Areas.Container }
+ */
 export default class Container {
+  /**
+   * @param { Areas.Areas } areas
+   * @param { Areas.Layout } layout
+   */
   constructor(areas, layout) {
     const el = document.createElement("div");
     el.classList.add("container");
