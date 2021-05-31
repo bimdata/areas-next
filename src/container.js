@@ -1,5 +1,5 @@
-import Zone from "../zone/zone.js";
-import Separator from "../separator/separator.js";
+import Zone from "../zone.js";
+import Separator from "../separator.js";
 import { clamp, sum } from "../utils.js";
 
 export default class Container {

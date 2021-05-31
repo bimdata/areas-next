@@ -1,6 +1,6 @@
 import { validateLayout } from "./utils.js";
-import Zone from "./zone/zone.js";
-import Container from "./container/container.js";
+import Zone from "./zone.js";
+import Container from "./container.js";
 import style from "./style.js";
 
 const template = document.createElement("template");
