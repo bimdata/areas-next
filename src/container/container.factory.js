@@ -1,13 +1,20 @@
-import makeSeparatorFactory from "../separator/separator.factory.js";
+import Separator from "../separator/separator.js";
 
 function makeContainerFactory(areas) {
   const Container = {
+    /**
+     * @returns { Areas.Container }
+     */
     make(layout) {
       const container = document.createElement("areas-container");
 
       container.root = areas;
 
-      container.Separator = makeSeparatorFactory(container);
+      container.separators = [];
+
+      container.getSeparatorIndex = separator => {
+        return container.separators.indexOf(separator);
+      };
 
       container.separatorSize = areas.separatorSize;
       container._locked = areas.locked;
@@ -35,7 +42,9 @@ function makeContainerFactory(areas) {
           } else {
             container.style.flexDirection = "row";
           }
-          container.shadowRoot.appendChild(container.Separator.make());
+          const separator = new Separator(container);
+          container.separators.push(separator);
+          container.shadowRoot.appendChild(separator.el);
         }
       });
 

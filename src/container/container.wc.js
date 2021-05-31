@@ -1,5 +1,7 @@
 import { clamp, sum } from "../utils.js";
 
+import style from "../style.js";
+
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
@@ -10,6 +12,9 @@ template.innerHTML = `
   height: 100%;
   overflow: hidden;
 }
+
+${style}
+
 </style>
 `;
 
@@ -169,15 +174,21 @@ class AreasContainer extends HTMLElement {
     }
   }
 
-  onSeparatorMove(e) {
+  /**
+   * @param { Areas.Separator } separator
+   * @param { MouseEvent } event
+   */
+  onSeparatorMove(separator, event) {
     if (this.locked) return;
-    const separator = e.currentTarget;
 
     let deltaPercentage = null;
 
     if (this.direction === "column") {
-      const { y, height: separatorHeight } = separator.getBoundingClientRect();
-      const { clientY } = e.detail;
+      const {
+        y,
+        height: separatorHeight,
+      } = separator.el.getBoundingClientRect();
+      const { clientY } = event;
 
       const separatorPosition = y + separatorHeight / 2;
 
@@ -187,8 +198,8 @@ class AreasContainer extends HTMLElement {
 
       deltaPercentage = (movementY / height) * 100;
     } else {
-      const { x, width: separatorWidth } = separator.getBoundingClientRect();
-      const { clientX } = e.detail;
+      const { x, width: separatorWidth } = separator.el.getBoundingClientRect();
+      const { clientX } = event;
 
       const separatorPosition = x + separatorWidth / 2;
 
@@ -199,9 +210,7 @@ class AreasContainer extends HTMLElement {
       deltaPercentage = (movementX / width) * 100;
     }
 
-    const separatorIndex = Array.from(separator.parentNode.children)
-      .filter(isElementSeparator)
-      .indexOf(separator);
+    const separatorIndex = this.getSeparatorIndex(separator);
 
     let ratio1 = this.ratios[separatorIndex];
     let ratio2 = this.ratios[separatorIndex + 1];
@@ -228,10 +237,6 @@ class AreasContainer extends HTMLElement {
 
     this.setSize();
   }
-}
-
-function isElementSeparator(element) {
-  return element.tagName.toLowerCase() === "areas-separator";
 }
 
 window.customElements.define("areas-container", AreasContainer);

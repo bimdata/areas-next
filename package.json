@@ -7,6 +7,7 @@
     "predev": "rm -rf dist",
     "dev": "esbuild src/main.js --bundle --outfile=dist/areas.js --sourcemap --watch"
   },
+  "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bimdata/areas-web-components.git"
