@@ -1,8 +1,12 @@
 const GRABBER_MARGIN = 4;
 
+/**
+ * @type { Areas.Separator }
+ */
 export default class Separator {
   /**
-   * @this { Areas.Separator }
+   * @param { Container } container
+   * @param { number } zIndex
    */
   constructor(container, zIndex = 1001) {
     this.container = container;
@@ -30,13 +34,13 @@ export default class Separator {
     grabber.addEventListener("mousedown", e => this.onMouseDown(e));
 
     if (container.direction === "column") {
-      this.el.style.height = `${container.root.separatorSize}px`;
-      if (!container.root.locked) {
+      this.el.style.height = `${container.areas.separatorSize}px`;
+      if (!container.areas.locked) {
         grabber.style.cursor = "ns-resize";
       }
     } else {
-      this.el.style.width = `${container.root.separatorSize}px`;
-      if (!container.root.locked) {
+      this.el.style.width = `${container.areas.separatorSize}px`;
+      if (!container.areas.locked) {
         grabber.style.cursor = "ew-resize";
       }
     }

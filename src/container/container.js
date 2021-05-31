@@ -1,44 +1,71 @@
+import Zone from "../zone/zone.js";
+import Separator from "../separator/separator.js";
 import { clamp, sum } from "../utils.js";
 
-import style from "../style.js";
+export default class Container {
+  constructor(areas, layout) {
+    const el = document.createElement("div");
+    el.classList.add("container");
 
-const template = document.createElement("template");
-template.innerHTML = `
-<style>
-:host {
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-  overflow: hidden;
-}
+    this.el = el;
+    this.areas = areas;
 
-${style}
+    this.separators = [];
 
-</style>
-`;
+    this.ratios = layout.children.map(child => child.ratio);
+    this.direction = layout.direction ?? "row";
 
-class AreasContainer extends HTMLElement {
-  constructor() {
-    super();
-    // Create & attach shadow DOM
-    const shadowRoot = this.attachShadow({ mode: "open" });
-    // Create & append template
-    shadowRoot.appendChild(template.content.cloneNode(true));
-  }
+    layout.children.forEach((child, i, children) => {
+      if (child.type === "zone") {
+        if (child.content) {
+          // existing zone
+          el.appendChild(child.content);
+        } else {
+          // new
+          el.appendChild(new Zone(areas, child.id, this).el);
+        }
+      } else {
+        const childContainer = new Container(areas, child);
+        el.appendChild(childContainer.el);
+      }
+      if (i !== children.length - 1) {
+        if (this.direction === "column") {
+          el.style.flexDirection = "column";
+        } else {
+          el.style.flexDirection = "row";
+        }
+        const separator = new Separator(this);
+        this.separators.push(separator);
+        el.appendChild(separator.el);
+      }
+    });
 
-  connectedCallback() {
     this.resizeObserver = new ResizeObserver(() => this.setSize());
-    this.resizeObserver.observe(this);
+    this.resizeObserver.observe(el);
   }
 
-  disconnectedCallback() {
+  destroy() {
     this.resizeObserver.disconnect();
   }
 
+  get separatorSize() {
+    return this.areas.separatorSize;
+  }
+
+  get _locked() {
+    return this.areas.locked;
+  }
+
+  /**
+   * @param { Areas.Separator } separator
+   */
+  getSeparatorIndex(separator) {
+    return this.separators.indexOf(separator);
+  }
+
   get children() {
-    return Array.from(
-      this.shadowRoot.querySelectorAll("areas-container, .zone")
+    return Array.from(this.el.children).filter(
+      child => !child.classList.contains("separator")
     );
   }
 
@@ -49,11 +76,11 @@ class AreasContainer extends HTMLElement {
   set locked(value) {
     this._locked = value;
 
-    this.shadowRoot
-      .querySelectorAll("areas-container")
+    this.el
+      .querySelectorAll(".container")
       .forEach(container => (container.locked = value));
 
-    this.shadowRoot.querySelectorAll("areas-separator").forEach(separator => {
+    this.el.querySelectorAll(".separator").forEach(separator => {
       if (this.direction === "column") {
         separator.style.cursor = value ? null : "ns-resize";
       } else {
@@ -66,8 +93,8 @@ class AreasContainer extends HTMLElement {
    * Returs all zones in this container and in its container descendants.
    */
   get zones() {
-    const zones = Array.from(this.shadowRoot.querySelectorAll(".zone"));
-    const containers = this.shadowRoot.querySelectorAll("areas-container");
+    const zones = Array.from(this.el.querySelectorAll(".zone"));
+    const containers = this.el.querySelectorAll(".container");
     containers.forEach(container => zones.push(...container.zones));
 
     return zones;
@@ -96,7 +123,7 @@ class AreasContainer extends HTMLElement {
     const index = children.indexOf(zone);
     if (children.length > 2) {
       // delete and share ratios to siblings
-      const separators = this.shadowRoot.querySelectorAll("areas-separator");
+      const separators = this.el.querySelectorAll(".separator");
 
       let separator = null;
 
@@ -125,8 +152,8 @@ class AreasContainer extends HTMLElement {
         separator = separators[index];
       }
 
-      this.shadowRoot.removeChild(zone);
-      this.shadowRoot.removeChild(separator);
+      this.el.removeChild(zone);
+      this.el.removeChild(separator);
 
       this.setSize();
     } else {
@@ -136,14 +163,14 @@ class AreasContainer extends HTMLElement {
       sibling.style.width = null;
 
       /** @type { HTMLElement} */
-      const parentContainer = this.shadowRoot.host.parentNode.host;
-      if (parentContainer.tagName === "AREAS-CONTAINER") {
+      const parentContainer = this.el.parentNode;
+      if (parentContainer.classList.contains("container")) {
         parentContainer.shadowRoot.replaceChild(sibling, this);
         parentContainer.setSize();
       } else {
         // root
-        this.root.shadowRoot.replaceChild(sibling, this);
-        if (sibling.tagName === "AREAS-ZONE") {
+        this.areas.shadowRoot.replaceChild(sibling, this);
+        if (sibling.classList.contains("zone")) {
           // simple zone layout
           sibling.removeAttribute("draggable");
         }
@@ -154,7 +181,7 @@ class AreasContainer extends HTMLElement {
   setSize() {
     const children = this.children;
     if (this.direction === "column") {
-      const { height } = this.getBoundingClientRect();
+      const { height } = this.el.getBoundingClientRect();
       const childSpaceRatio =
         (height - this.separatorSize * (children.length - 1)) / height;
       children.forEach(child => {
@@ -163,7 +190,7 @@ class AreasContainer extends HTMLElement {
         }%)`;
       });
     } else {
-      const { width } = this.getBoundingClientRect();
+      const { width } = this.el.getBoundingClientRect();
       const childSpaceRatio =
         (width - this.separatorSize * (children.length - 1)) / width;
       children.forEach(child => {
@@ -194,7 +221,7 @@ class AreasContainer extends HTMLElement {
 
       const movementY = clientY - separatorPosition;
 
-      const { height } = this.getBoundingClientRect();
+      const { height } = this.el.getBoundingClientRect();
 
       deltaPercentage = (movementY / height) * 100;
     } else {
@@ -205,7 +232,7 @@ class AreasContainer extends HTMLElement {
 
       const movementX = clientX - separatorPosition;
 
-      const { width } = this.getBoundingClientRect();
+      const { width } = this.el.getBoundingClientRect();
 
       deltaPercentage = (movementX / width) * 100;
     }
@@ -238,7 +265,3 @@ class AreasContainer extends HTMLElement {
     this.setSize();
   }
 }
-
-window.customElements.define("areas-container", AreasContainer);
-
-export default AreasContainer;

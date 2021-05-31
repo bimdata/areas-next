@@ -12,12 +12,12 @@ declare namespace Areas {
 
   }
 
+  interface Zone {
+
+  }
+
   interface Separator extends AreasElement {
     mouseMoveListener(): void;
     container: Container
-  }
-
-  interface Zone {
-
   }
 }

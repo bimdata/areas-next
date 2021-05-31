@@ -1,17 +1,22 @@
 import { validateLayout } from "./utils.js";
-import makeContainerFactory from "./container/container.factory.js";
 import Zone from "./zone/zone.js";
+import Container from "./container/container.js";
+import style from "./style.js";
+
+const template = document.createElement("template");
+template.innerHTML = style;
 
 class AreasRoot extends HTMLElement {
   constructor() {
     super();
     // Create & attach shadow DOM
-    this.attachShadow({ mode: "open" });
+    const shadowRoot = this.attachShadow({ mode: "open" });
+
+    // Create & append template
+    shadowRoot.appendChild(template.content.cloneNode(true));
 
     this.nextZoneId = 1;
     this._mode = null;
-
-    this.Container = makeContainerFactory(this);
 
     this.modeAttributes = new Map([
       ["split-v", "splittable-v"],
@@ -30,9 +35,9 @@ class AreasRoot extends HTMLElement {
       this.setZoneIds(layout);
 
       if (layout.type === "container") {
-        const container = this.Container.make(layout);
+        const container = new Container(this, layout);
 
-        this.shadowRoot.appendChild(container);
+        this.shadowRoot.appendChild(container.el);
       } else {
         const zone = new Zone(this, layout.id);
         this.shadowRoot.appendChild(zone.el);
@@ -54,7 +59,7 @@ class AreasRoot extends HTMLElement {
           "AREAS - locked attribute may be used as boolean attribute with no value."
         );
       }
-      const container = this.shadowRoot.querySelector("areas-container");
+      const container = this.shadowRoot.querySelector(".container");
       if (!container) return;
 
       if (newValue === null) {
@@ -116,7 +121,7 @@ class AreasRoot extends HTMLElement {
     if (zone) {
       return [zone];
     } else {
-      return this.shadowRoot.querySelector("areas-container").zones;
+      return this.shadowRoot.querySelector(".container").zones;
     }
   }
 
@@ -216,7 +221,7 @@ class AreasRoot extends HTMLElement {
         children: containerChildren,
       };
 
-      this.shadowRoot.appendChild(this.Container.make(layout, separatorSize));
+      this.shadowRoot.appendChild(new Container(this, layout));
     } else {
       // zone is in container
       if (container.direction === direction) {

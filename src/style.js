@@ -1,4 +1,13 @@
 export default `
+<style>
+/* Container styles */
+.container {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  overflow: hidden;
+}
 
 /* Separator styles */
 .separator {
@@ -81,4 +90,5 @@ export default `
   width: 2px;
   height: 100%;
 }
+</style>
 `;
