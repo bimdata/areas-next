@@ -1,4 +1,5 @@
 import Separator from "../separator/separator.js";
+import Zone from "../zone/zone.js";
 
 function makeContainerFactory(areas) {
   const Container = {
@@ -29,7 +30,9 @@ function makeContainerFactory(areas) {
             container.shadowRoot.appendChild(child.content);
           } else {
             // new
-            container.shadowRoot.appendChild(areas.Zone.make(child.id));
+            container.shadowRoot.appendChild(
+              new Zone(areas, child.id, container).el
+            );
           }
         } else {
           const childContainer = Container.make(child);

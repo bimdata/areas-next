@@ -16,4 +16,8 @@ declare namespace Areas {
     mouseMoveListener(): void;
     container: Container
   }
+
+  interface Zone {
+
+  }
 }

@@ -38,7 +38,7 @@ class AreasContainer extends HTMLElement {
 
   get children() {
     return Array.from(
-      this.shadowRoot.querySelectorAll("areas-container, areas-zone")
+      this.shadowRoot.querySelectorAll("areas-container, .zone")
     );
   }
 
@@ -66,7 +66,7 @@ class AreasContainer extends HTMLElement {
    * Returs all zones in this container and in its container descendants.
    */
   get zones() {
-    const zones = Array.from(this.shadowRoot.querySelectorAll("areas-zone"));
+    const zones = Array.from(this.shadowRoot.querySelectorAll(".zone"));
     const containers = this.shadowRoot.querySelectorAll("areas-container");
     containers.forEach(container => zones.push(...container.zones));
 
@@ -75,7 +75,7 @@ class AreasContainer extends HTMLElement {
 
   getZone(zoneId) {
     for (let child of this.children) {
-      if (child.tagName === "AREAS-ZONE") {
+      if (child.classList.contains("zone")) {
         if (child.getAttribute("id") === zoneId.toString()) {
           return child;
         }

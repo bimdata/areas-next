@@ -1,6 +1,6 @@
 import { validateLayout } from "./utils.js";
 import makeContainerFactory from "./container/container.factory.js";
-import makeZoneFactory from "./zone/zone.factory.js";
+import Zone from "./zone/zone.js";
 
 class AreasRoot extends HTMLElement {
   constructor() {
@@ -12,7 +12,6 @@ class AreasRoot extends HTMLElement {
     this._mode = null;
 
     this.Container = makeContainerFactory(this);
-    this.Zone = makeZoneFactory(this);
 
     this.modeAttributes = new Map([
       ["split-v", "splittable-v"],
@@ -35,8 +34,8 @@ class AreasRoot extends HTMLElement {
 
         this.shadowRoot.appendChild(container);
       } else {
-        const zone = this.Zone.make(layout.id);
-        this.shadowRoot.appendChild(zone);
+        const zone = new Zone(this, layout.id);
+        this.shadowRoot.appendChild(zone.el);
       }
     }
 
@@ -113,7 +112,7 @@ class AreasRoot extends HTMLElement {
   }
 
   get zones() {
-    const zone = this.shadowRoot.querySelector("areas-zone");
+    const zone = this.shadowRoot.querySelector(".zone");
     if (zone) {
       return [zone];
     } else {
@@ -230,20 +229,20 @@ class AreasRoot extends HTMLElement {
 
         container.ratios.splice(zoneIndex, 1, firstRatio, secondRatio);
 
-        const separator = container.Separator.make();
-        const newZone = this.Zone.make(this.nextZoneId++);
+        const separator = container.Separator.make(); // TODO doesnt exist anymore
+        const newZone = new Zone(this, this.nextZoneId++);
         if (insertNewAfter) {
           const zoneNextSibling = zone.nextSibling;
           if (zoneNextSibling) {
-            container.shadowRoot.insertBefore(newZone, zoneNextSibling);
-            container.shadowRoot.insertBefore(separator, newZone);
+            container.shadowRoot.insertBefore(newZone.el, zoneNextSibling);
+            container.shadowRoot.insertBefore(separator, newZone.el);
           } else {
             container.shadowRoot.appendChild(separator);
-            container.shadowRoot.appendChild(newZone);
+            container.shadowRoot.appendChild(newZone.el);
           }
         } else {
           container.shadowRoot.insertBefore(separator, zone);
-          container.shadowRoot.insertBefore(newZone, separator);
+          container.shadowRoot.insertBefore(newZone.el, separator);
         }
 
         container.setSize();
