@@ -1,6 +1,6 @@
-import Zone from "../zone.js";
-import Separator from "../separator.js";
-import { clamp, sum } from "../utils.js";
+import Zone from "./zone.js";
+import Separator from "./separator.js";
+import { clamp, sum } from "./utils.js";
 
 /**
  * @type { Areas.Container }
@@ -120,6 +120,59 @@ export default class Container {
         }
       }
     }
+  }
+
+  addZone(index, ratio, existingZone = null) {
+    if (index < 0 || index > this.children.length) {
+      throw new Error(`Can not add zone at index ${index}.`);
+    }
+
+    let zone = null;
+    if (existingZone) {
+      zone = existingZone;
+      zone.container = this;
+    } else {
+      zone = new Zone(this.areas, this.areas.nextZoneId++, this);
+    }
+
+    this.children.splice(index, 0, zone);
+
+    if (index === this.ratios.length) {
+      this.ratios.push(ratio);
+    } else {
+      const existingRatio = this.ratios[index];
+      const availableRatio = Math.min(existingRatio, ratio);
+
+      const oldZoneNewRatio = existingRatio - availableRatio;
+
+      this.ratios.splice(index, 1, availableRatio, oldZoneNewRatio);
+    }
+
+    this.updateDOMTree();
+  }
+
+  updateDOMTree() {
+    for (let i = 0; i < this.children.length; i++) {
+      const child = this.children[i];
+      const domChild = this.el.childen[i];
+
+      if (child.el === domChild) {
+        return;
+      } else {
+        const oldChild = this.children[i + 1];
+        if (oldChild && oldChild.el === domChild) {
+          // addition
+          this.el.appendChild();
+        } else {
+          // deletion
+          this.el.removeChild(domChild);
+        }
+      }
+    }
+
+    const childrenDOMElements = this.el.childen;
+
+    this.setSize();
   }
 
   /**
