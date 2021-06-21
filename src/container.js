@@ -148,10 +148,10 @@ export default class Container {
       this.ratios.splice(index, 1, availableRatio, oldZoneNewRatio);
     }
 
-    this.updateDOMTree();
+    this.updateView();
   }
 
-  updateDOMTree() {
+  updateView() {
     for (let i = 0; i < this.children.length; i++) {
       const child = this.children[i];
       const domChild = this.el.childen[i];

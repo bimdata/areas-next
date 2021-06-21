@@ -8,9 +8,7 @@
   },
   "include": [
     "src/**/*",
+    "tests/**/*",
     "index.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
 }
