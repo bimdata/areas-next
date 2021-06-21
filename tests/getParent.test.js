@@ -1,7 +1,7 @@
-import makeAreas from "../src/new-project-from-scratch/areas";
+import makeAreas from "../src/areas";
 
 describe("Get parent feature", () => {
-  it("Should return null for root", () => {
+  it("Should return null on a root zone layout", () => {
     const zone1 = {
       id: 1,
       type: "zone",
@@ -12,7 +12,7 @@ describe("Get parent feature", () => {
     expect(areas.getParent(1)).toEqual(null);
   });
 
-  it("Should get parent", () => {
+  it("Should return the correct parent on a container layout", () => {
     const zone1 = {
       id: 1,
       type: "zone",
@@ -56,6 +56,9 @@ describe("Get parent feature", () => {
     expect(areas.getParent(areas.getZone(2))).toEqual(testLayout);
     expect(areas.getParent(areas.getZone(3))).toEqual(container);
     expect(areas.getParent(areas.getZone(4))).toEqual(container);
+    expect(areas.getParent(areas.getParent(areas.getZone(3)))).toEqual(
+      testLayout
+    );
     expect(areas.getParent({})).toEqual(null);
   });
 });

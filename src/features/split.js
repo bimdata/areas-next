@@ -1,6 +1,6 @@
 function makeSplitFeature(areas) {
   return zoneId => {
-    areas.layout;
+    // TODO
   };
 }
 

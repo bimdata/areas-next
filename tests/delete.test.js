@@ -1,7 +1,7 @@
-import makeAreas from "../src/new-project-from-scratch/areas";
+import makeAreas from "../src/areas";
 
 describe("Delete feature", () => {
-  it("Should delete first zone", () => {
+  it("Should delete first child zone", () => {
     const areas = makeAreas({
       type: "container",
       direction: "row",
@@ -22,7 +22,7 @@ describe("Delete feature", () => {
     });
   });
 
-  it("Should delete middle zone", () => {
+  it("Should delete middle child zone", () => {
     const areas = makeAreas({
       type: "container",
       direction: "row",
@@ -43,7 +43,7 @@ describe("Delete feature", () => {
     });
   });
 
-  it("Should delete last zone", () => {
+  it("Should delete last child zone", () => {
     const areas = makeAreas({
       type: "container",
       direction: "row",
@@ -64,32 +64,32 @@ describe("Delete feature", () => {
     });
   });
 
-  // it("Should delete zone on ", () => {
-  //   const testLayout = {
-  //     id: 21,
-  //     type: "container",
-  //     direction: "row",
-  //     ratio: 60,
-  //     children: [
-  //       {
-  //         id: 30,
-  //         type: "zone",
-  //         ratio: 40,
-  //       },
-  //       {
-  //         id: 31,
-  //         type: "zone",
-  //         ratio: 30,
-  //       },
-  //       {
-  //         id: 32,
-  //         type: "zone",
-  //         ratio: 30,
-  //       },
-  //     ],
-  //   };
-  //   const areas = makeAreas(testLayout);
-  //   areas.deleteZone(31);
-  //   expect(areas.layout).equal();
-  // });
+  it("Should delete zone when only 2 child", () => {
+    const areas = makeAreas({
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 30, type: "zone", ratio: 40 },
+        { id: 31, type: "zone", ratio: 30 },
+        {
+          type: "container",
+          ratio: 30,
+          children: [
+            { id: 64, type: "zone", ratio: 50 },
+            { id: 68, type: "zone", ratio: 50 },
+          ],
+        },
+      ],
+    });
+    areas.deleteZone(64);
+    expect(areas.layout).toEqual({
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 30, type: "zone", ratio: 40 },
+        { id: 31, type: "zone", ratio: 30 },
+        { id: 68, type: "zone", ratio: 30 },
+      ],
+    });
+  });
 });

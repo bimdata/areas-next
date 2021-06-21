@@ -1,6 +1,6 @@
 function makeResizeFeature(areas) {
   return zoneId => {
-    areas.layout;
+    // TODO
   };
 }
 

@@ -1,6 +1,6 @@
-import makeAreas from "../src/new-project-from-scratch/areas";
+import makeAreas from "../src/areas";
 
-describe("Get zone", () => {
+describe("Get zone feature", () => {
   it("Should return the correct zone on a root zone layout.", () => {
     const zone1 = {
       id: 1,

@@ -10,11 +10,9 @@ function makeGetParentFeature(areas) {
 
 function getParent(container, node) {
   for (let child of container.children) {
-    if (child.type === "zone") {
-      if (child === node) {
-        return container;
-      }
-    } else {
+    if (child === node) {
+      return container;
+    } else if (child.type === "container") {
       const parent = getParent(child, node);
       if (parent) {
         return parent;

@@ -10,9 +10,10 @@ function makeDeleteFeature(areas) {
       throw new Error("AREAS - Cannot delete root Zone");
     }
 
+    const zoneIndex = container.children.indexOf(zone);
+
     if (container.children.length > 2) {
       // just remove the zone and dispatch its ratio
-      const zoneIndex = container.children.indexOf(zone);
       const previous = container.children[zoneIndex - 1];
       const next = container.children[zoneIndex + 1];
 
@@ -30,13 +31,11 @@ function makeDeleteFeature(areas) {
       );
     } else {
       // the container is removed and became the remaining zone
-      const zoneIndex = container.children.indexOf(zone);
       const sibling = container.children[zoneIndex === 1 ? 0 : 1];
 
       const containerParent = areas.getParent(container);
       if (containerParent) {
-        const containerRatio = container.ratio;
-        sibling.ratio = containerRatio;
+        sibling.ratio = container.ratio;
 
         const containerIndex = containerParent.children.indexOf(container);
         containerParent.children.splice(containerIndex, 1, sibling);

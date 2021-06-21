@@ -1,6 +1,6 @@
 function makeSwapFeature(areas) {
   return zoneId => {
-    areas.layout;
+    // TODO
   };
 }
 

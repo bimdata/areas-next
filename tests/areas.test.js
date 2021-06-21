@@ -1,4 +1,4 @@
-import makeAreas from "../src/new-project-from-scratch/areas.js";
+import makeAreas from "../src/areas.js";
 
 const layout = {
   type: "container",
@@ -42,8 +42,8 @@ const layout = {
   ],
 };
 
-describe("state management", () => {
-  it("Should work", () => {
+describe("Areas engine", () => {
+  it("Should make areas", () => {
     expect(() => makeAreas(layout)).not.toThrow();
   });
 });
