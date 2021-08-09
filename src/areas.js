@@ -1,12 +1,12 @@
 import { validateLayout } from "./layout.js";
 import { deepCopy } from "./utils.js";
 import {
+  makeDeleteFeature,
+  makeGetParentFeature,
+  makeGetZoneFeature,
   makeResizeFeature,
   makeSplitFeature,
-  makeDeleteFeature,
   makeSwapFeature,
-  makeGetZoneFeature,
-  makeGetParentFeature,
 } from "./features/index.js";
 
 function make(layoutData) {
@@ -18,12 +18,12 @@ function make(layoutData) {
   validateLayout(layout);
   areas.layout = layout;
 
+  areas.deleteZone = makeDeleteFeature(areas);
+  areas.getParent = makeGetParentFeature(areas);
+  areas.getZone = makeGetZoneFeature(areas);
   areas.resizeZone = makeResizeFeature(areas);
   areas.splitZone = makeSplitFeature(areas);
-  areas.deleteZone = makeDeleteFeature(areas);
   areas.swapZones = makeSwapFeature(areas);
-  areas.getZone = makeGetZoneFeature(areas);
-  areas.getParent = makeGetParentFeature(areas);
 
   return areas;
 }

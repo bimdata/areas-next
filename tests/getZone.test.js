@@ -10,7 +10,6 @@ describe("Get zone feature", () => {
     const areas = makeAreas(zone1);
 
     expect(areas.getZone(1)).toEqual(zone1);
-    expect(areas.getZone(2)).toEqual(null);
   });
 
   it("Should return the correct zone on a container layout.", () => {
@@ -57,6 +56,20 @@ describe("Get zone feature", () => {
     expect(areas.getZone(2)).toEqual(zone2);
     expect(areas.getZone(3)).toEqual(zone3);
     expect(areas.getZone(4)).toEqual(zone4);
-    expect(areas.getZone(5)).toEqual(null);
+  });
+
+  it("Should return null if zone does not exist", () => {
+    const testLayout = {
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 50 },
+        { id: 2, type: "zone", ratio: 50 },
+      ],
+    };
+
+    const areas = makeAreas(testLayout);
+
+    expect(areas.getZone(123)).toEqual(null);
   });
 });

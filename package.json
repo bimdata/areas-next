@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "rm -rf dist",
     "dev": "esbuild src/main.js --bundle --outfile=dist/areas.js --sourcemap --watch",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "types": "./index.d.ts",
   "repository": {
