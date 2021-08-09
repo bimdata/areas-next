@@ -1,5 +1,5 @@
 function makeResizeFeature(areas) {
-  return zoneId => {
+  return (zoneId, value) => {
     // TODO
   };
 }

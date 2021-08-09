@@ -1,4 +1,5 @@
 import { validateLayout } from "../src/layout.js";
+import { makeLayoutIterable } from "../src/utils.js";
 
 describe("Validate layout", () => {
   it("Should throw if layout is an empty object", () => {
@@ -44,19 +45,31 @@ describe("Validate layout", () => {
   });
 
   it("Should return layout if called with a valid zone layout", () => {
-    const testLayout = { type: "zone" };
+    const testLayout = makeLayoutIterable({ type: "zone" });
     expect(validateLayout(testLayout)).toEqual(testLayout);
   });
 
   it("Should return layout if called with a valid container layout", () => {
-    const testLayout = {
+    const testLayout = makeLayoutIterable({
       type: "container",
       direction: "row",
       children: [
         { type: "zone", ratio: 33 },
         { type: "zone", ratio: 67 },
       ],
-    };
+    });
     expect(validateLayout(testLayout)).toEqual(testLayout);
+  });
+
+  it("Should throw if two ids are the same.", () => {
+    const testLayout = {
+      type: "container",
+      direction: "row",
+      children: [
+        { type: "zone", ratio: 33, id: 1 },
+        { type: "zone", ratio: 67, id: 1 },
+      ],
+    };
+    expect(() => validateLayout(testLayout)).toThrow();
   });
 });

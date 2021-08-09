@@ -8,7 +8,38 @@ function validateLayout(layout) {
       "AREAS - Layout first child must be a zone or a container."
     );
   }
+
+  testNodeIds(layout);
+
   return layout;
+}
+
+function testNodeIds(layout) {
+  const ids = new Set();
+  for (let node of layout) {
+    if (node.id != undefined) {
+      if (ids.has(node.id)) {
+        throw new Error("AREAS - Cannot add the same id twice.");
+      } else {
+        ids.add(node.id);
+      }
+    }
+  }
+}
+
+function setNodeIds(layout) {
+  const ids = Array.from(layout)
+    .map(node => node.id)
+    .filter(id => id !== undefined && id !== null)
+    .sort((a, b) => a - b);
+
+  let idMax = ids[ids.length - 1] ?? 0;
+
+  Array.from(layout)
+    .filter(id => id === undefined || id === null)
+    .forEach(node => {
+      node.id = ++idMax;
+    });
 }
 
 function validateZone(zone) {
@@ -54,4 +85,4 @@ function validateContainer(container) {
   return container;
 }
 
-export { validateLayout };
+export { validateLayout, setNodeIds };

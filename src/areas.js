@@ -1,5 +1,5 @@
-import { validateLayout } from "./layout.js";
-import { deepCopy } from "./utils.js";
+import { validateLayout, setNodeIds } from "./layout.js";
+import { deepCopy, makeLayoutIterable } from "./utils.js";
 import {
   makeDeleteFeature,
   makeGetParentFeature,
@@ -15,7 +15,11 @@ function make(layoutData) {
   };
 
   let layout = deepCopy(layoutData);
+  makeLayoutIterable(layout);
+
   validateLayout(layout);
+  setNodeIds(layout);
+
   areas.layout = layout;
 
   areas.deleteZone = makeDeleteFeature(areas);
