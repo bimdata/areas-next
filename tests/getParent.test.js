@@ -38,6 +38,7 @@ describe("Get parent feature", () => {
     };
 
     const container = {
+      id: 2,
       ratio: 30,
       type: "container",
       direction: "row",
@@ -45,6 +46,7 @@ describe("Get parent feature", () => {
     };
 
     const testLayout = {
+      id: 1,
       type: "container",
       direction: "row",
       children: [zone1, zone2, container],

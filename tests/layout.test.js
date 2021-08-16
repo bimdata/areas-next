@@ -1,4 +1,5 @@
-import { validateLayout } from "../src/layout.js";
+import makeAreas from "../src/areas.js";
+import { validateLayout, setLayoutIds } from "../src/layout.js";
 import { makeLayoutIterable } from "../src/utils.js";
 
 describe("Validate layout", () => {
@@ -71,5 +72,52 @@ describe("Validate layout", () => {
       ],
     };
     expect(() => validateLayout(testLayout)).toThrow();
+  });
+
+  it("Should set missing zone ids in layout", () => {
+    const testLayout = {
+      id: 10,
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 33 },
+        { type: "zone", ratio: 67 },
+      ],
+    };
+
+    const areas = makeAreas(testLayout);
+
+    expect(areas.layout).toEqual({
+      id: 10,
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 33 },
+        { id: 2, type: "zone", ratio: 67 },
+      ],
+    });
+  });
+
+  it("Should set missing container ids in layout", () => {
+    const testLayout = {
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 33 },
+        { id: 2, type: "zone", ratio: 67 },
+      ],
+    };
+
+    const areas = makeAreas(testLayout);
+
+    expect(areas.layout).toEqual({
+      id: 1,
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 33 },
+        { id: 2, type: "zone", ratio: 67 },
+      ],
+    });
   });
 });

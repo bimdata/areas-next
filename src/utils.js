@@ -28,4 +28,32 @@ function makeLayoutIterable(layout) {
   return layout;
 }
 
-export { deepCopy, makeLayoutIterable };
+function makeIdManager() {
+  let currentId = 1;
+  const ids = new Set();
+
+  const idManager = {
+    nextId() {
+      while (!this.isIdAvailable(currentId)) {
+        currentId++;
+      }
+      ids.add(currentId);
+      return currentId;
+    },
+    isIdAvailable(id) {
+      return !ids.has(id);
+    },
+    add(id) {
+      if (!this.isIdAvailable(id)) {
+        return false;
+      } else {
+        ids.add(id);
+        return id;
+      }
+    },
+  };
+
+  return idManager;
+}
+
+export { deepCopy, makeLayoutIterable, makeIdManager };

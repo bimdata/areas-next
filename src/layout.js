@@ -15,30 +15,46 @@ function validateLayout(layout) {
 }
 
 function testNodeIds(layout) {
-  const ids = new Set();
+  const zoneIds = new Set();
+  const containerIds = new Set();
   for (let node of layout) {
     if (node.id != undefined) {
-      if (ids.has(node.id)) {
-        throw new Error("AREAS - Cannot add the same id twice.");
+      if (node.type === "zone") {
+        if (zoneIds.has(node.id)) {
+          throw new Error("AREAS - Cannot add the same zone id twice.");
+        } else {
+          zoneIds.add(node.id);
+        }
       } else {
-        ids.add(node.id);
+        // container
+        if (containerIds.has(node.id)) {
+          throw new Error("AREAS - Cannot add the same container id twice.");
+        } else {
+          containerIds.add(node.id);
+        }
       }
     }
   }
 }
 
-function setNodeIds(layout) {
-  const ids = Array.from(layout)
+function setLayoutIds(areas) {
+  setIds(areas.layout, "zone", areas.zoneIdManager);
+  setIds(areas.layout, "container", areas.containerIdManager);
+}
+
+function setIds(layout, type, idManager) {
+  const nodes = [...layout].filter(node => node.type === type);
+
+  const ids = nodes
     .map(node => node.id)
-    .filter(id => id !== undefined && id !== null)
-    .sort((a, b) => a - b);
+    .filter(id => id !== undefined && id !== null);
 
-  let idMax = ids[ids.length - 1] ?? 0;
+  ids.forEach(id => idManager.add(id));
 
-  Array.from(layout)
-    .filter(id => id === undefined || id === null)
+  nodes
+    .filter(node => node.id === undefined || node.id === null)
     .forEach(node => {
-      node.id = ++idMax;
+      node.id = idManager.nextId();
     });
 }
 
@@ -85,4 +101,4 @@ function validateContainer(container) {
   return container;
 }
 
-export { validateLayout, setNodeIds };
+export { validateLayout, setLayoutIds };

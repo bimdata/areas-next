@@ -72,4 +72,36 @@ describe("Get zone feature", () => {
 
     expect(areas.getZone(123)).toEqual(null);
   });
+
+  it("Should return null when attempting to get a container", () => {
+    const testLayout = {
+      id: 1,
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 2, type: "zone", ratio: 50 },
+        { id: 3, type: "zone", ratio: 50 },
+      ],
+    };
+
+    const areas = makeAreas(testLayout);
+
+    expect(areas.getZone(1)).toEqual(null);
+  });
+
+  it("Should return zone even if a container has the same id", () => {
+    const testLayout = {
+      id: 1,
+      type: "container",
+      direction: "row",
+      children: [
+        { id: 1, type: "zone", ratio: 50 },
+        { id: 2, type: "zone", ratio: 50 },
+      ],
+    };
+
+    const areas = makeAreas(testLayout);
+
+    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 50 });
+  });
 });

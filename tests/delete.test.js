@@ -3,6 +3,7 @@ import makeAreas from "../src/areas";
 describe("Delete feature", () => {
   it("Should delete first child zone", () => {
     const areas = makeAreas({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -13,6 +14,7 @@ describe("Delete feature", () => {
     });
     areas.deleteZone(30);
     expect(areas.layout).toEqual({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -24,6 +26,7 @@ describe("Delete feature", () => {
 
   it("Should delete middle child zone", () => {
     const areas = makeAreas({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -34,6 +37,7 @@ describe("Delete feature", () => {
     });
     areas.deleteZone(31);
     expect(areas.layout).toEqual({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -45,6 +49,7 @@ describe("Delete feature", () => {
 
   it("Should delete last child zone", () => {
     const areas = makeAreas({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -55,6 +60,7 @@ describe("Delete feature", () => {
     });
     areas.deleteZone(32);
     expect(areas.layout).toEqual({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
@@ -66,12 +72,14 @@ describe("Delete feature", () => {
 
   it("Should delete zone when only 2 child", () => {
     const areas = makeAreas({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
         { id: 30, type: "zone", ratio: 40 },
         { id: 31, type: "zone", ratio: 30 },
         {
+          id: 2,
           type: "container",
           ratio: 30,
           children: [
@@ -83,6 +91,7 @@ describe("Delete feature", () => {
     });
     areas.deleteZone(64);
     expect(areas.layout).toEqual({
+      id: 1,
       type: "container",
       direction: "row",
       children: [
