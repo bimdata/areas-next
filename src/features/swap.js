@@ -1,5 +1,5 @@
 function makeSwapFeature(areas) {
-  return zoneId => {
+  return (srcZoneId, destZoneId) => {
     // TODO
   };
 }

@@ -1,5 +1,5 @@
 function makeSplitFeature(areas) {
-  return zoneId => {
+  return (zoneId, ratio) => {
     // TODO
   };
 }
