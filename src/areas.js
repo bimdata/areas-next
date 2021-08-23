@@ -2,6 +2,7 @@ import { validateLayout, setLayoutIds } from "./layout.js";
 import { deepCopy, makeLayoutIterable, makeIdManager } from "./utils.js";
 import {
   makeDeleteFeature,
+  makeGetNodesFeature,
   makeGetParentFeature,
   makeGetZoneFeature,
   makeResizeFeature,
@@ -26,6 +27,7 @@ function make(layoutData) {
   setLayoutIds(areas);
 
   areas.deleteZone = makeDeleteFeature(areas);
+  areas.getNodes = makeGetNodesFeature(areas);
   areas.getParent = makeGetParentFeature(areas);
   areas.getZone = makeGetZoneFeature(areas);
   areas.resizeZone = makeResizeFeature(areas);
