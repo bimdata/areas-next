@@ -1,6 +1,29 @@
 import makeAreas from "../src/areas";
 
 describe("Get parent feature", () => {
+  it("Should throw if zone is null or undefined", () => {
+    const zone1 = {
+      id: 1,
+      type: "zone",
+    };
+
+    const areas = makeAreas(zone1);
+
+    expect(() => areas.getParent()).toThrow();
+    expect(() => areas.getParent(null)).toThrow();
+  });
+
+  it("Should throw if zone does not exist", () => {
+    const zone1 = {
+      id: 1,
+      type: "zone",
+    };
+
+    const areas = makeAreas(zone1);
+
+    expect(() => areas.getParent({ id: 2, type: "zone" })).toThrow();
+  });
+
   it("Should return null on a root zone layout", () => {
     const zone1 = {
       id: 1,

@@ -1,5 +1,10 @@
 function makeGetParentFeature(areas) {
   return node => {
+    if (!node) {
+      throw new TypeError(
+        "AREAS - fail to get parent: zone is null or undefined"
+      );
+    }
     if (areas.layout.type === "zone") {
       return null;
     } else {
