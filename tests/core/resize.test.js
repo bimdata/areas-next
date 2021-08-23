@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas";
+import makeCore from "../../src/core/core.js";
 
 describe("Resize feature", () => {
   it("Should throw if resize value is not a number", () => {
@@ -11,9 +11,9 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.resizeZone(1, "string")).toThrow();
+    expect(() => core.resizeZone(1, "string")).toThrow();
   });
 
   it("Should throw if zone does not exist", () => {
@@ -27,9 +27,9 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.resizeZone(123, 30)).toThrow();
+    expect(() => core.resizeZone(123, 30)).toThrow();
   });
 
   it("Should update zone ratios", () => {
@@ -52,15 +52,15 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
-    areas.resizeZone(3, 17);
+    const core = makeCore(testLayout);
+    core.resizeZone(3, 17);
 
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 57 });
-    expect(areas.getZone(4)).toEqual({ id: 4, type: "zone", ratio: 23 });
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 57 });
+    expect(core.getZone(4)).toEqual({ id: 4, type: "zone", ratio: 23 });
 
-    areas.resizeZone(3, -24);
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 33 });
-    expect(areas.getZone(4)).toEqual({ id: 4, type: "zone", ratio: 47 });
+    core.resizeZone(3, -24);
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 33 });
+    expect(core.getZone(4)).toEqual({ id: 4, type: "zone", ratio: 47 });
   });
 
   it("Should return new zone ratio", () => {
@@ -83,19 +83,19 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.resizeZone(3, 17)).toEqual(67);
-    expect(areas.resizeZone(3, -24)).toEqual(43);
+    expect(core.resizeZone(3, 17)).toEqual(67);
+    expect(core.resizeZone(3, -24)).toEqual(43);
   });
 
   it("Should return 100 when resizing a single zone layout", () => {
     const testLayout = { id: 1, type: "zone" };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.resizeZone(1, 17)).toEqual(100);
-    expect(areas.resizeZone(1, -24)).toEqual(100);
+    expect(core.resizeZone(1, 17)).toEqual(100);
+    expect(core.resizeZone(1, -24)).toEqual(100);
   });
 
   it("Should do nothing if resizing the last child of a container", () => {
@@ -110,10 +110,10 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.resizeZone(3, 17)).toEqual(20);
-    expect(areas.layout).toEqual(testLayout);
+    expect(core.resizeZone(3, 17)).toEqual(20);
+    expect(core.layout).toEqual(testLayout);
   });
 
   it("Should ensure that the sum of ratios doesn't exceeds 100", () => {
@@ -128,14 +128,14 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.resizeZone(1, 62)).toEqual(80);
-    expect(areas.resizeZone(1, 10)).toEqual(80);
+    expect(core.resizeZone(1, 62)).toEqual(80);
+    expect(core.resizeZone(1, 10)).toEqual(80);
 
-    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 80 });
-    expect(areas.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 0 });
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
+    expect(core.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 80 });
+    expect(core.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 0 });
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
   });
 
   it("Should ensure that the sum of ratios is not less than 100", () => {
@@ -150,13 +150,13 @@ describe("Resize feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.resizeZone(1, -50)).toEqual(0);
-    expect(areas.resizeZone(1, -5)).toEqual(0);
+    expect(core.resizeZone(1, -50)).toEqual(0);
+    expect(core.resizeZone(1, -5)).toEqual(0);
 
-    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 0 });
-    expect(areas.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 80 });
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
+    expect(core.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 0 });
+    expect(core.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 80 });
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
   });
 });

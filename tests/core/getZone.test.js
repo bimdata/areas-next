@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas";
+import makeCore from "../../src/core/core.js";
 
 describe("Get zone feature", () => {
   it("Should return the correct zone on a root zone layout.", () => {
@@ -7,9 +7,9 @@ describe("Get zone feature", () => {
       type: "zone",
     };
 
-    const areas = makeAreas(zone1);
+    const core = makeCore(zone1);
 
-    expect(areas.getZone(1)).toEqual(zone1);
+    expect(core.getZone(1)).toEqual(zone1);
   });
 
   it("Should return the correct zone on a container layout.", () => {
@@ -50,12 +50,12 @@ describe("Get zone feature", () => {
       children: [zone1, zone2, container],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.getZone(1)).toEqual(zone1);
-    expect(areas.getZone(2)).toEqual(zone2);
-    expect(areas.getZone(3)).toEqual(zone3);
-    expect(areas.getZone(4)).toEqual(zone4);
+    expect(core.getZone(1)).toEqual(zone1);
+    expect(core.getZone(2)).toEqual(zone2);
+    expect(core.getZone(3)).toEqual(zone3);
+    expect(core.getZone(4)).toEqual(zone4);
   });
 
   it("Should return null if zone does not exist", () => {
@@ -68,9 +68,9 @@ describe("Get zone feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.getZone(123)).toEqual(null);
+    expect(core.getZone(123)).toEqual(null);
   });
 
   it("Should return null when attempting to get a container", () => {
@@ -84,9 +84,9 @@ describe("Get zone feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.getZone(1)).toEqual(null);
+    expect(core.getZone(1)).toEqual(null);
   });
 
   it("Should return zone even if a container has the same id", () => {
@@ -100,8 +100,8 @@ describe("Get zone feature", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 50 });
+    expect(core.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 50 });
   });
 });

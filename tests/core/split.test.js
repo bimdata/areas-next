@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas.js";
+import makeCore from "../../src/core/core.js";
 
 describe("Split feature", () => {
   let testLayout = null;
@@ -15,41 +15,41 @@ describe("Split feature", () => {
   });
 
   it("Should throw if zone does not exist.", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.splitZone(3, 80, "row")).toThrow();
+    expect(() => core.splitZone(3, 80, "row")).toThrow();
   });
 
   it('Should throw if direction is neither "row" or "column".', () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.splitZone(1, 80, "direcon")).toThrow();
+    expect(() => core.splitZone(1, 80, "direcon")).toThrow();
   });
 
   it("Should return the newly created zone.", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.splitZone(1, 80, "row", true).id).toEqual(3);
+    expect(core.splitZone(1, 80, "row", true).id).toEqual(3);
   });
 
   it("Should throw if ratio is not a number.", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.splitZone(1, "a")).toThrow();
+    expect(() => core.splitZone(1, "a")).toThrow();
   });
 
   it("Should throw if ratio is lesser than 0 or greater than 100.", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(() => areas.splitZone(1, -1)).toThrow();
-    expect(() => areas.splitZone(1, 101)).toThrow();
+    expect(() => core.splitZone(1, -1)).toThrow();
+    expect(() => core.splitZone(1, 101)).toThrow();
   });
 
   it("Should split zone at specified ratio. (same direction as the parent container, insert new after)", () => {
-    const areas = makeAreas(testLayout);
-    areas.splitZone(1, 80, "row", true);
+    const core = makeCore(testLayout);
+    core.splitZone(1, 80, "row", true);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       type: "container",
       direction: "row",
       id: 1,
@@ -62,10 +62,10 @@ describe("Split feature", () => {
   });
 
   it("Should split zone at specified ratio. (same direction as the parent container, insert new before)", () => {
-    const areas = makeAreas(testLayout);
-    areas.splitZone(1, 80, "row", false);
+    const core = makeCore(testLayout);
+    core.splitZone(1, 80, "row", false);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       type: "container",
       direction: "row",
       id: 1,
@@ -78,14 +78,14 @@ describe("Split feature", () => {
   });
 
   it("Should split zone at specified ratio. (different direction of the container, a new container must be created, insert new after)", () => {
-    const areas = makeAreas(testLayout);
-    areas.splitZone(1, 80, "column", true);
+    const core = makeCore(testLayout);
+    core.splitZone(1, 80, "column", true);
 
-    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 80 });
-    expect(areas.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 60 });
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
+    expect(core.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 80 });
+    expect(core.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 60 });
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 20 });
 
-    expect(areas.getParent(areas.getZone(1))).toEqual({
+    expect(core.getParent(core.getZone(1))).toEqual({
       type: "container",
       direction: "column",
       ratio: 40,
@@ -98,14 +98,14 @@ describe("Split feature", () => {
   });
 
   it("Should split zone at specified ratio. (different direction of the container, a new container must be created, insert new before)", () => {
-    const areas = makeAreas(testLayout);
-    areas.splitZone(1, 80, "column", false);
+    const core = makeCore(testLayout);
+    core.splitZone(1, 80, "column", false);
 
-    expect(areas.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 20 });
-    expect(areas.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 60 });
-    expect(areas.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 80 });
+    expect(core.getZone(1)).toEqual({ id: 1, type: "zone", ratio: 20 });
+    expect(core.getZone(2)).toEqual({ id: 2, type: "zone", ratio: 60 });
+    expect(core.getZone(3)).toEqual({ id: 3, type: "zone", ratio: 80 });
 
-    expect(areas.getParent(areas.getZone(1))).toEqual({
+    expect(core.getParent(core.getZone(1))).toEqual({
       type: "container",
       direction: "column",
       ratio: 40,
@@ -118,10 +118,10 @@ describe("Split feature", () => {
   });
 
   it("Should split in single zone layout. (new container with direction and child position)", () => {
-    const areas1 = makeAreas({ id: 1, type: "zone" });
-    areas1.splitZone(1, 80, "row", true);
+    const core1 = makeCore({ id: 1, type: "zone" });
+    core1.splitZone(1, 80, "row", true);
 
-    expect(areas1.layout).toEqual({
+    expect(core1.layout).toEqual({
       type: "container",
       direction: "row",
       id: 1,
@@ -131,10 +131,10 @@ describe("Split feature", () => {
       ],
     });
 
-    const areas2 = makeAreas({ id: 1, type: "zone" });
-    areas2.splitZone(1, 80, "column", true);
+    const core2 = makeCore({ id: 1, type: "zone" });
+    core2.splitZone(1, 80, "column", true);
 
-    expect(areas2.layout).toEqual({
+    expect(core2.layout).toEqual({
       type: "container",
       direction: "column",
       id: 1,
@@ -144,10 +144,10 @@ describe("Split feature", () => {
       ],
     });
 
-    const areas3 = makeAreas({ id: 1, type: "zone" });
-    areas3.splitZone(1, 80, "row", false);
+    const core3 = makeCore({ id: 1, type: "zone" });
+    core3.splitZone(1, 80, "row", false);
 
-    expect(areas3.layout).toEqual({
+    expect(core3.layout).toEqual({
       type: "container",
       direction: "row",
       id: 1,
@@ -157,10 +157,10 @@ describe("Split feature", () => {
       ],
     });
 
-    const areas4 = makeAreas({ id: 1, type: "zone" });
-    areas4.splitZone(1, 80, "column", false);
+    const core4 = makeCore({ id: 1, type: "zone" });
+    core4.splitZone(1, 80, "column", false);
 
-    expect(areas4.layout).toEqual({
+    expect(core4.layout).toEqual({
       type: "container",
       direction: "column",
       id: 1,
@@ -172,7 +172,7 @@ describe("Split feature", () => {
   });
 
   it("Should correctly split a zone with a ratio of 0.", () => {
-    const areas = makeAreas({
+    const core = makeCore({
       type: "container",
       direction: "row",
       children: [
@@ -180,9 +180,9 @@ describe("Split feature", () => {
         { id: 2, type: "zone", ratio: 100 },
       ],
     });
-    areas.splitZone(1, 80, "row", false);
+    core.splitZone(1, 80, "row", false);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       type: "container",
       direction: "row",
       id: 1,

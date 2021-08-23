@@ -1,5 +1,5 @@
-function makeGetNodesFeature(areas) {
-  return () => getDescendants(areas.layout, [areas.layout]);
+function makeGetNodesFeature(core) {
+  return () => getDescendants(core.layout, [core.layout]);
 }
 
 function getDescendants(node, descendants = []) {

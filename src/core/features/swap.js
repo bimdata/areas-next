@@ -1,24 +1,24 @@
 /**
- * @param { Areas.Areas } areas
+ * @param { Areas.Areas } core
  */
-function makeSwapFeature(areas) {
+function makeSwapFeature(core) {
   return (srcZoneId, destZoneId) => {
-    const zoneSrc = areas.getZone(srcZoneId);
-    const zoneDest = areas.getZone(destZoneId);
+    const zoneSrc = core.getZone(srcZoneId);
+    const zoneDest = core.getZone(destZoneId);
 
     if (!zoneSrc) {
       throw new Error(
-        `AREAS - fail to swap zone ${srcZoneId}: zone does not exist.`
+        `AREAS CORE - fail to swap zone ${srcZoneId}: zone does not exist.`
       );
     }
     if (!zoneDest) {
       throw new Error(
-        `AREAS - fail to swap to zone ${destZoneId}: zone does not exist.`
+        `AREAS CORE - fail to swap to zone ${destZoneId}: zone does not exist.`
       );
     }
 
-    const zoneSrcContainer = areas.getParent(zoneSrc);
-    const zoneDestContainer = areas.getParent(zoneDest);
+    const zoneSrcContainer = core.getParent(zoneSrc);
+    const zoneDestContainer = core.getParent(zoneDest);
 
     const zoneSrcIndex = zoneSrcContainer.children.indexOf(zoneSrc);
     const zoneDestIndex = zoneDestContainer.children.indexOf(zoneDest);

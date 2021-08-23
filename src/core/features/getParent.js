@@ -1,17 +1,17 @@
-function makeGetParentFeature(areas) {
+function makeGetParentFeature(core) {
   return node => {
     if (!node) {
       throw new TypeError(
-        "AREAS - fail to get parent: zone is null or undefined"
+        "AREAS CORE - fail to get parent: zone is null or undefined"
       );
     }
-    if (!areas.getNodes().includes(node)) {
-      throw new Error("AREAS - fail to get parent: zone does not exist");
+    if (!core.getNodes().includes(node)) {
+      throw new Error("AREAS CORE - fail to get parent: zone does not exist");
     }
-    if (areas.layout.type === "zone") {
+    if (core.layout.type === "zone") {
       return null;
     } else {
-      return getParent(areas.layout, node);
+      return getParent(core.layout, node);
     }
   };
 }

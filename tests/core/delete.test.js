@@ -1,8 +1,8 @@
-import makeAreas from "../src/areas";
+import makeCore from "../../src/core/core.js";
 
 describe("Delete feature", () => {
   it("Should delete first child zone", () => {
-    const areas = makeAreas({
+    const core = makeCore({
       id: 1,
       type: "container",
       direction: "row",
@@ -12,8 +12,8 @@ describe("Delete feature", () => {
         { id: 32, type: "zone", ratio: 30 },
       ],
     });
-    areas.deleteZone(30);
-    expect(areas.layout).toEqual({
+    core.deleteZone(30);
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",
@@ -25,7 +25,7 @@ describe("Delete feature", () => {
   });
 
   it("Should delete middle child zone", () => {
-    const areas = makeAreas({
+    const core = makeCore({
       id: 1,
       type: "container",
       direction: "row",
@@ -35,8 +35,8 @@ describe("Delete feature", () => {
         { id: 32, type: "zone", ratio: 30 },
       ],
     });
-    areas.deleteZone(31);
-    expect(areas.layout).toEqual({
+    core.deleteZone(31);
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",
@@ -48,7 +48,7 @@ describe("Delete feature", () => {
   });
 
   it("Should delete last child zone", () => {
-    const areas = makeAreas({
+    const core = makeCore({
       id: 1,
       type: "container",
       direction: "row",
@@ -58,8 +58,8 @@ describe("Delete feature", () => {
         { id: 32, type: "zone", ratio: 30 },
       ],
     });
-    areas.deleteZone(32);
-    expect(areas.layout).toEqual({
+    core.deleteZone(32);
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",
@@ -71,7 +71,7 @@ describe("Delete feature", () => {
   });
 
   it("Should delete zone when only 2 child", () => {
-    const areas = makeAreas({
+    const core = makeCore({
       id: 1,
       type: "container",
       direction: "row",
@@ -89,8 +89,8 @@ describe("Delete feature", () => {
         },
       ],
     });
-    areas.deleteZone(64);
-    expect(areas.layout).toEqual({
+    core.deleteZone(64);
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",

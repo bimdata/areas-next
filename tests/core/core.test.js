@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas.js";
+import makeCore from "../../src/core/core.js";
 
 const layout = {
   id: 1,
@@ -49,8 +49,8 @@ const layout = {
   ],
 };
 
-describe("Areas engine", () => {
-  it("Should make areas", () => {
-    expect(() => makeAreas(layout)).not.toThrow();
+describe("Areas Core", () => {
+  it("Should make areas core", () => {
+    expect(() => makeCore(layout)).not.toThrow();
   });
 });

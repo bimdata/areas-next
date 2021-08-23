@@ -1,10 +1,10 @@
-import makeAreas from "../src/areas";
+import makeCore from "../../src/core/core.js";
 
 describe("Get Nodes feature", () => {
   it("Should return a singleton array for single zone layout", () => {
     const testLayout = { id: 1, type: "zone" };
-    const areas = makeAreas(testLayout);
-    expect(areas.getNodes()).toEqual([testLayout]);
+    const core = makeCore(testLayout);
+    expect(core.getNodes()).toEqual([testLayout]);
   });
 
   it("Should return the list of all nodes", () => {
@@ -47,8 +47,8 @@ describe("Get Nodes feature", () => {
       children: [zone1, zone2, container],
     };
 
-    const areas = makeAreas(testLayout);
-    const nodes = areas.getNodes();
+    const core = makeCore(testLayout);
+    const nodes = core.getNodes();
 
     expect(nodes.length).toEqual(6);
     expect(nodes).toEqual(

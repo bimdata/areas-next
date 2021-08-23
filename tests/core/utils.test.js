@@ -1,4 +1,4 @@
-import { makeLayoutIterable, makeIdManager } from "../src/utils";
+import { makeLayoutIterable, makeIdManager } from "../../src/core/utils.js";
 
 describe("Iterable layout", () => {
   it("Should return all nodes", () => {

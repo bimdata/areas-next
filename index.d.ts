@@ -3,31 +3,9 @@
 // }
 
 declare namespace Areas {
-
-  enum AreasMode {
-    delete = "delete",
-    swap = "swap",
-    splitV = "split-v",
-    splitH = "split-h"
-  }
-
-  enum AreasModeAttribute {
-    splittableV = "splittable-v",
-    splittableH = "splittable-h",
-    draggable = "draggable",
-    deletable = "deletable",
-  }
-
   interface Areas {
-    locked: boolean;
-    mode?: AreasMode
-    modeAttribute: AreasModeAttribute;
-    separatorSize: number;
-    zones: Array<HTMLElement>;
-  }
-
-  interface AreasElement {
-    el: HTMLElement
+    getZone(zoneId: number): Zone;
+    getParent(node: Node): Container;
   }
 
   enum NodeType {
@@ -35,40 +13,24 @@ declare namespace Areas {
     container = "container"
   }
 
-  type ContainerNode = {
+  type Node = Container | Zone;
+
+  type Container = {
+    id: number,
     type: NodeType.container;
-    ratio: number;
+    ratio?: number;
     direction: ContainerDirection;
-    children: Array<ContainerNode | ZoneNode>;
+    children: Array<Node>;
   }
 
-  type ZoneNode = {
+  type Zone = {
+    id: number,
     type: NodeType.zone;
-    ratio: number;
+    ratio?: number;
   }
-
-  type Layout = ContainerNode | ZoneNode;
 
   enum ContainerDirection {
     row = "row",
     column = "column",
-  }
-
-  interface Container extends AreasElement {
-    separators: Separator[];
-    areas: Areas.Areas
-    ratios: number[];
-    direction: ContainerDirection;
-  }
-
-  interface Zone {
-    areas: Areas.Areas;
-    id: number;
-    container?: Container;
-  }
-
-  interface Separator extends AreasElement {
-    mouseMoveListener(): void;
-    container: Container
   }
 }

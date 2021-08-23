@@ -1,13 +1,13 @@
-function makeGetZoneFeature(areas) {
+function makeGetZoneFeature(core) {
   return zoneId => {
-    if (areas.layout.type === "zone") {
-      if (areas.layout.id === zoneId) {
-        return areas.layout;
+    if (core.layout.type === "zone") {
+      if (core.layout.id === zoneId) {
+        return core.layout;
       } else {
         return null;
       }
     } else {
-      return getContainerZone(areas.layout, zoneId);
+      return getContainerZone(core.layout, zoneId);
     }
   };
 }

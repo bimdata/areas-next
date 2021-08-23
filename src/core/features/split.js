@@ -1,24 +1,24 @@
-function makeSplitFeature(areas) {
+function makeSplitFeature(core) {
   return (zoneId, ratio, direction, insertAfter = true) => {
-    const zone = areas.getZone(zoneId);
+    const zone = core.getZone(zoneId);
     if (!zone) {
       throw new Error(
-        `AREAS - fail to split zone ${zoneId}: zone does not exist.`
+        `AREAS CORE - fail to split zone ${zoneId}: zone does not exist.`
       );
     }
     if (typeof ratio !== "number" || ratio < 0 || ratio > 100) {
       throw new TypeError(
-        `AREAS - fail to split zone: invalid ratio ${ratio}, ratio should be a number between 0 and 100.`
+        `AREAS CORE - fail to split zone: invalid ratio ${ratio}, ratio should be a number between 0 and 100.`
       );
     }
     if (direction !== "row" && direction !== "column") {
       throw new TypeError(
-        `AREAS - fail to split zone: invalid direction ${direction}, direction should be 'row' or 'column'.`
+        `AREAS CORE - fail to split zone: invalid direction ${direction}, direction should be 'row' or 'column'.`
       );
     }
 
-    const container = areas.getParent(zone);
-    const newZone = { id: areas.zoneIdManager.nextId(), type: "zone" };
+    const container = core.getParent(zone);
+    const newZone = { id: core.zoneIdManager.nextId(), type: "zone" };
     if (container) {
       const zoneIndex = container.children.findIndex(child => child === zone);
 
@@ -37,7 +37,7 @@ function makeSplitFeature(areas) {
         // Add replace the target zone with a new container in the cross direction
         // that contains the target zone and a new zone after/before it
         const newContainer = {
-          id: areas.containerIdManager.nextId(),
+          id: core.containerIdManager.nextId(),
           type: "container",
           direction,
           ratio: zone.ratio,
@@ -56,7 +56,7 @@ function makeSplitFeature(areas) {
     } else {
       // Single zone layout
       const newContainer = {
-        id: areas.containerIdManager.nextId(),
+        id: core.containerIdManager.nextId(),
         type: "container",
         direction,
       };
@@ -69,7 +69,7 @@ function makeSplitFeature(areas) {
         zone.ratio = Math.ceil(100 - ratio);
         newContainer.children = [newZone, zone];
       }
-      areas.layout = newContainer;
+      core.layout = newContainer;
     }
 
     return newZone;

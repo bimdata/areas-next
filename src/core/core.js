@@ -11,7 +11,7 @@ import {
 } from "./features/index.js";
 
 function make(layoutData) {
-  const areas = {
+  const core = {
     layout: null, // readonly
     zoneIdManager: makeIdManager(),
     containerIdManager: makeIdManager(),
@@ -22,19 +22,19 @@ function make(layoutData) {
 
   validateLayout(layout);
 
-  areas.layout = layout;
+  core.layout = layout;
 
-  setLayoutIds(areas);
+  setLayoutIds(core);
 
-  areas.deleteZone = makeDeleteFeature(areas);
-  areas.getNodes = makeGetNodesFeature(areas);
-  areas.getParent = makeGetParentFeature(areas);
-  areas.getZone = makeGetZoneFeature(areas);
-  areas.resizeZone = makeResizeFeature(areas);
-  areas.splitZone = makeSplitFeature(areas);
-  areas.swapZones = makeSwapFeature(areas);
+  core.deleteZone = makeDeleteFeature(core);
+  core.getNodes = makeGetNodesFeature(core);
+  core.getParent = makeGetParentFeature(core);
+  core.getZone = makeGetZoneFeature(core);
+  core.resizeZone = makeResizeFeature(core);
+  core.splitZone = makeSplitFeature(core);
+  core.swapZones = makeSwapFeature(core);
 
-  return areas;
+  return core;
 }
 
 export default make;

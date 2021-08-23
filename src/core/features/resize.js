@@ -1,17 +1,17 @@
-function makeResizeFeature(areas) {
+function makeResizeFeature(core) {
   return (zoneId, value) => {
     if (typeof value !== "number") {
-      throw new TypeError("AREAS - resize value must be a number.");
+      throw new TypeError("AREAS CORE - resize value must be a number.");
     }
 
-    const zone = areas.getZone(zoneId);
+    const zone = core.getZone(zoneId);
     if (!zone) {
       throw new Error(
-        `AREAS - fail to resize zone ${zoneId}: zone does not exist.`
+        `AREAS CORE - fail to resize zone ${zoneId}: zone does not exist.`
       );
     }
 
-    const container = areas.getParent(zone);
+    const container = core.getParent(zone);
     if (!container) {
       return 100;
     }

@@ -5,7 +5,7 @@ function validateLayout(layout) {
     validateZone(layout);
   } else {
     throw new TypeError(
-      "AREAS - Layout first child must be a zone or a container."
+      "AREAS CORE - Layout first child must be a zone or a container."
     );
   }
 
@@ -21,14 +21,16 @@ function testNodeIds(layout) {
     if (node.id != undefined) {
       if (node.type === "zone") {
         if (zoneIds.has(node.id)) {
-          throw new Error("AREAS - Cannot add the same zone id twice.");
+          throw new Error("AREAS CORE - Cannot add the same zone id twice.");
         } else {
           zoneIds.add(node.id);
         }
       } else {
         // container
         if (containerIds.has(node.id)) {
-          throw new Error("AREAS - Cannot add the same container id twice.");
+          throw new Error(
+            "AREAS CORE - Cannot add the same container id twice."
+          );
         } else {
           containerIds.add(node.id);
         }
@@ -37,9 +39,9 @@ function testNodeIds(layout) {
   }
 }
 
-function setLayoutIds(areas) {
-  setIds(areas.layout, "zone", areas.zoneIdManager);
-  setIds(areas.layout, "container", areas.containerIdManager);
+function setLayoutIds(core) {
+  setIds(core.layout, "zone", core.zoneIdManager);
+  setIds(core.layout, "container", core.containerIdManager);
 }
 
 function setIds(layout, type, idManager) {
@@ -60,10 +62,12 @@ function setIds(layout, type, idManager) {
 
 function validateZone(zone) {
   if (typeof zone !== "object") {
-    throw new TypeError("AREAS - Invalid zone. Zone must be an object.");
+    throw new TypeError("AREAS CORE - Invalid zone. Zone must be an object.");
   }
   if (zone?.type !== "zone") {
-    throw new TypeError('AREAS - Invalid zone. A zone must be of type "zone".');
+    throw new TypeError(
+      'AREAS CORE - Invalid zone. A zone must be of type "zone".'
+    );
   }
   return zone;
 }
@@ -71,12 +75,12 @@ function validateZone(zone) {
 function validateContainer(container) {
   if (typeof container !== "object") {
     throw new TypeError(
-      "AREAS - Invalid container. A container must be an object."
+      "AREAS CORE - Invalid container. A container must be an object."
     );
   }
   if (container?.type !== "container") {
     throw new TypeError(
-      'AREAS - Invalid container. Container must be of type "container".'
+      'AREAS CORE - Invalid container. Container must be of type "container".'
     );
   }
   if (
@@ -84,17 +88,17 @@ function validateContainer(container) {
     !["row", "column"].includes(container.direction)
   ) {
     throw new TypeError(
-      'AREAS - Invalid container. Container direction must be of type "row" or "column".'
+      'AREAS CORE - Invalid container. Container direction must be of type "row" or "column".'
     );
   }
   if (container?.children?.length < 2) {
     throw new TypeError(
-      "AREAS - Invalid container. Container children must have at least 2 children."
+      "AREAS CORE - Invalid container. Container children must have at least 2 children."
     );
   }
   if (container?.children?.reduce((acc, cur) => acc + cur?.ratio, 0) !== 100) {
     throw new TypeError(
-      "AREAS - Invalid container. The sum of container children ratios must be equal to 100."
+      "AREAS CORE - Invalid container. The sum of container children ratios must be equal to 100."
     );
   }
 

@@ -1,6 +1,6 @@
-import makeAreas from "../src/areas.js";
-import { validateLayout, setLayoutIds } from "../src/layout.js";
-import { makeLayoutIterable } from "../src/utils.js";
+import makeCore from "../../src/core/core.js";
+import { validateLayout } from "../../src/core/layout.js";
+import { makeLayoutIterable } from "../../src/core/utils.js";
 
 describe("Validate layout", () => {
   it("Should throw if layout is an empty object", () => {
@@ -85,9 +85,9 @@ describe("Validate layout", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       id: 10,
       type: "container",
       direction: "row",
@@ -108,9 +108,9 @@ describe("Validate layout", () => {
       ],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",

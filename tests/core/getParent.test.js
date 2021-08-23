@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas";
+import makeCore from "../../src/core/core.js";
 
 describe("Get parent feature", () => {
   it("Should throw if zone is null or undefined", () => {
@@ -7,10 +7,10 @@ describe("Get parent feature", () => {
       type: "zone",
     };
 
-    const areas = makeAreas(zone1);
+    const core = makeCore(zone1);
 
-    expect(() => areas.getParent()).toThrow();
-    expect(() => areas.getParent(null)).toThrow();
+    expect(() => core.getParent()).toThrow();
+    expect(() => core.getParent(null)).toThrow();
   });
 
   it("Should throw if zone does not exist", () => {
@@ -19,9 +19,9 @@ describe("Get parent feature", () => {
       type: "zone",
     };
 
-    const areas = makeAreas(zone1);
+    const core = makeCore(zone1);
 
-    expect(() => areas.getParent({ id: 2, type: "zone" })).toThrow();
+    expect(() => core.getParent({ id: 2, type: "zone" })).toThrow();
   });
 
   it("Should return null on a root zone layout", () => {
@@ -30,9 +30,9 @@ describe("Get parent feature", () => {
       type: "zone",
     };
 
-    const areas = makeAreas(zone1);
+    const core = makeCore(zone1);
 
-    expect(areas.getParent(areas.getZone(1))).toEqual(null);
+    expect(core.getParent(core.getZone(1))).toEqual(null);
   });
 
   it("Should return the correct parent on a container layout", () => {
@@ -75,14 +75,12 @@ describe("Get parent feature", () => {
       children: [zone1, zone2, container],
     };
 
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    expect(areas.getParent(areas.getZone(1))).toEqual(testLayout);
-    expect(areas.getParent(areas.getZone(2))).toEqual(testLayout);
-    expect(areas.getParent(areas.getZone(3))).toEqual(container);
-    expect(areas.getParent(areas.getZone(4))).toEqual(container);
-    expect(areas.getParent(areas.getParent(areas.getZone(3)))).toEqual(
-      testLayout
-    );
+    expect(core.getParent(core.getZone(1))).toEqual(testLayout);
+    expect(core.getParent(core.getZone(2))).toEqual(testLayout);
+    expect(core.getParent(core.getZone(3))).toEqual(container);
+    expect(core.getParent(core.getZone(4))).toEqual(container);
+    expect(core.getParent(core.getParent(core.getZone(3)))).toEqual(testLayout);
   });
 });

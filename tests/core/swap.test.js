@@ -1,4 +1,4 @@
-import makeAreas from "../src/areas.js";
+import makeCore from "../../src/core/core.js";
 
 describe("Swap feature", () => {
   let testLayout = null;
@@ -24,21 +24,21 @@ describe("Swap feature", () => {
   });
 
   it("Should throw if src zone does not exist", () => {
-    const areas = makeAreas(testLayout);
-    expect(() => areas.swapZones(123, 2)).toThrow();
+    const core = makeCore(testLayout);
+    expect(() => core.swapZones(123, 2)).toThrow();
   });
 
   it("Should throw if target zone does not exist", () => {
-    const areas = makeAreas(testLayout);
-    expect(() => areas.swapZones(1, 123)).toThrow();
+    const core = makeCore(testLayout);
+    expect(() => core.swapZones(1, 123)).toThrow();
   });
 
   it("Should swap sibling zones", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    areas.swapZones(1, 2);
+    core.swapZones(1, 2);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",
@@ -60,11 +60,11 @@ describe("Swap feature", () => {
   });
 
   it("Should swap zones on different levels", () => {
-    const areas = makeAreas(testLayout);
+    const core = makeCore(testLayout);
 
-    areas.swapZones(2, 4);
+    core.swapZones(2, 4);
 
-    expect(areas.layout).toEqual({
+    expect(core.layout).toEqual({
       id: 1,
       type: "container",
       direction: "row",
