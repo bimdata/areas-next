@@ -5,6 +5,9 @@ function makeGetParentFeature(areas) {
         "AREAS - fail to get parent: zone is null or undefined"
       );
     }
+    if (!areas.getNodes().includes(node)) {
+      throw new Error("AREAS - fail to get parent: zone does not exist");
+    }
     if (areas.layout.type === "zone") {
       return null;
     } else {

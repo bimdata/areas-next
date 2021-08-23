@@ -32,7 +32,7 @@ describe("Get parent feature", () => {
 
     const areas = makeAreas(zone1);
 
-    expect(areas.getParent(1)).toEqual(null);
+    expect(areas.getParent(areas.getZone(1))).toEqual(null);
   });
 
   it("Should return the correct parent on a container layout", () => {
@@ -84,6 +84,5 @@ describe("Get parent feature", () => {
     expect(areas.getParent(areas.getParent(areas.getZone(3)))).toEqual(
       testLayout
     );
-    expect(areas.getParent({})).toEqual(null);
   });
 });
