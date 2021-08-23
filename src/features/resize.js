@@ -6,7 +6,9 @@ function makeResizeFeature(areas) {
 
     const zone = areas.getZone(zoneId);
     if (!zone) {
-      return false;
+      throw new Error(
+        `AREAS - fail to resize zone ${zoneId}: zone does not exist.`
+      );
     }
 
     const container = areas.getParent(zone);

@@ -16,7 +16,7 @@ describe("Resize feature", () => {
     expect(() => areas.resizeZone(1, "string")).toThrow();
   });
 
-  it("Should return false if zone does not exist", () => {
+  it("Should throw if zone does not exist", () => {
     const testLayout = {
       id: 10,
       type: "container",
@@ -28,9 +28,8 @@ describe("Resize feature", () => {
     };
 
     const areas = makeAreas(testLayout);
-    expect(areas.resizeZone(123, 30)).toBeFalsy();
 
-    expect(areas.layout).toEqual(testLayout);
+    expect(() => areas.resizeZone(123, 30)).toThrow();
   });
 
   it("Should update zone ratios", () => {
