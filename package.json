@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "predev": "rm -rf dist",
-    "dev": "esbuild src/main.js --bundle --outfile=dist/areas.js --sourcemap --watch",
+    "dev": "esbuild ./src/areas.js --bundle --format=esm --outfile=dist/areas.js --sourcemap --watch '--define:process.env.NODE_ENV=\"development\"'",
     "test": "jest --verbose"
   },
   "types": "./index.d.ts",
@@ -19,11 +19,14 @@
     "url": "https://github.com/bimdata/areas-web-components/issues"
   },
   "homepage": "https://github.com/bimdata/areas-web-components#readme",
+  "dependencies": {
+    "vue": "^3.2.6"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.14.5",
     "babel-core": "^6.26.3",
     "babel-jest": "^27.0.2",
-    "esbuild": "^0.9.2",
+    "esbuild": "^0.9.7",
     "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "^24.3.6",

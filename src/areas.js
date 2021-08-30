@@ -1,8 +1,6 @@
 import makeCore from "./core/core.js";
 import makeRenderer from "./renderer/renderer.js";
 
-export default makeAreas;
-
 function makeAreas(htmlElement, layoutData) {
   const core = makeCore(layoutData);
   const renderer = makeRenderer(htmlElement, core);
@@ -14,3 +12,5 @@ function makeAreas(htmlElement, layoutData) {
 
   return areas;
 }
+
+export default makeAreas;
