@@ -30,7 +30,7 @@ function make(layoutData) {
   core.getNodes = makeGetNodesFeature(core);
   core.getParent = makeGetParentFeature(core);
   core.getZone = makeGetZoneFeature(core);
-  core.resizeZone = makeResizeFeature(core);
+  core.resize = makeResizeFeature(core);
   core.splitZone = makeSplitFeature(core);
   core.swapZones = makeSwapFeature(core);
 

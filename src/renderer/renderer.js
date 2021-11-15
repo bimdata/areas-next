@@ -1,4 +1,4 @@
-import { createApp, h, ref, watch } from "vue";
+import { createApp, h, ref, triggerRef, toRaw } from "vue";
 
 import renderZone from "./zone.js";
 import renderContainer from "./container.js";
@@ -6,34 +6,38 @@ import renderContainer from "./container.js";
 /**
  * @param { Element } htmlElement
  * @param { Areas.Core } core
+ * @return { Areas.Renderer }
  */
 function makeRenderer(htmlElement, core) {
-  const layout = core.layout;
-  const refLayout = ref(layout);
+  const layout = ref(core.layout);
+
+  const renderer = {
+    getParent(containerChild) {
+      return core.getParent(toRaw(containerChild));
+    },
+    resize(containerChild, value) {
+      core.resize(toRaw(containerChild), value);
+      triggerRef(layout);
+    },
+  };
 
   function buildLayout(layout) {
     if (layout.type === "zone") {
-      return renderZone(core, layout);
+      return renderZone(renderer, layout);
     } else {
-      return renderContainer(core, layout);
+      return renderContainer(renderer, layout);
     }
   }
 
   const app = createApp({
     render() {
-      let buildedLayout = buildLayout(layout);
-
-      watch(refLayout, () => {
-        buildedLayout = buildLayout(layout);
-      });
-
-      return h("div", { class: "areas-root" }, [buildedLayout]);
+      return h("div", { class: "areas-root" }, [buildLayout(layout.value)]);
     },
   });
 
-  app.mount(htmlElement);
+  renderer.root = app.mount(htmlElement);
 
-  return app;
+  return renderer;
 }
 
 export default makeRenderer;

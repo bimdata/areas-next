@@ -6,40 +6,47 @@ declare namespace Areas {
   interface Core {
     layout: Node;
     getZone(zoneId: number): Zone;
-    getParent(node: Node): Container;
+    getParent(containerChild: ContainerChild): Container;
     deleteZone(zoneId: number): Zone;
     getNodes(): Node[];
-    resizeZone(zoneId: number, value:number): number;
-    splitZone(zoneId: number, ratio: number, direction: ContainerDirection, insertAfter?: Boolean): Zone;
+    resize(container: Container, child: ContainerChild, value: number): boolean;
+    splitZone(
+      zoneId: number,
+      ratio: number,
+      direction: ContainerDirection,
+      insertAfter?: Boolean
+    ): Zone;
     swapZones(zoneId1: number, zoneId2: number): void;
   }
 
   interface Renderer {
-    deleteZone(zoneId: number): Node;
-    resizeZone(zoneId: number, value:number): Node;
-    splitZone(zoneId: number, ratio: number, direction: ContainerDirection, insertAfter?: Boolean): Node;
-    swapZones(zoneId1: number, zoneId2: number): Node;
+    root: Object;
+    resize(containerChild: ContainerChild, value): boolean;
+    getParent(containerChild: ContainerChild): Container;
   }
 
   enum NodeType {
     zone = "zone",
-    container = "container"
+    container = "container",
   }
 
-  type Node = Container | Zone;
+  interface Node {
+    id: number;
+    type: NodeType;
+  }
 
-  type Container = {
-    id: number,
+  interface Container extends Node {
     type: NodeType.container;
-    ratio?: number;
     direction: ContainerDirection;
-    children: Array<Node>;
+    children: Array<ContainerChild>;
   }
 
-  type Zone = {
-    id: number,
+  interface Zone extends Node {
     type: NodeType.zone;
-    ratio?: number;
+  }
+
+  interface ContainerChild extends Node {
+    ratio: number;
   }
 
   enum ContainerDirection {

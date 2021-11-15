@@ -1,10 +1,11 @@
 import { h } from "vue";
 
 /**
+ * @param { Areas.Renderer } renderer
  * @param { Areas.Zone } zone
  */
-function renderZone(core, zone, deltaPx = 0) {
-  const container = core.getParent(zone);
+function renderZone(renderer, zone, deltaPx = 0) {
+  const container = renderer.getParent(zone);
 
   const options = {
     class: "areas-zone",

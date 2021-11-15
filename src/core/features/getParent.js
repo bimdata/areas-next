@@ -1,27 +1,24 @@
 function makeGetParentFeature(core) {
-  return node => {
-    if (!node) {
+  return containerChild => {
+    if (!containerChild) {
       throw new TypeError(
-        "AREAS CORE - fail to get parent: zone is null or undefined"
+        "AREAS CORE - fail to get parent: container child is null or undefined"
       );
-    }
-    if (!core.getNodes().includes(node)) {
-      throw new Error("AREAS CORE - fail to get parent: zone does not exist");
     }
     if (core.layout.type === "zone") {
       return null;
     } else {
-      return getParent(core.layout, node);
+      return getParent(core.layout, containerChild);
     }
   };
 }
 
-function getParent(container, node) {
+function getParent(container, containerChild) {
   for (let child of container.children) {
-    if (child === node) {
+    if (child === containerChild) {
       return container;
     } else if (child.type === "container") {
-      const parent = getParent(child, node);
+      const parent = getParent(child, containerChild);
       if (parent) {
         return parent;
       }

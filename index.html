@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
-    <div id="area" style="height: 500px;"></div>
+    <div id="area" style="height: 500px"></div>
     <script type="module">
       import makeAreas from "./dist/areas.js";
 
@@ -18,38 +18,41 @@
         children: [
           {
             type: "zone",
-            ratio: 50
+            ratio: 50,
           },
           {
             type: "container",
             ratio: 50,
-            direction : "column",
+            direction: "column",
             children: [
-            {
-              type: "zone",
-              ratio: 30
-            },          {
-              type: "zone",
-              ratio: 30
-            },          {
-              type: "container",
-              ratio: 40,
-              children: [
-                {
-                  type: "zone",
-                  ratio: 50
-                },          {
-                  type: "zone",
-                  ratio: 50
-                }, 
-              ]
-            },
-            ]
-          }
-        ]
+              {
+                type: "zone",
+                ratio: 30,
+              },
+              {
+                type: "zone",
+                ratio: 30,
+              },
+              {
+                type: "container",
+                ratio: 40,
+                children: [
+                  {
+                    type: "zone",
+                    ratio: 50,
+                  },
+                  {
+                    type: "zone",
+                    ratio: 50,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       };
 
-      makeAreas(document.getElementById("area"), layout);
+      window.areas = makeAreas(document.getElementById("area"), layout);
     </script>
   </body>
 </html>
