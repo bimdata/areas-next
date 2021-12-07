@@ -24,8 +24,8 @@ function onMouseDown(renderer, container, index, mouseEvent) {
   mouseEvent.preventDefault();
   mouseEvent.stopPropagation();
 
-  let mousemoveFunc = e => drag(renderer, container, index, e);
-  let mouseupFunc = () => stopDrag(mousemoveFunc, mouseupFunc);
+  const mousemoveFunc = e => drag(renderer, container, index, e);
+  const mouseupFunc = () => stopDrag(mousemoveFunc, mouseupFunc);
 
   document.addEventListener("mousemove", mousemoveFunc);
   document.addEventListener("mouseup", mouseupFunc);
@@ -41,32 +41,27 @@ function onMouseDown(renderer, container, index, mouseEvent) {
 function drag(renderer, container, index, e) {
   const containerChild = container.children[index];
 
-  /**
-   * @type { Element }
-   */
   const dimension = container.direction === "column" ? "height" : "width";
 
   const separatorElement =
     renderer.root.$refs[`separator-${container.id}-${index + 1}`];
 
-  const separatorSize = separatorElement.getBoundingClientRect()[dimension];
+  const separatorRect = separatorElement.getBoundingClientRect();
+  const separatorSize = separatorRect[dimension];
 
-  const containerChildRect = separatorElement.previousElementSibling.getBoundingClientRect();
-  const containerChildSize = containerChildRect[dimension];
-  const nextContainerChildSize = separatorElement.nextElementSibling.getBoundingClientRect()[
-    dimension
-  ];
+  const deltaSize =
+    (container.direction === "column"
+      ? e.clientY - separatorRect.y
+      : e.clientX - separatorRect.x) -
+    separatorSize / 2;
 
-  const totalSize = separatorSize + containerChildSize + nextContainerChildSize;
+  const containerSize = renderer.root.$refs[
+    `container-${container.id}`
+  ].getBoundingClientRect()[dimension];
 
-  const requestedSize =
-    container.direction === "column"
-      ? e.clientY - containerChildRect.y
-      : e.clientX - containerChildRect.x;
+  const deltaPercentage = (deltaSize / containerSize) * 100;
 
-  const delta = requestedSize - containerChildSize;
-
-  renderer.resize(containerChild, (delta / totalSize) * 100);
+  renderer.resize(containerChild, deltaPercentage);
 }
 
 function stopDrag(mousemoveFunc, mouseupFunc) {

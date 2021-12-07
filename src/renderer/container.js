@@ -11,6 +11,7 @@ const separatorSize = 3;
  */
 function renderContainer(renderer, container, deltaPx = 0) {
   const options = {
+    ref: `container-${container.id}`,
     class: "areas-container",
     id: `container-${container.id}`,
     style: {
