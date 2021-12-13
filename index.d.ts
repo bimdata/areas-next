@@ -67,4 +67,8 @@ declare namespace Areas {
     row = "row",
     column = "column",
   }
+
+  interface Content {
+    dom: HTMLElement;
+  }
 }

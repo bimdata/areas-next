@@ -1,4 +1,4 @@
-import { h } from "vue";
+import { h } from "vue/dist/vue.esm-bundler.js";
 
 /**
  * @param { Areas.Renderer } renderer

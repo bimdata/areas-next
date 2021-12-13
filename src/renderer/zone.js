@@ -1,4 +1,4 @@
-import { h } from "vue";
+import { h } from "vue/dist/vue.esm-bundler.js";
 
 import { clamp } from "../utils.js";
 
@@ -42,7 +42,7 @@ function renderZone(renderer, zone) {
     }
   }
 
-  return h("div", options, `zone-id-${zone.id}`);
+  return h("div", options, renderer.contentManager.renderZoneContent(zone));
 }
 
 export default renderZone;

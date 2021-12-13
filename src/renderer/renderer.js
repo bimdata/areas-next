@@ -1,8 +1,15 @@
-import { createApp, h, ref, triggerRef, toRaw } from "vue";
+import {
+  createApp,
+  h,
+  ref,
+  shallowRef,
+  triggerRef,
+} from "vue/dist/vue.esm-bundler.js";
 
 import renderZone from "./zone.js";
 import renderContainer from "./container/container.js";
 import { getContainerDimensions } from "./container/utils.js";
+import makeContentManager from "./contentManager/contentManager.js";
 
 /**
  * @param { Element } htmlElement
@@ -10,7 +17,9 @@ import { getContainerDimensions } from "./container/utils.js";
  * @return { Areas.Renderer }
  */
 function makeRenderer(htmlElement, core) {
-  const layout = ref(core.layout);
+  const layout = shallowRef(core.layout);
+
+  console.log(layout.value);
 
   const {
     width: initWidth,
@@ -42,18 +51,19 @@ function makeRenderer(htmlElement, core) {
       return 3;
     },
     getParent(containerChild) {
-      return core.getParent(toRaw(containerChild));
+      return core.getParent(containerChild);
     },
     getContainerDimensions(container) {
       return getContainerDimensions(this, container);
     },
     resize(containerChild, value) {
-      core.resize(toRaw(containerChild), value);
+      core.resize(containerChild, value);
       triggerRef(layout);
     },
     destroy() {
       resizeObserver.disconnect();
     },
+    contentManager: makeContentManager(),
   };
 
   function buildLayout(layout) {

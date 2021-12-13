@@ -1,7 +1,3 @@
-function deepCopy(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
 function makeLayoutIterable(layout) {
   const makeRecursiveIterator = obj => {
     if (obj.children?.length) {
@@ -56,4 +52,4 @@ function makeIdManager() {
   return idManager;
 }
 
-export { deepCopy, makeLayoutIterable, makeIdManager };
+export { makeLayoutIterable, makeIdManager };

@@ -19,6 +19,9 @@
           {
             type: "zone",
             ratio: 50,
+            content: {
+              template: `<div>Content 1</div>`,
+            },
           },
           {
             type: "container",
@@ -28,6 +31,17 @@
               {
                 type: "zone",
                 ratio: 30,
+                content: {
+                  mounted() {
+                    console.log("mounted");
+                  },
+                  data() {
+                    return {
+                      text: "",
+                    };
+                  },
+                  template: `<div>Content 2 <input type='text' v-model="text" />{{text}}</div>`,
+                },
               },
               {
                 type: "zone",
@@ -44,6 +58,9 @@
                   {
                     type: "zone",
                     ratio: 50,
+                    content: {
+                      template: `<div>Content 3</div>`,
+                    },
                   },
                 ],
               },

@@ -1,5 +1,5 @@
 import { validateLayout, setLayoutIds } from "./layout.js";
-import { deepCopy, makeLayoutIterable, makeIdManager } from "./utils.js";
+import { makeLayoutIterable, makeIdManager } from "./utils.js";
 import {
   makeDeleteFeature,
   makeGetNodesFeature,
@@ -10,14 +10,13 @@ import {
   makeSwapFeature,
 } from "./features/index.js";
 
-function make(layoutData) {
+function make(layout) {
   const core = {
     layout: null, // readonly
     zoneIdManager: makeIdManager(),
     containerIdManager: makeIdManager(),
   };
 
-  let layout = deepCopy(layoutData);
   makeLayoutIterable(layout);
 
   validateLayout(layout);
