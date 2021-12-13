@@ -1,12 +1,3 @@
-.areas-root {
-  height: 100%;
-}
-
-.areas-container {
-  display: flex;
-  flex: 1;
-}
-
-.areas-zone {
-  /* empty */
+.areas-separator {
+  background-color: grey;
 }

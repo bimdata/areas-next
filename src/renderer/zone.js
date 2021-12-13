@@ -8,8 +8,8 @@ function renderZone(renderer, zone) {
   const container = renderer.getParent(zone);
 
   const options = {
-    class: "areas-zone",
     id: `zone-${zone.id}`,
+    class: "areas-zone",
     key: zone.id,
   };
 

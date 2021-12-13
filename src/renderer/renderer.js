@@ -66,7 +66,14 @@ function makeRenderer(htmlElement, core) {
 
   const app = createApp({
     render() {
-      return h("div", { class: "areas-root" }, [buildLayout(layout.value)]);
+      return h(
+        "div",
+        {
+          class: "areas-root",
+          style: { height: "100%" },
+        },
+        [buildLayout(layout.value)]
+      );
     },
   });
 
