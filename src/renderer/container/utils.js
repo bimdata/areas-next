@@ -2,7 +2,7 @@
  *
  * @param { Areas.Renderer } renderer
  * @param { Areas.Container } container
- * @returns { {width: number, height: number } }
+ * @returns { { width: number, height: number } }
  */
 function getContainerDimensions(renderer, container) {
   const parentContainer = renderer.getParent(container);

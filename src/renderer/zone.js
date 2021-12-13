@@ -1,5 +1,7 @@
 import { h } from "vue";
 
+import { clamp } from "../utils.js";
+
 /**
  * @param { Areas.Renderer } renderer
  * @param { Areas.Zone } zone
@@ -22,24 +24,20 @@ function renderZone(renderer, zone) {
     const separatorCount = container.children.length - 1;
 
     if (container.direction === "column") {
-      const totalSeparatorRatio =
-        (separatorCount * renderer.separatorSize) / containerHeight;
-      const perZoneSeparatorRatio =
-        (separatorCount / container.children.length) * totalSeparatorRatio;
+      const separatorLessRatio =
+        1 - (separatorCount * renderer.separatorSize) / containerHeight;
 
       options.style = {
-        height: `${zone.ratio - perZoneSeparatorRatio}%`,
+        height: `${clamp(zone.ratio * separatorLessRatio, 0, 100)}%`,
         width: "100%",
       };
     } else {
-      const totalSeparatorRatio =
-        (separatorCount * renderer.separatorSize) / containerWidth;
-      const perZoneSeparatorRatio =
-        (separatorCount / container.children.length) * totalSeparatorRatio;
+      const separatorLessRatio =
+        1 - (separatorCount * renderer.separatorSize) / containerWidth;
 
       options.style = {
         height: "100%",
-        width: `${zone.ratio - perZoneSeparatorRatio}%`,
+        width: `${clamp(zone.ratio * separatorLessRatio, 0, 100)}%`,
       };
     }
   }

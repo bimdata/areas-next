@@ -13,7 +13,7 @@ function renderSeparator(renderer, container, index) {
         ? "height"
         : "width"]: `${renderer.separatorSize}px`,
       cursor: container.direction === "column" ? "ns-resize" : "ew-resize",
-      flexShrink: 0, // TODO maybe not...
+      flexShrink: 0,
     },
     onMousedown: e => onMouseDown(renderer, container, index, e),
   });
@@ -58,7 +58,7 @@ function drag(renderer, container, index, e) {
     `container-${container.id}`
   ].getBoundingClientRect()[dimension];
 
-  let deltaPercentage = (deltaSize / containerSize) * 100;
+  const deltaPercentage = (deltaSize / containerSize) * 100;
 
   renderer.resize(containerChild, deltaPercentage);
 }

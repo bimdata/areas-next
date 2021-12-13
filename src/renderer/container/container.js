@@ -1,4 +1,5 @@
 import { h } from "vue";
+import { clamp } from "../../utils.js";
 import renderSeparator from "../separator.js";
 
 import renderZone from "../zone.js";
@@ -32,11 +33,19 @@ function renderContainer(renderer, container) {
       1 - (renderer.separatorSize * separatorCount) / containerSize;
 
     if (containerParent.direction === "column") {
-      options.style.height = `${container.ratio * separatorsLessRatio}%`;
+      options.style.height = `${clamp(
+        container.ratio * separatorsLessRatio,
+        0,
+        100
+      )}%`;
       options.style.width = "100%";
     } else {
       options.style.height = "100%";
-      options.style.width = `${container.ratio * separatorsLessRatio}%`;
+      options.style.width = `${clamp(
+        container.ratio * separatorsLessRatio,
+        0,
+        100
+      )}%`;
     }
   }
 
