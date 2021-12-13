@@ -19,8 +19,6 @@ import makeContentManager from "./contentManager/contentManager.js";
 function makeRenderer(htmlElement, core) {
   const layout = shallowRef(core.layout);
 
-  console.log(layout.value);
-
   const {
     width: initWidth,
     height: initHeight,
@@ -75,14 +73,26 @@ function makeRenderer(htmlElement, core) {
   }
 
   const app = createApp({
+    mounted() {
+      setTimeout(() => {
+        // TODO !
+        renderer.contentManager.link();
+      });
+    },
     render() {
       return h(
         "div",
         {
           class: "areas-root",
           style: { height: "100%" },
+          mounted() {
+            console.log("coucou");
+          },
         },
-        [buildLayout(layout.value)]
+        [
+          renderer.contentManager.buildLayoutContent(layout.value),
+          buildLayout(layout.value),
+        ]
       );
     },
   });

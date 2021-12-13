@@ -1,3 +1,5 @@
+import { ref, h } from "vue/dist/vue.esm-bundler.js";
+
 import makeContent from "./content.js";
 
 function makeContentManager() {
@@ -5,6 +7,7 @@ function makeContentManager() {
    * @type { Map<number, Areas.Content> }
    */
   const contents = new Map();
+  const zoneRefs = new Map();
 
   const contentManager = {
     contents,
@@ -41,6 +44,50 @@ function makeContentManager() {
 
       contents.set(zoneId1, content2);
       contents.set(zoneId2, content1);
+    },
+    buildLayoutContent(layout) {
+      for (const node of layout) {
+        if (node.type === "zone" && node.content) {
+          const zoneId = node.id;
+
+          contents.set(zoneId, { component: node.content, ref: ref(null) });
+        }
+      }
+
+      return h(
+        "div",
+        {
+          style: { display: "none" },
+        },
+        [...contents.values()].map(content =>
+          h(content.component, { ref: content.ref })
+        )
+      );
+    },
+    getRef(zoneId) {
+      let zoneRef = zoneRefs.get(zoneId);
+      if (!zoneRef) {
+        zoneRef = ref(null);
+        zoneRefs.set(zoneId, zoneRef);
+      }
+
+      return zoneRef;
+    },
+    link() {
+      [...zoneRefs.entries()].forEach(([zoneId, zoneRef]) => {
+        const content = contents.get(zoneId);
+        if (!content) return;
+
+        const contentDOM = content.ref.value.$el;
+
+        const target = zoneRef.value;
+
+        while (target.lastChild) {
+          target.removeChild(target.lastChild);
+        }
+
+        target.appendChild(contentDOM);
+      });
     },
   };
 

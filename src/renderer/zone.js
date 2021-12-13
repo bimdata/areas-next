@@ -13,6 +13,7 @@ function renderZone(renderer, zone) {
     id: `zone-${zone.id}`,
     class: "areas-zone",
     key: zone.id,
+    ref: renderer.contentManager.getRef(zone.id),
   };
 
   if (container) {
@@ -42,7 +43,11 @@ function renderZone(renderer, zone) {
     }
   }
 
-  return h("div", options, renderer.contentManager.renderZoneContent(zone));
+  return h({
+    render() {
+      return h("div", options);
+    },
+  });
 }
 
 export default renderZone;
