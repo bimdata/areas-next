@@ -15,15 +15,19 @@ function getContainerDimensions(renderer, container) {
     if (parentContainer.direction === "column") {
       return {
         width: parentWidth,
-        height:
+        height: Math.max(
+          0,
           (parentHeight - separatorCount * renderer.separatorSize) *
-          (container.ratio / 100),
+            (container.ratio / 100)
+        ),
       };
     } else {
       return {
-        width:
+        width: Math.max(
+          0,
           (parentWidth - separatorCount * renderer.separatorSize) *
-          (container.ratio / 100),
+            (container.ratio / 100)
+        ),
         height: parentHeight,
       };
     }
