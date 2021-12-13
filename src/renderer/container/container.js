@@ -10,10 +10,12 @@ import renderZone from "../zone.js";
 function renderContainer(renderer, container) {
   const options = {
     ref: `container-${container.id}`,
-    class: "areas-container",
     id: `container-${container.id}`,
+    class: "areas-container",
     style: {
       height: "100%",
+      display: "flex",
+      flex: "1",
       flexDirection: container.direction,
     },
   };

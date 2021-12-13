@@ -7,12 +7,12 @@ import { h } from "vue";
 function renderSeparator(renderer, container, index) {
   return h("div", {
     ref: `separator-${container.id}-${index + 1}`,
+    class: "areas-separator",
     style: {
       [container.direction === "column"
         ? "height"
         : "width"]: `${renderer.separatorSize}px`,
       cursor: container.direction === "column" ? "ns-resize" : "ew-resize",
-      backgroundColor: "grey", // TODO developmenent only
       flexShrink: 0, // TODO maybe not...
     },
     onMousedown: e => onMouseDown(renderer, container, index, e),
