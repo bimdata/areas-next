@@ -5,10 +5,13 @@ function makeAreas(htmlElement, layoutData) {
   const core = makeCore(layoutData);
   const renderer = makeRenderer(htmlElement, core);
 
-  const areas = {
+  const areas = Object.freeze({
     core,
     renderer,
-  };
+    destroy() {
+      renderer.destroy();
+    },
+  });
 
   return areas;
 }

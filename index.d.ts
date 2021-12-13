@@ -1,8 +1,15 @@
-// declare module "@bimdata/areas" {
-//   export default Areas.AreasFactory;
-// }
+declare module "@bimdata/areas" {
+  export default Areas.AreasFactory;
+}
 
 declare namespace Areas {
+  function AreasFactory(htmlElement: HTMLElement, layoutData: Object): Areas;
+
+  interface Areas extends Destroyable {
+    readonly core: Core;
+    readonly renderer: Renderer;
+  }
+
   interface Core {
     layout: Node;
     getZone(zoneId: number): Zone;
@@ -19,10 +26,17 @@ declare namespace Areas {
     swapZones(zoneId1: number, zoneId2: number): void;
   }
 
-  interface Renderer {
-    root: Object;
+  interface Destroyable {
+    destroy(): void;
+  }
+
+  interface Renderer extends Destroyable {
+    readonly root: Object;
     resize(containerChild: ContainerChild, value): boolean;
     getParent(containerChild: ContainerChild): Container;
+    readonly width: number;
+    readonly heigth: number;
+    readonly separatorSize: number;
   }
 
   enum NodeType {

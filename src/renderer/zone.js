@@ -4,7 +4,7 @@ import { h } from "vue";
  * @param { Areas.Renderer } renderer
  * @param { Areas.Zone } zone
  */
-function renderZone(renderer, zone, deltaPx = 0) {
+function renderZone(renderer, zone) {
   const container = renderer.getParent(zone);
 
   const options = {
@@ -14,15 +14,32 @@ function renderZone(renderer, zone, deltaPx = 0) {
   };
 
   if (container) {
+    const {
+      width: containerWidth,
+      height: containerHeight,
+    } = renderer.getContainerDimensions(container);
+
+    const separatorCount = container.children.length - 1;
+
     if (container.direction === "column") {
+      const totalSeparatorRatio =
+        (separatorCount * renderer.separatorSize) / containerHeight;
+      const perZoneSeparatorRatio =
+        (separatorCount / container.children.length) * totalSeparatorRatio;
+
       options.style = {
-        height: `calc(${zone.ratio}% - ${deltaPx}px)`,
+        height: `${zone.ratio - perZoneSeparatorRatio}%`,
         width: "100%",
       };
     } else {
+      const totalSeparatorRatio =
+        (separatorCount * renderer.separatorSize) / containerWidth;
+      const perZoneSeparatorRatio =
+        (separatorCount / container.children.length) * totalSeparatorRatio;
+
       options.style = {
         height: "100%",
-        width: `calc(${zone.ratio}% - ${deltaPx}px)`,
+        width: `${zone.ratio - perZoneSeparatorRatio}%`,
       };
     }
   }

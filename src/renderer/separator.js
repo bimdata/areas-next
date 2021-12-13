@@ -1,7 +1,5 @@
 import { h } from "vue";
 
-const separatorSize = 3;
-
 /**
  * @param { Areas.Renderer } renderer
  * @param { Areas.Container } container
@@ -12,9 +10,10 @@ function renderSeparator(renderer, container, index) {
     style: {
       [container.direction === "column"
         ? "height"
-        : "width"]: `${separatorSize}px`,
+        : "width"]: `${renderer.separatorSize}px`,
       cursor: container.direction === "column" ? "ns-resize" : "ew-resize",
       backgroundColor: "grey", // TODO developmenent only
+      flexShrink: 0, // TODO maybe not...
     },
     onMousedown: e => onMouseDown(renderer, container, index, e),
   });
@@ -59,7 +58,7 @@ function drag(renderer, container, index, e) {
     `container-${container.id}`
   ].getBoundingClientRect()[dimension];
 
-  const deltaPercentage = (deltaSize / containerSize) * 100;
+  let deltaPercentage = (deltaSize / containerSize) * 100;
 
   renderer.resize(containerChild, deltaPercentage);
 }

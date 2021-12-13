@@ -1,15 +1,13 @@
 import { h } from "vue";
-import renderSeparator from "./separator.js";
+import renderSeparator from "../separator.js";
 
-import renderZone from "./zone.js";
-
-const separatorSize = 3;
+import renderZone from "../zone.js";
 
 /**
  * @param { Areas.Renderer } renderer
  * @param { Areas.Container } container
  */
-function renderContainer(renderer, container, deltaPx = 0) {
+function renderContainer(renderer, container) {
   const options = {
     ref: `container-${container.id}`,
     class: "areas-container",
@@ -20,14 +18,23 @@ function renderContainer(renderer, container, deltaPx = 0) {
     },
   };
 
+  const dimension = container.direction === "column" ? "height" : "width";
+
+  const containerSize = renderer.getContainerDimensions(container)[dimension];
+
   const containerParent = renderer.getParent(container);
   if (containerParent) {
+    const separatorCount = container.children.length - 1;
+
+    const separatorsLessRatio =
+      1 - (renderer.separatorSize * separatorCount) / containerSize;
+
     if (containerParent.direction === "column") {
-      options.style.height = `calc(${container.ratio}% - ${deltaPx}px)`;
+      options.style.height = `${container.ratio * separatorsLessRatio}%`;
       options.style.width = "100%";
     } else {
       options.style.height = "100%";
-      options.style.width = `calc(${container.ratio}% - ${deltaPx}px)`;
+      options.style.width = `${container.ratio * separatorsLessRatio}%`;
     }
   }
 
@@ -37,26 +44,14 @@ function renderContainer(renderer, container, deltaPx = 0) {
     if (child.type === "zone") {
       if (i <= separatorCount - 1) {
         return [
-          renderZone(
-            renderer,
-            child,
-            (separatorCount / container.children.length) * separatorSize
-          ),
+          renderZone(renderer, child),
           renderSeparator(renderer, container, i),
         ];
       } else {
-        return renderZone(
-          renderer,
-          child,
-          (separatorCount / container.children.length) * separatorSize
-        );
+        return renderZone(renderer, child);
       }
     } else {
-      return renderContainer(
-        renderer,
-        child,
-        (separatorCount / container.children.length) * separatorSize
-      );
+      return renderContainer(renderer, child);
     }
   });
 
