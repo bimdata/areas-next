@@ -40,7 +40,14 @@
                       text: "",
                     };
                   },
-                  template: `<div>Content 2 <input type='text' v-model="text" />{{text}}</div>`,
+                  template: `
+                  <div>
+                    <div>Content 2</div> 
+                    <div style="margin: 12px 0">
+                      <input type='text' v-model="text" />
+                    </div>
+                    <div>{{text}}</div>
+                  </div>`,
                 },
               },
               {

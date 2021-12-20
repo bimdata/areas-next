@@ -7,14 +7,14 @@ import { clamp } from "../utils.js";
  * @param { Areas.Zone } zone
  */
 function renderZone(renderer, zone) {
-  const container = renderer.getParent(zone);
-
   const options = {
+    ref: renderer.contentManager.getRef(zone.id),
     id: `zone-${zone.id}`,
     class: "areas-zone",
     key: zone.id,
-    ref: renderer.contentManager.getRef(zone.id),
   };
+
+  const container = renderer.getParent(zone);
 
   if (container) {
     const {
@@ -43,11 +43,7 @@ function renderZone(renderer, zone) {
     }
   }
 
-  return h({
-    render() {
-      return h("div", options);
-    },
-  });
+  return h("div", options);
 }
 
 export default renderZone;

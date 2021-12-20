@@ -74,10 +74,7 @@ function makeRenderer(htmlElement, core) {
 
   const app = createApp({
     mounted() {
-      setTimeout(() => {
-        // TODO !
-        renderer.contentManager.link();
-      });
+      setTimeout(() => renderer.contentManager.link());
     },
     render() {
       return h(
@@ -85,9 +82,6 @@ function makeRenderer(htmlElement, core) {
         {
           class: "areas-root",
           style: { height: "100%" },
-          mounted() {
-            console.log("coucou");
-          },
         },
         [
           renderer.contentManager.buildLayoutContent(layout.value),

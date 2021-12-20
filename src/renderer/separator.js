@@ -5,7 +5,7 @@ import { h } from "vue/dist/vue.esm-bundler.js";
  * @param { Areas.Container } container
  */
 function renderSeparator(renderer, container, index) {
-  return h("div", {
+  const options = {
     ref: `separator-${container.id}-${index + 1}`,
     class: "areas-separator",
     style: {
@@ -16,7 +16,9 @@ function renderSeparator(renderer, container, index) {
       flexShrink: 0,
     },
     onMousedown: e => onMouseDown(renderer, container, index, e),
-  });
+  };
+
+  return h("div", options);
 }
 
 function onMouseDown(renderer, container, index, mouseEvent) {
