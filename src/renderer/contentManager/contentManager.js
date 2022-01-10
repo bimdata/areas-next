@@ -83,6 +83,10 @@ function makeContentManager() {
 
       this.link();
     },
+    deleteContent(zoneId) {
+      contents.delete(zoneId);
+      zoneRefs.delete(zoneId);
+    },
   };
 
   return contentManager;

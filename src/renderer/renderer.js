@@ -65,6 +65,13 @@ function makeRenderer(htmlElement, core) {
       await nextTick();
       this.contentManager.link();
     },
+    async delete(zoneId) {
+      this.contentManager.deleteContent(zoneId);
+      core.deleteZone(zoneId);
+      triggerRef(layout);
+      await nextTick();
+      this.contentManager.link();
+    },
     destroy() {
       resizeObserver.disconnect();
     },
