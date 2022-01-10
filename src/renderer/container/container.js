@@ -1,8 +1,8 @@
 import { h } from "vue";
-import { clamp } from "../../utils.js";
 import renderSeparator from "../separator.js";
 
 import renderZone from "../zone.js";
+import { getContainerChildStyleSizes } from "./utils.js";
 
 /**
  * @param { Areas.Renderer } renderer
@@ -20,45 +20,30 @@ function renderContainer(renderer, container) {
     },
   };
 
-  const dimension = container.direction === "column" ? "height" : "width";
-
-  const containerSize = renderer.getContainerDimensions(container)[dimension];
-
   const containerParent = renderer.getParent(container);
+
   if (containerParent) {
-    const separatorCount = container.children.length - 1;
+    const { width, height } = getContainerChildStyleSizes(
+      renderer,
+      containerParent,
+      container
+    );
 
-    const separatorsLessRatio =
-      1 - (renderer.separatorSize * separatorCount) / containerSize;
-
-    if (containerParent.direction === "column") {
-      options.style.height = `${clamp(
-        container.ratio * separatorsLessRatio,
-        0,
-        100
-      )}%`;
-      options.style.width = "100%";
-    } else {
-      options.style.height = "100%";
-      options.style.width = `${clamp(
-        container.ratio * separatorsLessRatio,
-        0,
-        100
-      )}%`;
-    }
+    options.style.width = width;
+    options.style.height = height;
   }
 
   const separatorCount = container.children.length - 1;
 
   const children = container.children.map((child, i) => {
-      if (i <= separatorCount - 1) {
-        return [
+    if (i <= separatorCount - 1) {
+      return [
         child.type === "zone"
           ? renderZone(renderer, child)
           : renderContainer(renderer, child),
-          renderSeparator(renderer, container, i),
-        ];
-      } else {
+        renderSeparator(renderer, container, i),
+      ];
+    } else {
       return child.type === "zone"
         ? renderZone(renderer, child)
         : renderContainer(renderer, child);
