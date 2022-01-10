@@ -16,7 +16,6 @@ function renderContainer(renderer, container) {
     style: {
       height: "100%",
       display: "flex",
-      flex: "1",
       flexDirection: container.direction,
     },
   };
@@ -52,17 +51,17 @@ function renderContainer(renderer, container) {
   const separatorCount = container.children.length - 1;
 
   const children = container.children.map((child, i) => {
-    if (child.type === "zone") {
       if (i <= separatorCount - 1) {
         return [
-          renderZone(renderer, child),
+        child.type === "zone"
+          ? renderZone(renderer, child)
+          : renderContainer(renderer, child),
           renderSeparator(renderer, container, i),
         ];
       } else {
-        return renderZone(renderer, child);
-      }
-    } else {
-      return renderContainer(renderer, child);
+      return child.type === "zone"
+        ? renderZone(renderer, child)
+        : renderContainer(renderer, child);
     }
   });
 

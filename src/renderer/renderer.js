@@ -4,6 +4,7 @@ import {
   ref,
   shallowRef,
   triggerRef,
+  nextTick,
 } from "vue/dist/vue.esm-bundler.js";
 
 import renderZone from "./zone.js";
@@ -57,6 +58,12 @@ function makeRenderer(htmlElement, core) {
     resize(containerChild, value) {
       core.resize(containerChild, value);
       triggerRef(layout);
+    },
+    async split(zoneId, ratio, direction, insertAfter) {
+      core.splitZone(zoneId, ratio, direction, insertAfter);
+      triggerRef(layout);
+      await nextTick();
+      this.contentManager.link();
     },
     destroy() {
       resizeObserver.disconnect();

@@ -19,7 +19,10 @@ function makeAreas(htmlElement, layoutData) {
      * @param {number} targetZoneId id of the target zone
      */
     swap(srcZoneId, targetZoneId) {
-      this.renderer.contentManager.swap(srcZoneId, targetZoneId);
+      return this.renderer.contentManager.swap(srcZoneId, targetZoneId);
+    },
+    split(zoneId, ratio, direction, insertAfter) {
+      return this.renderer.split(zoneId, ratio, direction, insertAfter);
     },
   });
 

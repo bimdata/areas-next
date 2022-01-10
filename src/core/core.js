@@ -1,5 +1,5 @@
 import { validateLayout, setLayoutIds } from "./layout.js";
-import { makeLayoutIterable, makeIdManager } from "./utils.js";
+import { makeObjectIterable, makeIdManager } from "./utils.js";
 import {
   makeDeleteFeature,
   makeGetNodesFeature,
@@ -17,7 +17,7 @@ function make(layout) {
     containerIdManager: makeIdManager(),
   };
 
-  makeLayoutIterable(layout);
+  makeObjectIterable(layout);
 
   validateLayout(layout);
 

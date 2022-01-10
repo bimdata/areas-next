@@ -1,6 +1,6 @@
 import makeCore from "../../src/core/core.js";
 import { validateLayout } from "../../src/core/layout.js";
-import { makeLayoutIterable } from "../../src/core/utils.js";
+import { makeObjectIterable } from "../../src/core/utils.js";
 
 describe("Validate layout", () => {
   it("Should throw if layout is an empty object", () => {
@@ -46,12 +46,12 @@ describe("Validate layout", () => {
   });
 
   it("Should return layout if called with a valid zone layout", () => {
-    const testLayout = makeLayoutIterable({ type: "zone" });
+    const testLayout = makeObjectIterable({ type: "zone" });
     expect(validateLayout(testLayout)).toEqual(testLayout);
   });
 
   it("Should return layout if called with a valid container layout", () => {
-    const testLayout = makeLayoutIterable({
+    const testLayout = makeObjectIterable({
       type: "container",
       direction: "row",
       children: [
