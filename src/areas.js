@@ -24,6 +24,9 @@ function makeAreas(htmlElement, layoutData) {
     split(zoneId, ratio, direction, insertAfter) {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);
     },
+    delete(zoneId) {
+      return this.renderer.delete(zoneId);
+    },
   });
 
   return areas;
