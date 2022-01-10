@@ -66,8 +66,8 @@ function makeContentManager() {
     /**
      * Swap (switch) the contents of two zones.
      *
-     * @param {Number} srcZoneId id of the source zone
-     * @param {Number} targetZoneId id of the target zone
+     * @param {number} srcZoneId id of the source zone
+     * @param {number} targetZoneId id of the target zone
      */
     swap(srcZoneId, targetZoneId) {
       const srcContent = contents.get(srcZoneId);
