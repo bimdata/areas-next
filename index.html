@@ -17,11 +17,25 @@
         direction: "row",
         children: [
           {
-            type: "zone",
+            type: "container",
             ratio: 50,
-            content: {
-              template: `<div>Content 1</div>`,
-            },
+            direction: "column",
+            children: [
+              {
+                type: "zone",
+                ratio: 50,
+                content: {
+                  template: `<div>Content 1</div>`,
+                },
+              },
+              {
+                type: "zone",
+                ratio: 50,
+                content: {
+                  template: `<div>Content 4</div>`,
+                },
+              },
+            ],
           },
           {
             type: "container",
