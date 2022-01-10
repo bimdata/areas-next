@@ -6,63 +6,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Areas</title>
     <link rel="stylesheet" href="./index.css" />
-    <script type="module" src="./dist/areas.js"></script>
   </head>
-  <body onload="init()">
-    <areas-root
-      separator-size="2"
-      layout='{
-        "type": "container",
-        "direction": "row",
-        "children": [
+  <body>
+    <div id="area" style="height: 500px"></div>
+    <script type="module">
+      import makeAreas from "./dist/areas.js";
+
+      const layout = {
+        type: "container",
+        direction: "row",
+        children: [
           {
-            "type": "zone",
-            "ratio": 20
+            type: "zone",
+            ratio: 50,
+            content: {
+              template: `<div>Content 1</div>`,
+            },
           },
           {
-            "type": "container",
-            "direction": "column",
-            "ratio": 80,
-            "children": [
+            type: "container",
+            ratio: 50,
+            direction: "column",
+            children: [
               {
-                "type": "zone",
-                "ratio": 40
+                type: "zone",
+                ratio: 30,
+                content: {
+                  mounted() {
+                    console.log("mounted");
+                  },
+                  data() {
+                    return {
+                      text: "",
+                    };
+                  },
+                  template: `
+                  <div>
+                    <div>Content 2</div> 
+                    <div style="margin: 12px 0">
+                      <input type='text' v-model="text" />
+                    </div>
+                    <div>{{text}}</div>
+                  </div>`,
+                },
               },
               {
-                "type": "container",
-                "direction": "row",
-                "ratio": 60,
-                "children": [
+                type: "zone",
+                ratio: 30,
+              },
+              {
+                type: "container",
+                ratio: 40,
+                children: [
                   {
-                    "type": "zone",
-                    "ratio": 40,
-                    "id": 12
+                    type: "zone",
+                    ratio: 50,
                   },
                   {
-                    "type": "zone",
-                    "ratio": 30
+                    type: "zone",
+                    ratio: 50,
+                    content: {
+                      template: `<div>Content 3</div>`,
+                    },
                   },
-                  {
-                    "type": "zone",
-                    "ratio": 30
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }'
-    >
-    </areas-root>
-    <script>
-      function init() {
-        const areas = document.querySelector("areas-root");
+                ],
+              },
+            ],
+          },
+        ],
+      };
 
-        const image = new Image(90, 90);
-        image.src = "./assets/mascot-drag-icon.png";
-
-        areas.setDragImage(image, 45, 45);
-      }
+      window.areas = makeAreas(document.getElementById("area"), layout);
     </script>
   </body>
 </html>

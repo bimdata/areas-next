@@ -1,10 +1,11 @@
-body {
-  width: calc(100% - 10px);
-  height: calc(100vh - 10px);
-  margin: 5px;
-  padding: 0;
+.areas-root {
+  overflow: hidden;
 }
 
-body > areas-container {
-  background-color: gray;
+.areas-separator {
+  background-color: grey;
+}
+.areas-zone {
+  flex-grow: 0;
+  overflow: hidden;
 }

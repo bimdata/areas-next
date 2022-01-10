@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    // "checkJs": true,
+    "allowJs": true,
+    "target": "es2020",
+    "module": "es6",
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "index.d.ts"
+  ],
+}
