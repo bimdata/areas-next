@@ -19,8 +19,8 @@ declare namespace Areas {
     resize(container: Container, child: ContainerChild, value: number): boolean;
     splitZone(
       zoneId: number,
-      ratio: number,
-      direction: ContainerDirection,
+      ratio?: number,
+      direction?: ContainerDirection,
       insertAfter?: Boolean
     ): Zone;
     swapZones(zoneId1: number, zoneId2: number): void;

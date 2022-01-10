@@ -11,6 +11,19 @@ function makeAreas(htmlElement, layoutData) {
     destroy() {
       renderer.destroy();
     },
+    // EXPOSED API
+    /**
+     * Swap (switch) the contents of two zones.
+     *
+     * @param {number} srcZoneId id of the source zone
+     * @param {number} targetZoneId id of the target zone
+     */
+    swap(srcZoneId, targetZoneId) {
+      return this.renderer.contentManager.swap(srcZoneId, targetZoneId);
+    },
+    split(zoneId, ratio, direction, insertAfter) {
+      return this.renderer.split(zoneId, ratio, direction, insertAfter);
+    },
   });
 
   return areas;

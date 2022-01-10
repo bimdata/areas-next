@@ -1,27 +1,32 @@
-function makeLayoutIterable(layout) {
-  const makeRecursiveIterator = obj => {
-    if (obj.children?.length) {
-      obj.children.forEach(child => {
-        Object.defineProperty(child, Symbol.iterator, {
-          value: makeRecursiveIterator(child),
-        });
+function makeRecursiveIterator(obj) {
+  if (obj.children?.length) {
+    obj.children.forEach(child => {
+      Object.defineProperty(child, Symbol.iterator, {
+        value: makeRecursiveIterator(child),
       });
-    }
-    return function* () {
-      yield obj;
-      if (obj.children?.length) {
-        for (let child of obj.children) {
-          yield* child;
-        }
+    });
+  }
+  return function* () {
+    yield obj;
+    if (obj.children?.length) {
+      for (let child of obj.children) {
+        yield* child;
       }
-    };
+    }
   };
+}
 
-  Object.defineProperty(layout, Symbol.iterator, {
-    value: makeRecursiveIterator(layout),
+/**
+ * Add the ability to iterate over the given object. The object itself is yield first and then all its children.
+ * @param {Object} obj
+ * @returns The given object over witch it is now possible to iterate.
+ */
+function makeObjectIterable(obj) {
+  Object.defineProperty(obj, Symbol.iterator, {
+    value: makeRecursiveIterator(obj),
   });
 
-  return layout;
+  return obj;
 }
 
 function makeIdManager() {
@@ -52,4 +57,4 @@ function makeIdManager() {
   return idManager;
 }
 
-export { makeLayoutIterable, makeIdManager };
+export { makeObjectIterable, makeIdManager };

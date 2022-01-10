@@ -1,4 +1,4 @@
-import { makeLayoutIterable, makeIdManager } from "../../src/core/utils.js";
+import { makeObjectIterable, makeIdManager } from "../../src/core/utils.js";
 
 describe("Iterable layout", () => {
   it("Should return all nodes", () => {
@@ -20,7 +20,7 @@ describe("Iterable layout", () => {
       children: [node2, node3, node4],
     };
 
-    makeLayoutIterable(node1);
+    makeObjectIterable(node1);
 
     expect([...node1]).toEqual([node1, node2, node3, node4, node5, node6]);
   });

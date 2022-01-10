@@ -8,4 +8,8 @@
 .areas-zone {
   flex-grow: 0;
   overflow: hidden;
+  background-color: coral;
+}
+.areas-container {
+  background-color: thistle;
 }

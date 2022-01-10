@@ -1,5 +1,7 @@
+import { makeObjectIterable } from "../utils.js";
+
 function makeSplitFeature(core) {
-  return (zoneId, ratio, direction, insertAfter = true) => {
+  return (zoneId, ratio = 50, direction = "row", insertAfter = true) => {
     const zone = core.getZone(zoneId);
     if (!zone) {
       throw new Error(
@@ -18,7 +20,10 @@ function makeSplitFeature(core) {
     }
 
     const container = core.getParent(zone);
-    const newZone = { id: core.zoneIdManager.nextId(), type: "zone" };
+    const newZone = makeObjectIterable({
+      id: core.zoneIdManager.nextId(),
+      type: "zone",
+    });
     if (container) {
       const zoneIndex = container.children.findIndex(child => child === zone);
 
@@ -36,12 +41,12 @@ function makeSplitFeature(core) {
       } else {
         // Add replace the target zone with a new container in the cross direction
         // that contains the target zone and a new zone after/before it
-        const newContainer = {
+        const newContainer = makeObjectIterable({
           id: core.containerIdManager.nextId(),
           type: "container",
           direction,
           ratio: zone.ratio,
-        };
+        });
         if (insertAfter) {
           newZone.ratio = Math.floor(100 - ratio);
           zone.ratio = Math.ceil(ratio);
@@ -55,11 +60,11 @@ function makeSplitFeature(core) {
       }
     } else {
       // Single zone layout
-      const newContainer = {
+      const newContainer = makeObjectIterable({
         id: core.containerIdManager.nextId(),
         type: "container",
         direction,
-      };
+      });
       if (insertAfter) {
         newZone.ratio = Math.floor(100 - ratio);
         zone.ratio = Math.ceil(ratio);

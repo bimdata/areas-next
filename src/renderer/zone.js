@@ -1,6 +1,6 @@
 import { h } from "vue/dist/vue.esm-bundler.js";
 
-import { clamp } from "../utils.js";
+import { getContainerChildStyleSizes } from "./container/utils.js";
 
 /**
  * @param { Areas.Renderer } renderer
@@ -17,30 +17,13 @@ function renderZone(renderer, zone) {
   const container = renderer.getParent(zone);
 
   if (container) {
-    const {
-      width: containerWidth,
-      height: containerHeight,
-    } = renderer.getContainerDimensions(container);
+    const { width, height } = getContainerChildStyleSizes(
+      renderer,
+      container,
+      zone
+    );
 
-    const separatorCount = container.children.length - 1;
-
-    if (container.direction === "column") {
-      const separatorLessRatio =
-        1 - (separatorCount * renderer.separatorSize) / containerHeight;
-
-      options.style = {
-        height: `${clamp(zone.ratio * separatorLessRatio, 0, 100)}%`,
-        width: "100%",
-      };
-    } else {
-      const separatorLessRatio =
-        1 - (separatorCount * renderer.separatorSize) / containerWidth;
-
-      options.style = {
-        height: "100%",
-        width: `${clamp(zone.ratio * separatorLessRatio, 0, 100)}%`,
-      };
-    }
+    options.style = { width, height };
   }
 
   return h("div", options);
