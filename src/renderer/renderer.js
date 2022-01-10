@@ -32,8 +32,8 @@ function makeRenderer(htmlElement, core) {
     entries.forEach(entry => {
       const { width, height } = entry.target.getBoundingClientRect();
 
-      widthRef.value = height;
-      heightRef.value = width;
+      widthRef.value = width;
+      heightRef.value = height;
     })
   );
 
