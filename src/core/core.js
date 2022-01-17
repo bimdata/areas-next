@@ -18,11 +18,8 @@ function make(layout) {
   };
 
   makeObjectIterable(layout);
-
   validateLayout(layout);
-
   core.layout = layout;
-
   setLayoutIds(core);
 
   core.deleteZone = makeDeleteFeature(core);
