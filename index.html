@@ -92,7 +92,7 @@
         },
         template: `
         <div>
-          <div>Content 2</div> 
+          <div>Content 2</div>
           <div style="margin: 12px 0">
             <input type='text' v-model="text" />
           </div>
@@ -100,7 +100,20 @@
         </div>`,
       });
       areas.registerContent("Content3", {
-        template: `<div>Content 3</div>`,
+        setup() {
+          const vue = areas.renderer.vue;
+
+          const loading = vue.ref(true);
+
+          vue.onMounted(() =>
+            setTimeout(() => {
+              loading.value = false;
+            }, 2000)
+          );
+
+          return () =>
+            vue.h("div", loading.value ? "LOADING !!!" : "Content 3");
+        },
       });
       areas.registerContent("Content4", {
         template: `<div>Content 4</div>`,

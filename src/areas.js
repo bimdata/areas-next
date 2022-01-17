@@ -26,6 +26,9 @@ function makeAreas() {
     split(zoneId, ratio, direction, insertAfter) {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);
     },
+    splitLayout(ratio, direction, insertAfter) {
+      this.renderer.splitLayout(ratio, direction, insertAfter);
+    },
     delete(zoneId) {
       return this.renderer.delete(zoneId);
     },

@@ -7,6 +7,7 @@ import {
   makeGetZoneFeature,
   makeResizeFeature,
   makeSplitFeature,
+  makeSplitLayoutFeature,
   makeSwapFeature,
 } from "./features/index.js";
 
@@ -28,6 +29,7 @@ function make(layout) {
   core.getZone = makeGetZoneFeature(core);
   core.resize = makeResizeFeature(core);
   core.splitZone = makeSplitFeature(core);
+  core.splitLayout = makeSplitLayoutFeature(core);
   core.swapZones = makeSwapFeature(core);
 
   return core;
