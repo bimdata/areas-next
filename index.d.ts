@@ -10,6 +10,8 @@ declare namespace Areas {
     readonly renderer: Renderer;
   }
 
+  interface Layout extends Node {}
+
   interface Core {
     layout: Node;
     getZone(zoneId: number): Zone;
@@ -39,6 +41,27 @@ declare namespace Areas {
     readonly separatorSize: number;
   }
 
+  interface ContentManager {
+    getContent(name: string): Content;
+    getZoneContent(zoneId: number): ContentInstance;
+    setContent(name: string, component: Object, options?: Object);
+    renderContent(layout: Layout);
+    link(): void;
+    getRef(zoneId: number): Object;
+    swap(srcZoneId: number, targetZoneId: number): void;
+    deleteZoneContent(zoneId: number): void;
+  }
+
+  interface Content {
+    name: string;
+    component: Object;
+  }
+
+  interface ContentInstance extends Content {
+    options?: Object;
+    ref?: { value: any };
+  }
+
   enum NodeType {
     zone = "zone",
     container = "container",
@@ -66,9 +89,5 @@ declare namespace Areas {
   enum ContainerDirection {
     row = "row",
     column = "column",
-  }
-
-  interface Content {
-    dom: HTMLElement;
   }
 }

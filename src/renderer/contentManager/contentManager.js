@@ -1,9 +1,11 @@
-import { h, ref } from "vue/dist/vue.esm-bundler.js";
-
-function makeContentManager() {
+/**
+ * @param { Areas.Renderer } renderer
+ * @returns { Areas.ContentManager }
+ */
+function makeContentManager(renderer) {
   /** @type { Map<number, Areas.Content> } */
   const contents = new Map();
-  /** @type { Map<number, Areas.Content> } */
+  /** @type { Map<number, Areas.ContentInstance> } */
   const zoneContent = new Map();
   /** @type { Map<number, Ref> } */
   const zoneRefs = new Map();
@@ -11,7 +13,7 @@ function makeContentManager() {
   contents.set("default", {
     component: {
       render() {
-        return h("div", "Default component");
+        return renderer.vue.h("div", "Default component");
       },
     },
   });
@@ -21,10 +23,11 @@ function makeContentManager() {
       return contents.has(name) ? contents.get(name) : contents.get("default");
     },
     getZoneContent(zoneId) {
-      return zoneContent.get(zoneId)?.ref.value;
+      return zoneContent.get(zoneId);
     },
     setContent(name, component, options) {
       contents.set(name, {
+        name,
         component,
         options,
       });
@@ -39,23 +42,28 @@ function makeContentManager() {
     renderContent(layout) {
       for (const node of layout) {
         if (node.type === "zone") {
+          const contentName = node.content ?? "default";
           zoneContent.set(
             node.id,
-            Object.assign({}, this.getContent(node.content ?? "default"), {
-              ref: ref(null),
+            Object.assign({}, this.getContent(contentName), {
+              ref: renderer.vue.ref(null),
               options: node.options,
+              name: contentName,
             })
           );
         }
       }
 
-      return h(
+      return renderer.vue.h(
         "div",
         {
           style: { display: "none" },
         },
         [...zoneContent.values()].map(content =>
-          h(content.component, { ...content.options, ref: content.ref })
+          renderer.vue.h(content.component, {
+            ...content.options,
+            ref: content.ref,
+          })
         )
       );
     },
@@ -80,7 +88,7 @@ function makeContentManager() {
     getRef(zoneId) {
       let zoneRef = zoneRefs.get(zoneId);
       if (!zoneRef) {
-        zoneRef = ref(null);
+        zoneRef = renderer.vue.ref(null);
         zoneRefs.set(zoneId, zoneRef);
       }
 

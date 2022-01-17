@@ -53,7 +53,6 @@ function makeRenderer() {
     destroy() {
       this.resizeObserver?.disconnect();
     },
-    contentManager: makeContentManager(),
     root: null,
     /**
 
@@ -100,6 +99,8 @@ function makeRenderer() {
           );
         },
       });
+
+      renderer.contentManager = makeContentManager(renderer);
 
       this.root = app.mount(htmlElement);
 

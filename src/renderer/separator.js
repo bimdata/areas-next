@@ -1,5 +1,3 @@
-import { h } from "vue/dist/vue.esm-bundler.js";
-
 /**
  * @param { Areas.Renderer } renderer
  * @param { Areas.Container } container
@@ -18,7 +16,7 @@ function renderSeparator(renderer, container, index) {
     onMousedown: e => onMouseDown(renderer, container, index, e),
   };
 
-  return h("div", options);
+  return renderer.vue.h("div", options);
 }
 
 function onMouseDown(renderer, container, index, mouseEvent) {
