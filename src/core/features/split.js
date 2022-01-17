@@ -74,7 +74,7 @@ function makeSplitFeature(core) {
         zone.ratio = Math.ceil(100 - ratio);
         newContainer.children = [newZone, zone];
       }
-      core.layout = newContainer;
+      core._layout = newContainer;
     }
 
     return newZone;
