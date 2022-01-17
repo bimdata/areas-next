@@ -57,4 +57,23 @@ function makeIdManager() {
   return idManager;
 }
 
-export { makeObjectIterable, makeIdManager };
+/**
+ * Copy an object and all its children.
+ * @param { { children?: Array } } object
+ * @returns { { children?: Array } }
+ */
+function deepCopy(object) {
+  if (!object) {
+    return;
+  }
+
+  const newObject = Object.assign({}, object);
+
+  if (object.children?.length > 0) {
+    newObject.children = object.children.map(deepCopy);
+  }
+
+  return newObject;
+}
+
+export { makeObjectIterable, makeIdManager, deepCopy };

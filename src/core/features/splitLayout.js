@@ -35,7 +35,7 @@ function makeSplitLayoutFeature(core) {
       layout.ratio = Math.ceil(100 - ratio);
       newContainer.children = [newZone, layout];
     }
-    core.layout = newContainer;
+    core._layout = newContainer;
 
     return newZone;
   };
