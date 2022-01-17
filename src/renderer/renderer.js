@@ -1,11 +1,4 @@
-import {
-  createApp,
-  h,
-  ref,
-  shallowRef,
-  triggerRef,
-  nextTick,
-} from "vue/dist/vue.esm-bundler.js";
+import * as vue from "vue/dist/vue.esm-bundler.js";
 
 import renderZone from "./zone.js";
 import renderContainer from "./container/container.js";
@@ -17,6 +10,7 @@ import makeContentManager from "./contentManager/contentManager.js";
  */
 function makeRenderer() {
   const renderer = {
+    vue,
     get width() {
       return this.widthRef?.value;
     },
@@ -34,25 +28,31 @@ function makeRenderer() {
     },
     resize(containerChild, value) {
       this.core.resize(containerChild, value);
-      triggerRef(this.layout);
+      vue.triggerRef(this.layout);
     },
     async split(zoneId, ratio, direction, insertAfter) {
       this.core.splitZone(zoneId, ratio, direction, insertAfter);
-      triggerRef(this.layout);
-      await nextTick();
+      vue.triggerRef(this.layout);
+      await vue.nextTick();
+      this.contentManager.link();
+    },
+    async splitLayout(ratio, direction, insertAfter) {
+      this.core.splitLayout(ratio, direction, insertAfter);
+      this.layout.value = this.core.layout;
+      // triggerRef(this.layout);
+      await vue.nextTick();
       this.contentManager.link();
     },
     async delete(zoneId) {
       this.contentManager.deleteZoneContent(zoneId);
       this.core.deleteZone(zoneId);
-      triggerRef(this.layout);
-      await nextTick();
+      vue.triggerRef(this.layout);
+      await vue.nextTick();
       this.contentManager.link();
     },
     destroy() {
       this.resizeObserver?.disconnect();
     },
-    contentManager: makeContentManager(),
     root: null,
     /**
 
@@ -61,15 +61,15 @@ function makeRenderer() {
      */
     mount(htmlElement, core) {
       this.core = core;
-      this.layout = shallowRef(core.layout);
+      this.layout = vue.shallowRef(core.layout);
 
       const {
         width: initWidth,
         height: initHeight,
       } = htmlElement.getBoundingClientRect();
 
-      this.widthRef = ref(initWidth);
-      this.heightRef = ref(initHeight);
+      this.widthRef = vue.ref(initWidth);
+      this.heightRef = vue.ref(initHeight);
 
       this.resizeObserver = new ResizeObserver(entries =>
         entries.forEach(entry => {
@@ -81,12 +81,12 @@ function makeRenderer() {
       );
 
       this.resizeObserver.observe(htmlElement);
-      const app = createApp({
+      const app = vue.createApp({
         mounted() {
           setTimeout(() => renderer.contentManager.link());
         },
         render() {
-          return h(
+          return vue.h(
             "div",
             {
               class: "areas-root",
@@ -99,6 +99,8 @@ function makeRenderer() {
           );
         },
       });
+
+      renderer.contentManager = makeContentManager(renderer);
 
       this.root = app.mount(htmlElement);
 

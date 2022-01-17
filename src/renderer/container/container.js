@@ -1,4 +1,3 @@
-import { h } from "vue";
 import renderSeparator from "../separator.js";
 
 import renderZone from "../zone.js";
@@ -50,7 +49,7 @@ function renderContainer(renderer, container) {
     }
   });
 
-  return h("div", options, [children]);
+  return renderer.vue.h("div", options, [children]);
 }
 
 export default renderContainer;

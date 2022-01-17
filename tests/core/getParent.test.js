@@ -13,7 +13,7 @@ describe("Get parent feature", () => {
     expect(() => core.getParent(null)).toThrow();
   });
 
-  it("Should throw if zone does not exist", () => {
+  it("Should return null if zone does not exist", () => {
     const zone1 = {
       id: 1,
       type: "zone",
@@ -21,7 +21,7 @@ describe("Get parent feature", () => {
 
     const core = makeCore(zone1);
 
-    expect(() => core.getParent({ id: 2, type: "zone" })).toThrow();
+    expect(core.getParent({ id: 2, type: "zone" })).toBe(null);
   });
 
   it("Should return null on a root zone layout", () => {

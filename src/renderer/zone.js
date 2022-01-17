@@ -1,5 +1,3 @@
-import { h } from "vue/dist/vue.esm-bundler.js";
-
 import { getContainerChildStyleSizes } from "./container/utils.js";
 
 /**
@@ -26,7 +24,7 @@ function renderZone(renderer, zone) {
     options.style = { width, height };
   }
 
-  return h("div", options);
+  return renderer.vue.h("div", options);
 }
 
 export default renderZone;
