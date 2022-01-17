@@ -3,6 +3,7 @@
  * @param { Areas.Container } container
  */
 function renderSeparator(renderer, container, index) {
+  const cursor = container.direction === "column" ? "ns-resize" : "ew-resize";
   const options = {
     ref: `separator-${container.id}-${index + 1}`,
     class: "areas-separator",
@@ -10,19 +11,21 @@ function renderSeparator(renderer, container, index) {
       [container.direction === "column"
         ? "height"
         : "width"]: `${renderer.separatorSize}px`,
-      cursor: container.direction === "column" ? "ns-resize" : "ew-resize",
+      cursor,
       backgroundColor: "var(--areas-separator-color, black)",
       flexShrink: 0,
     },
-    onMousedown: e => onMouseDown(renderer, container, index, e),
+    onMousedown: e => onMouseDown(renderer, container, index, e, cursor),
   };
 
   return renderer.vue.h("div", options);
 }
 
-function onMouseDown(renderer, container, index, mouseEvent) {
+function onMouseDown(renderer, container, index, mouseEvent, cursor) {
   mouseEvent.preventDefault();
   mouseEvent.stopPropagation();
+
+  document.body.style.cursor = cursor;
 
   const mousemoveFunc = e => drag(renderer, container, index, e);
   const mouseupFunc = () => stopDrag(mousemoveFunc, mouseupFunc);
@@ -67,6 +70,8 @@ function drag(renderer, container, index, e) {
 function stopDrag(mousemoveFunc, mouseupFunc) {
   document.removeEventListener("mousemove", mousemoveFunc);
   document.removeEventListener("mouseup", mouseupFunc);
+
+  document.body.style.cursor = "";
 }
 
 export default renderSeparator;
