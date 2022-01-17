@@ -9,6 +9,10 @@ function renderZone(renderer, zone) {
     ref: renderer.contentManager.getRef(zone.id),
     id: `zone-${zone.id}`,
     class: "areas-zone",
+    style: {
+      flexGrow: 0,
+      overflow: "hidden",
+    },
     key: zone.id,
   };
 
