@@ -17,4 +17,4 @@ Then drink coffee: :coffee: :coffee: :coffee:
 - [x] Separator color must be customizable
 - [x] Cursor on resize must be on document
 - [ ] e2e cypress tests
-- [ ] types
+- [x] types

@@ -2,6 +2,9 @@ import makeCore from "./core/core.js";
 import { deepCopy } from "./core/utils.js";
 import makeRenderer from "./renderer/renderer.js";
 
+/**
+ * @returns { Areas.Areas }
+ */
 function makeAreas() {
   const core = makeCore();
   const renderer = makeRenderer(core);
@@ -12,13 +15,6 @@ function makeAreas() {
     destroy() {
       renderer.destroy();
     },
-    // EXPOSED API
-    /**
-     * Swap (switch) the contents of two zones.
-     *
-     * @param {number} srcZoneId id of the source zone
-     * @param {number} targetZoneId id of the target zone
-     */
     swap(srcZoneId, targetZoneId) {
       return this.renderer.contentManager.swap(srcZoneId, targetZoneId);
     },
@@ -26,7 +22,7 @@ function makeAreas() {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);
     },
     splitLayout(ratio, direction, insertAfter) {
-      this.renderer.splitLayout(ratio, direction, insertAfter);
+      return this.renderer.splitLayout(ratio, direction, insertAfter);
     },
     delete(zoneId) {
       return this.renderer.delete(zoneId);
@@ -36,7 +32,7 @@ function makeAreas() {
     },
     mount(el, layoutData) {
       this.core.layout = layoutData;
-      this.renderer.mount(el, layoutData);
+      return this.renderer.mount(el, layoutData);
     },
     get layout() {
       return deepCopy(this.core.layout);
