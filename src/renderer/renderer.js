@@ -13,6 +13,7 @@ function makeRenderer(core) {
   const renderer = {
     vue,
     core,
+    zones: vue.ref([]),
     get width() {
       return this.widthRef?.value;
     },
@@ -60,6 +61,18 @@ function makeRenderer(core) {
      */
     mount(htmlElement) {
       this.layout = vue.shallowRef(core.layout);
+
+      vue.watch(
+        this.layout,
+        newLayout => {
+          this.zones.value = [...newLayout].filter(
+            node => node.type === "zone"
+          );
+        },
+        {
+          immediate: true,
+        }
+      );
 
       const {
         width: initWidth,
