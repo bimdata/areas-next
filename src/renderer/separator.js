@@ -11,6 +11,7 @@ function renderSeparator(renderer, container, index) {
         ? "height"
         : "width"]: `${renderer.separatorSize}px`,
       cursor: container.direction === "column" ? "ns-resize" : "ew-resize",
+      backgroundColor: "var(--areas-separator-color, black)",
       flexShrink: 0,
     },
     onMousedown: e => onMouseDown(renderer, container, index, e),

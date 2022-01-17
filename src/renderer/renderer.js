@@ -101,7 +101,7 @@ function makeRenderer(core) {
             "div",
             {
               class: "areas-root",
-              style: { height: "100%" },
+              style: { height: "100%", overflow: "hidden" },
             },
             [
               renderer.contentManager.renderContent(renderer.layout.value),

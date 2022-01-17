@@ -1,13 +1,10 @@
 .areas-root {
-  overflow: hidden;
 }
 
 .areas-separator {
-  background-color: grey;
+  --areas-separator-color: grey;
 }
 .areas-zone {
-  flex-grow: 0;
-  overflow: hidden;
   background-color: coral;
 }
 .areas-container {

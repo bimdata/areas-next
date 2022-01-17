@@ -13,3 +13,8 @@ npm run dev
 You then need to serve the `index.html` file using a web server of your choice.
 
 Then drink coffee: :coffee: :coffee: :coffee:
+
+- [x] Separator color must be customizable
+- [ ] Cursor on resize must be on document
+- [ ] e2e cypress tests
+- [ ] types
