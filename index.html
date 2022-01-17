@@ -24,16 +24,15 @@
               {
                 type: "zone",
                 ratio: 50,
-                content: {
-                  template: `<div>Content 1</div>`,
+                content: "Content1",
+                options: {
+                  text: "coucou",
                 },
               },
               {
                 type: "zone",
                 ratio: 50,
-                content: {
-                  template: `<div>Content 4</div>`,
-                },
+                content: "Content4",
               },
             ],
           },
@@ -45,24 +44,7 @@
               {
                 type: "zone",
                 ratio: 30,
-                content: {
-                  mounted() {
-                    console.log("mounted");
-                  },
-                  data() {
-                    return {
-                      text: "",
-                    };
-                  },
-                  template: `
-                  <div>
-                    <div>Content 2</div> 
-                    <div style="margin: 12px 0">
-                      <input type='text' v-model="text" />
-                    </div>
-                    <div>{{text}}</div>
-                  </div>`,
-                },
+                content: "Content2",
               },
               {
                 type: "zone",
@@ -79,9 +61,7 @@
                   {
                     type: "zone",
                     ratio: 50,
-                    content: {
-                      template: `<div>Content 3</div>`,
-                    },
+                    content: "Content3",
                   },
                 ],
               },
@@ -90,7 +70,45 @@
         ],
       };
 
-      window.areas = makeAreas(document.getElementById("area"), layout);
+      const areas = makeAreas();
+
+      areas.registerContent("Content1", {
+        template: `<div>Content 1 {{ text }}</div>`,
+        props: {
+          text: {
+            type: String,
+            default: "pas coucou",
+          },
+        },
+      });
+      areas.registerContent("Content2", {
+        mounted() {
+          console.log("mounted");
+        },
+        data() {
+          return {
+            text: "",
+          };
+        },
+        template: `
+        <div>
+          <div>Content 2</div> 
+          <div style="margin: 12px 0">
+            <input type='text' v-model="text" />
+          </div>
+          <div>{{text}}</div>
+        </div>`,
+      });
+      areas.registerContent("Content3", {
+        template: `<div>Content 3</div>`,
+      });
+      areas.registerContent("Content4", {
+        template: `<div>Content 4</div>`,
+      });
+
+      areas.mount(document.getElementById("area"), layout);
+
+      window.areas = areas;
     </script>
   </body>
 </html>
