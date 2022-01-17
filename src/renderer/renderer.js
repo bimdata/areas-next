@@ -6,11 +6,13 @@ import { getContainerDimensions } from "./container/utils.js";
 import makeContentManager from "./contentManager/contentManager.js";
 
 /**
+ * @param { Areas.Core }
  * @return { Areas.Renderer }
  */
-function makeRenderer() {
+function makeRenderer(core) {
   const renderer = {
     vue,
+    core,
     get width() {
       return this.widthRef?.value;
     },
@@ -39,7 +41,6 @@ function makeRenderer() {
     async splitLayout(ratio, direction, insertAfter) {
       this.core.splitLayout(ratio, direction, insertAfter);
       this.layout.value = this.core.layout;
-      // triggerRef(this.layout);
       await vue.nextTick();
       this.contentManager.link();
     },
@@ -55,12 +56,9 @@ function makeRenderer() {
     },
     root: null,
     /**
-
      * @param {HTMLElement} htmlElement
-      * @param { Areas.Core } core
      */
-    mount(htmlElement, core) {
-      this.core = core;
+    mount(htmlElement) {
       this.layout = vue.shallowRef(core.layout);
 
       const {

@@ -27,7 +27,7 @@ function makeDeleteFeature(core) {
       }
 
       container.children = container.children.filter(
-        child => child.id !== zoneId
+        child => child.type !== "zone" || child.id !== zoneId
       );
     } else {
       // the container is removed and became the remaining zone

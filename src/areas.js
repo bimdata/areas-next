@@ -1,14 +1,13 @@
 import makeCore from "./core/core.js";
+import { deepCopy } from "./core/utils.js";
 import makeRenderer from "./renderer/renderer.js";
 
 function makeAreas() {
-  const renderer = makeRenderer();
-  let _core = null;
+  const core = makeCore();
+  const renderer = makeRenderer(core);
 
   const areas = Object.freeze({
-    get core() {
-      return _core;
-    },
+    core,
     renderer,
     destroy() {
       renderer.destroy();
@@ -35,10 +34,12 @@ function makeAreas() {
     registerContent(name, content, options) {
       return this.renderer.contentManager.setContent(name, content, options);
     },
-    mount(htmlElement, layoutData) {
-      _core = makeCore(layoutData);
-
-      this.renderer.mount(htmlElement, this.core);
+    mount(el, layoutData) {
+      this.core.layout = layoutData;
+      this.renderer.mount(el, layoutData);
+    },
+    get layout() {
+      return deepCopy(this.core.layout);
     },
   });
 

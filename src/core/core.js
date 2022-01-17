@@ -13,15 +13,23 @@ import {
 
 function make(layout) {
   const core = {
-    layout: null, // readonly
+    _layout: null,
+    get layout() {
+      return this._layout;
+    },
+    set layout(layout) {
+      makeObjectIterable(layout);
+      validateLayout(layout);
+      this._layout = layout;
+      setLayoutIds(core);
+    },
     zoneIdManager: makeIdManager(),
     containerIdManager: makeIdManager(),
   };
 
-  makeObjectIterable(layout);
-  validateLayout(layout);
-  core.layout = layout;
-  setLayoutIds(core);
+  if (layout) {
+    core.layout = layout;
+  }
 
   core.deleteZone = makeDeleteFeature(core);
   core.getNodes = makeGetNodesFeature(core);
