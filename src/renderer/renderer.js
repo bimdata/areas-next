@@ -100,13 +100,13 @@ function makeRenderer() {
         },
       });
 
-      renderer.contentManager = makeContentManager(renderer);
-
       this.root = app.mount(htmlElement);
 
       return app;
     },
   };
+
+  renderer.contentManager = makeContentManager(renderer);
 
   function buildLayout(layout) {
     if (layout.type === "zone") {
