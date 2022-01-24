@@ -71,7 +71,7 @@
         ],
       };
 
-      const areas = makeAreas(Vue);
+      const areas = makeAreas(Vue, layout);
 
       areas.registerContent("Content1", {
         template: `<div>Content 1 {{ text }}</div>`,
@@ -120,7 +120,11 @@
         template: `<div>Content 4</div>`,
       });
 
-      areas.mount(document.getElementById("area"), layout);
+      Vue.createApp({
+        render() {
+          return Vue.h(areas.component);
+        },
+      }).mount("#area");
 
       window.areas = areas;
     </script>

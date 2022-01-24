@@ -83,7 +83,7 @@ declare namespace Areas {
       content: Component,
       options?: ContentOptions
     ): void;
-    mount(el: HTMLElement, layoutData: Layout): App;
+    readonly component: VueComponentInstance;
   }
 
   /**
@@ -97,9 +97,9 @@ declare namespace Areas {
   interface ContentOptions {}
 
   /**
-   * Vue.js App
+   * Vue.js Component instance
    */
-  interface App {}
+  interface VueComponentInstance {}
 
   /**
    * Vue.js
@@ -141,7 +141,7 @@ declare namespace Areas {
   }
 
   interface Renderer extends Destroyable {
-    root: App;
+    root: VueComponentInstance;
     vue: Vue;
     core: Core;
     resize(containerChild: ContainerChild, value: number): void;
@@ -161,8 +161,8 @@ declare namespace Areas {
       insertAfter: boolean
     ): Promise<void>;
     delete(zoneId: number): Promise<void>;
-    mount(htmlElement: HTMLElement): App;
     contentManager: ContentManager;
+    readonly component: VueComponentInstance;
   }
 
   interface ContentManager {
