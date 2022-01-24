@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Areas</title>
     <link rel="stylesheet" href="./index.css" />
+    <script src="https://unpkg.com/vue@next"></script>
   </head>
   <body>
     <div id="area" style="height: 500px"></div>
@@ -70,7 +71,7 @@
         ],
       };
 
-      const areas = makeAreas();
+      const areas = makeAreas(Vue);
 
       areas.registerContent("Content1", {
         template: `<div>Content 1 {{ text }}</div>`,

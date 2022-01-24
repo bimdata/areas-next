@@ -3,11 +3,12 @@ import { deepCopy } from "./core/utils.js";
 import makeRenderer from "./renderer/renderer.js";
 
 /**
+ * @param { Object } vue Vue.js 3
  * @returns { Areas.Areas }
  */
-function makeAreas() {
+function makeAreas(vue) {
   const core = makeCore();
-  const renderer = makeRenderer(core);
+  const renderer = makeRenderer(core, vue);
 
   const areas = Object.freeze({
     core,

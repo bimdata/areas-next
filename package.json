@@ -1,27 +1,30 @@
 {
-  "name": "areas-web-component",
-  "version": "0.0.1",
+  "name": "@bimdata/areas-next",
+  "version": "0.1.0",
   "description": "This is a web component version of [Areas](https://github.com/bimdata/areas).",
-  "main": "src/main.js",
+  "main": "dist/areas.js",
   "scripts": {
     "predev": "rm -rf dist",
+    "prebuild": "rm -rf dist",
     "dev": "esbuild ./src/areas.js --bundle --format=esm --outfile=dist/areas.js --sourcemap --watch '--define:process.env.NODE_ENV=\"development\"'",
+    "build": "esbuild ./src/areas.js --bundle --format=esm --minify --outfile=dist/areas.js '--define:process.env.NODE_ENV=\"production\"'",
     "test": "jest --verbose"
   },
+  "files": [
+    "dist/*",
+    "index.d.ts"
+  ],
   "types": "./index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bimdata/areas-web-components.git"
+    "url": "git+https://github.com/bimdata/areas-next.git"
   },
   "author": "BIMData.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bimdata/areas-web-components/issues"
+    "url": "https://github.com/bimdata/areas-next/issues"
   },
-  "homepage": "https://github.com/bimdata/areas-web-components#readme",
-  "dependencies": {
-    "vue": "^3.2.6"
-  },
+  "homepage": "https://github.com/bimdata/areas-next#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.14.5",
     "babel-core": "^6.26.3",

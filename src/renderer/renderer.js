@@ -1,17 +1,16 @@
-import * as vue from "vue/dist/vue.esm-bundler.js";
-
 import renderZone from "./zone.js";
 import renderContainer from "./container/container.js";
 import { getContainerDimensions } from "./container/utils.js";
 import makeContentManager from "./contentManager/contentManager.js";
 
 /**
- * @param { Areas.Core }
+ * @param { Areas.Core } core
+ * @param { Object } vue Vue.js 3
  * @return { Areas.Renderer }
  */
-function makeRenderer(core) {
+function makeRenderer(core, vue) {
   const renderer = {
-    vue,
+    vue: vue,
     core,
     zones: vue.ref([]),
     get width() {
