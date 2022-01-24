@@ -1,6 +1,5 @@
 import renderZone from "./zone.js";
 import renderContainer from "./container/container.js";
-import { getContainerDimensions } from "./container/utils.js";
 import makeContentManager from "./contentManager/contentManager.js";
 
 /**
@@ -24,9 +23,6 @@ function makeRenderer(core, vue) {
     },
     getParent(containerChild) {
       return this.core.getParent(containerChild);
-    },
-    getContainerDimensions(container) {
-      return getContainerDimensions(this, container);
     },
     resize(containerChild, value) {
       this.core.resize(containerChild, value);

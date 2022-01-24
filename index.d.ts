@@ -146,9 +146,6 @@ declare namespace Areas {
     core: Core;
     resize(containerChild: ContainerChild, value: number): void;
     getParent(containerChild: ContainerChild): Container;
-    getContainerDimensions(
-      container: Container
-    ): { width: number; height: number };
     readonly width: number;
     readonly heigth: number;
     readonly separatorSize: number;
