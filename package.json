@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "This is a web component version of [Areas](https://github.com/bimdata/areas).",
   "main": "dist/areas.js",
+  "private": false,
   "scripts": {
     "predev": "rm -rf dist",
     "prebuild": "rm -rf dist",
