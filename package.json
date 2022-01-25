@@ -9,7 +9,8 @@
     "prebuild": "rm -rf dist",
     "dev": "esbuild ./src/areas.js --bundle --format=esm --outfile=dist/areas.js --sourcemap --watch '--define:process.env.NODE_ENV=\"development\"'",
     "build": "esbuild ./src/areas.js --bundle --format=esm --minify --outfile=dist/areas.js '--define:process.env.NODE_ENV=\"production\"'",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist/*",
