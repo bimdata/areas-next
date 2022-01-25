@@ -4,10 +4,11 @@ import makeRenderer from "./renderer/renderer.js";
 
 /**
  * @param { Object } vue Vue.js 3
+ * @param { Areas.Layout } layoutData
  * @returns { Areas.Areas }
  */
-function makeAreas(vue) {
-  const core = makeCore();
+function makeAreas(vue, layoutData) {
+  const core = makeCore(layoutData);
   const renderer = makeRenderer(core, vue);
 
   const areas = Object.freeze({
@@ -31,12 +32,11 @@ function makeAreas(vue) {
     registerContent(name, content, options) {
       return this.renderer.contentManager.setContent(name, content, options);
     },
-    mount(el, layoutData) {
-      this.core.layout = layoutData;
-      return this.renderer.mount(el, layoutData);
-    },
     get layout() {
       return deepCopy(this.core.layout);
+    },
+    get component() {
+      return this.renderer.component;
     },
   });
 

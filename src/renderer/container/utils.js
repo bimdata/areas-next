@@ -45,7 +45,7 @@ function getContainerChildStyleSizes(renderer, container, containerChild) {
   const {
     width: containerWidth,
     height: containerHeight,
-  } = renderer.getContainerDimensions(container);
+  } = getContainerDimensions(renderer, container);
 
   const separatorCount = container.children.length - 1;
 
@@ -68,4 +68,4 @@ function getContainerChildStyleSizes(renderer, container, containerChild) {
   }
 }
 
-export { getContainerDimensions, getContainerChildStyleSizes };
+export { getContainerChildStyleSizes };

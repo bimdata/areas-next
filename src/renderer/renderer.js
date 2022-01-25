@@ -1,6 +1,5 @@
 import renderZone from "./zone.js";
 import renderContainer from "./container/container.js";
-import { getContainerDimensions } from "./container/utils.js";
 import makeContentManager from "./contentManager/contentManager.js";
 
 /**
@@ -9,24 +8,24 @@ import makeContentManager from "./contentManager/contentManager.js";
  * @return { Areas.Renderer }
  */
 function makeRenderer(core, vue) {
+  const widthRef = vue.ref(0);
+  const heightRef = vue.ref(0);
+
   const renderer = {
     vue: vue,
     core,
     zones: vue.ref([]),
     get width() {
-      return this.widthRef?.value;
+      return widthRef.value;
     },
     get height() {
-      return this.heightRef?.value;
+      return heightRef.value;
     },
     get separatorSize() {
       return 3;
     },
     getParent(containerChild) {
       return this.core.getParent(containerChild);
-    },
-    getContainerDimensions(container) {
-      return getContainerDimensions(this, container);
     },
     resize(containerChild, value) {
       this.core.resize(containerChild, value);
@@ -55,10 +54,7 @@ function makeRenderer(core, vue) {
       this.resizeObserver?.disconnect();
     },
     root: null,
-    /**
-     * @param {HTMLElement} htmlElement
-     */
-    mount(htmlElement) {
+    get component() {
       this.layout = vue.shallowRef(core.layout);
 
       vue.watch(
@@ -73,27 +69,31 @@ function makeRenderer(core, vue) {
         }
       );
 
-      const {
-        width: initWidth,
-        height: initHeight,
-      } = htmlElement.getBoundingClientRect();
-
-      this.widthRef = vue.ref(initWidth);
-      this.heightRef = vue.ref(initHeight);
-
-      this.resizeObserver = new ResizeObserver(entries =>
-        entries.forEach(entry => {
-          const { width, height } = entry.target.getBoundingClientRect();
-
-          this.widthRef.value = width;
-          this.heightRef.value = height;
-        })
-      );
-
-      this.resizeObserver.observe(htmlElement);
-      const app = vue.createApp({
+      return {
+        created() {
+          renderer.root = this;
+        },
         mounted() {
-          setTimeout(() => renderer.contentManager.link());
+          const {
+            width: initWidth,
+            height: initHeight,
+          } = this.$el.getBoundingClientRect();
+
+          widthRef.value = initWidth;
+          heightRef.value = initHeight;
+
+          renderer.resizeObserver = new ResizeObserver(entries =>
+            entries.forEach(entry => {
+              const { width, height } = entry.target.getBoundingClientRect();
+
+              widthRef.value = width;
+              heightRef.value = height;
+            })
+          );
+
+          renderer.resizeObserver.observe(this.$el);
+
+          renderer.contentManager.link();
         },
         render() {
           return vue.h(
@@ -108,11 +108,7 @@ function makeRenderer(core, vue) {
             ]
           );
         },
-      });
-
-      this.root = app.mount(htmlElement);
-
-      return app;
+      };
     },
   };
 
