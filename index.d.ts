@@ -1,4 +1,4 @@
-declare module "@bimdata/areas" {
+declare module "@bimdata/areas-next" {
   export default Areas.AreasFactory;
 }
 
