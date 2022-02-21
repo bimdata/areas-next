@@ -122,7 +122,7 @@
 
       Vue.createApp({
         render() {
-          return Vue.h(areas.component);
+          return Vue.h(areas.component, { style: "height: 100%;" });
         },
       }).mount("#area");
 
