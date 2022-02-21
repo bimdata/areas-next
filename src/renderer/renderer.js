@@ -100,7 +100,6 @@ function makeRenderer(core, vue) {
             "div",
             {
               class: "areas-root",
-              style: { height: "100%", overflow: "hidden" },
             },
             [
               renderer.contentManager.renderContent(renderer.layout.value),
