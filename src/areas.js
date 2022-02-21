@@ -3,7 +3,7 @@ import { deepCopy } from "./core/utils.js";
 import makeRenderer from "./renderer/renderer.js";
 
 /**
- * @param { Object } vue Vue.js 3
+ * @param { Areas.Vue } vue Vue.js 3
  * @param { Areas.Layout } layoutData
  * @returns { Areas.Areas }
  */

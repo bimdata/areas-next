@@ -3,7 +3,7 @@ declare module "@bimdata/areas-next" {
 }
 
 declare namespace Areas {
-  function AreasFactory(htmlElement: HTMLElement, layoutData: Object): Areas;
+  function AreasFactory(vue: Vue, layoutData: Object): Areas;
 
   interface Destroyable {
     destroy(): void;
