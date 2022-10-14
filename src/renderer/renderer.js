@@ -27,28 +27,52 @@ function makeRenderer(core, vue) {
     getParent(containerChild) {
       return this.core.getParent(containerChild);
     },
+    /**
+     * After updating the core layout tree structure, it is required to synchronize the UI to reflect the changes.
+     *
+     * NOTE: a simple resize does not alter the tree structure of the layout, it does not require such a re-synchronization.
+     *
+     * If core.layout reference is updated, it must be reassigned to renderer.layout,
+     * else, a simple `vue.triggerRef` on the renderer.layout is enough (triggerRef=true).
+     *
+     * @param { boolean } [triggerRef=false]
+     */
+    async coreLayoutSync(reassignedLayout = false) {
+      if (reassignedLayout) {
+        this.layout.value = this.core.layout;
+      } else {
+        vue.triggerRef(this.layout);
+      }
+      await vue.nextTick();
+      this.contentManager.link();
+    },
     resize(containerChild, value) {
       this.core.resize(containerChild, value);
       vue.triggerRef(this.layout);
     },
     async split(zoneId, ratio, direction, insertAfter) {
       this.core.splitZone(zoneId, ratio, direction, insertAfter);
-      vue.triggerRef(this.layout);
-      await vue.nextTick();
-      this.contentManager.link();
+      await this.coreLayoutSync(this.zones.value.length === 1);
     },
     async splitLayout(ratio, direction, insertAfter) {
       this.core.splitLayout(ratio, direction, insertAfter);
-      this.layout.value = this.core.layout;
-      await vue.nextTick();
-      this.contentManager.link();
+      await this.coreLayoutSync(true);
     },
     async delete(zoneId) {
+      let layoutMustBeReassigned = false;
+
+      const zone = this.core.getZone(zoneId);
+      if (zone) {
+        const zoneParent = this.core.getParent(zone);
+        layoutMustBeReassigned =
+          zoneParent?.children.length === 2 &&
+          this.core.getParent(zoneParent) === null;
+      }
+
       this.contentManager.deleteZoneContent(zoneId);
       this.core.deleteZone(zoneId);
-      vue.triggerRef(this.layout);
-      await vue.nextTick();
-      this.contentManager.link();
+
+      await this.coreLayoutSync(layoutMustBeReassigned);
     },
     destroy() {
       this.resizeObserver?.disconnect();

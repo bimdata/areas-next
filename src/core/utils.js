@@ -3,6 +3,7 @@ function makeRecursiveIterator(obj) {
     obj.children.forEach(child => {
       Object.defineProperty(child, Symbol.iterator, {
         value: makeRecursiveIterator(child),
+        configurable: true,
       });
     });
   }
@@ -24,6 +25,7 @@ function makeRecursiveIterator(obj) {
 function makeObjectIterable(obj) {
   Object.defineProperty(obj, Symbol.iterator, {
     value: makeRecursiveIterator(obj),
+    configurable: true,
   });
 
   return obj;
