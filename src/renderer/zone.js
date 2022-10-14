@@ -26,6 +26,8 @@ function renderZone(renderer, zone) {
     );
 
     options.style = { width, height };
+  } else {
+    options.style = { height: "100%" };
   }
 
   return renderer.vue.h("div", options);
