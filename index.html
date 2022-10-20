@@ -74,11 +74,14 @@
       const areas = makeAreas(Vue, layout);
 
       areas.registerContent("Content1", {
-        template: `<div>Content 1 {{ text }}</div>`,
+        template: `<div>Content 1 {{ text }}. Zone id {{ zoneId }}</div>`,
         props: {
           text: {
             type: String,
             default: "pas coucou",
+          },
+          zoneId: {
+            type: Number,
           },
         },
       });
@@ -91,6 +94,11 @@
             text: "",
           };
         },
+        props: {
+          zoneId: {
+            type: Number,
+          },
+        },
         template: `
         <div>
           <div>Content 2</div>
@@ -98,6 +106,7 @@
             <input type='text' v-model="text" />
           </div>
           <div>{{text}}</div>
+          <div>Zone id {{ zoneId }}</div>
         </div>`,
       });
       areas.registerContent("Content3", {
