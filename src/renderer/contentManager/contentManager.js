@@ -47,7 +47,7 @@ function makeContentManager(renderer) {
             node.id,
             Object.assign({}, this.getContent(contentName), {
               ref: renderer.vue.ref(null),
-              options: node.options,
+              options: { zoneId: node.id, ...node.options },
               name: contentName,
             })
           );
