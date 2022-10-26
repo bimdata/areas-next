@@ -32,11 +32,10 @@ function makeDeleteFeature(core) {
     } else {
       // the container is removed and became the remaining zone
       const sibling = container.children[zoneIndex === 1 ? 0 : 1];
+      sibling.ratio = container.ratio;
 
       const containerParent = core.getParent(container);
       if (containerParent) {
-        sibling.ratio = container.ratio;
-
         const containerIndex = containerParent.children.indexOf(container);
         containerParent.children.splice(containerIndex, 1, sibling);
       } else {
