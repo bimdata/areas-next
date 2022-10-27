@@ -32,6 +32,9 @@ function makeAreas(vue, layoutData) {
     registerContent(name, content) {
       this.renderer.contentManager.registerContent(name, content);
     },
+    getElementZoneId(el) {
+      return this.renderer.contentManager.getElementZoneId(el);
+    },
     get layout() {
       return deepCopy(this.core.layout);
     },

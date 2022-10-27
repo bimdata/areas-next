@@ -83,7 +83,14 @@ function makeContentManager(renderer) {
         target.appendChild(contentElement);
       });
     },
-
+    getElementZoneId(el) {
+      for (const [zoneId, zoneRef] of [...zoneRefs.entries()]) {
+        if (zoneRef.value?.contains(el)) {
+          return zoneId;
+        }
+      }
+      return null;
+    },
     getRef(zoneId) {
       let zoneRef = zoneRefs.get(zoneId);
       if (!zoneRef) {
