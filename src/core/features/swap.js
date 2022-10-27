@@ -2,35 +2,35 @@
  * @param { Areas.Areas } core
  */
 function makeSwapFeature(core) {
-  return (srcZoneId, destZoneId) => {
-    const zoneSrc = core.getZone(srcZoneId);
-    const zoneDest = core.getZone(destZoneId);
+  return (zoneIdA, zoneIdB) => {
+    const zoneA = core.getZone(zoneIdA);
+    const zoneB = core.getZone(zoneIdB);
 
-    if (!zoneSrc) {
+    if (!zoneA) {
       throw new Error(
-        `AREAS CORE - fail to swap zone ${srcZoneId}: zone does not exist.`
+        `AREAS CORE - fail to swap zone ${zoneIdA}: zone does not exist.`
       );
     }
-    if (!zoneDest) {
+    if (!zoneB) {
       throw new Error(
-        `AREAS CORE - fail to swap to zone ${destZoneId}: zone does not exist.`
+        `AREAS CORE - fail to swap to zone ${zoneIdB}: zone does not exist.`
       );
     }
 
-    const zoneSrcContainer = core.getParent(zoneSrc);
-    const zoneDestContainer = core.getParent(zoneDest);
+    const zoneAContainer = core.getParent(zoneA);
+    const zoneBContainer = core.getParent(zoneB);
 
-    const zoneSrcIndex = zoneSrcContainer.children.indexOf(zoneSrc);
-    const zoneDestIndex = zoneDestContainer.children.indexOf(zoneDest);
+    const zoneAIndex = zoneAContainer.children.indexOf(zoneA);
+    const zoneBIndex = zoneBContainer.children.indexOf(zoneB);
 
-    const zoneSrcRatio = zoneSrc.ratio;
-    const zoneDestRatio = zoneDest.ratio;
+    const zoneARatio = zoneA.ratio;
+    const zoneBRatio = zoneB.ratio;
 
-    zoneSrc.ratio = zoneDestRatio;
-    zoneDest.ratio = zoneSrcRatio;
+    zoneA.ratio = zoneBRatio;
+    zoneB.ratio = zoneARatio;
 
-    zoneSrcContainer.children[zoneSrcIndex] = zoneDest;
-    zoneDestContainer.children[zoneDestIndex] = zoneSrc;
+    zoneAContainer.children[zoneAIndex] = zoneB;
+    zoneBContainer.children[zoneBIndex] = zoneA;
   };
 }
 

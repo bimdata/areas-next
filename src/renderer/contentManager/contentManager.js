@@ -100,27 +100,6 @@ function makeContentManager(renderer) {
 
       return zoneRef;
     },
-
-    /**
-     * Swap (switch) the contents of two zones.
-     *
-     * @param {number} srcZoneId id of the source zone
-     * @param {number} targetZoneId id of the target zone
-     */
-    async swap(srcZoneId, targetZoneId) {
-      const srcContent = zoneContent.get(srcZoneId);
-      const targetContent = zoneContent.get(targetZoneId);
-
-      if (!(srcContent && targetContent)) {
-        console.warn("[Content Manager] Swap: no content.");
-        return;
-      }
-
-      zoneContent.set(srcZoneId, targetContent);
-      zoneContent.set(targetZoneId, srcContent);
-
-      this.link();
-    },
     deleteZoneContent(zoneId) {
       zoneContent.delete(zoneId);
       zoneRefs.delete(zoneId);

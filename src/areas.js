@@ -17,8 +17,8 @@ function makeAreas(vue, layoutData) {
     destroy() {
       renderer.destroy();
     },
-    swap(srcZoneId, targetZoneId) {
-      this.renderer.contentManager.swap(srcZoneId, targetZoneId);
+    swap(zoneIdA, zoneIdB) {
+      return this.renderer.swap(zoneIdA, zoneIdB);
     },
     split(zoneId, ratio, direction, insertAfter) {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);

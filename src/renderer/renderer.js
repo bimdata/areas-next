@@ -74,6 +74,10 @@ function makeRenderer(core, vue) {
 
       await this.coreLayoutSync(layoutMustBeReassigned);
     },
+    async swap(zoneIdA, zoneIdB) {
+      this.core.swapZones(zoneIdA, zoneIdB);
+      await this.coreLayoutSync();
+    },
     destroy() {
       this.resizeObserver?.disconnect();
     },
