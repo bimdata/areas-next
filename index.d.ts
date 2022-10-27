@@ -64,7 +64,7 @@ declare namespace Areas {
       ratio?: number,
       direction?: Direction,
       insertAfter?: boolean
-    ): Promise<Zone>;
+    ): Promise<void>;
     /**
      * Split layout.
      *
@@ -76,13 +76,9 @@ declare namespace Areas {
       ratio?: number,
       direction?: Direction,
       insertAfter?: boolean
-    ): Promise<Zone>;
+    ): Promise<void>;
     delete(zoneId: number): Promise<void>;
-    registerContent(
-      name: string,
-      content: Component,
-      options?: ContentOptions
-    ): void;
+    registerContent(name: string, content: Component): void;
     readonly component: VueComponentInstance;
   }
 
@@ -166,9 +162,7 @@ declare namespace Areas {
   }
 
   interface ContentManager {
-    getContent(name: string): Content;
-    getZoneContent(zoneId: number): ContentInstance;
-    setContent(name: string, component: Object, options?: Object): void;
+    registerContent(name: string, component: Object): void;
     renderContent(layout: Layout): VNode;
     link(): void;
     getRef(zoneId: number): { value: any };
@@ -182,7 +176,7 @@ declare namespace Areas {
   }
 
   interface ContentInstance extends Content {
-    options?: Object;
-    ref?: { value: any };
+    options: { zoneId: number; key: number } | any;
+    ref: { value: any };
   }
 }

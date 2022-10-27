@@ -3,14 +3,14 @@
  * @returns { Areas.ContentManager }
  */
 function makeContentManager(renderer) {
-  /** @type { Map<number, Areas.Content> } */
-  const contents = new Map();
+  /** @type { Map<string, Areas.Content> } */
+  const registeredContents = new Map();
   /** @type { Map<number, Areas.ContentInstance> } */
   const zoneContent = new Map();
   /** @type { Map<number, Ref> } */
   const zoneRefs = new Map();
 
-  contents.set("default", {
+  registeredContents.set("default", {
     component: {
       render() {
         return renderer.vue.h("div", "Default component");
@@ -18,18 +18,17 @@ function makeContentManager(renderer) {
     },
   });
 
+  function getRegisteredContent(name) {
+    return registeredContents.has(name)
+      ? registeredContents.get(name)
+      : registeredContents.get("default");
+  }
+
   const contentManager = {
-    getContent(name) {
-      return contents.has(name) ? contents.get(name) : contents.get("default");
-    },
-    getZoneContent(zoneId) {
-      return zoneContent.get(zoneId);
-    },
-    setContent(name, component, options) {
-      contents.set(name, {
+    registerContent(name, component) {
+      registeredContents.set(name, {
         name,
         component,
-        options,
       });
     },
     /**
@@ -40,19 +39,19 @@ function makeContentManager(renderer) {
      * @returns {VNode}
      */
     renderContent(layout) {
-      for (const node of layout) {
-        if (node.type === "zone") {
-          const contentName = node.content ?? "default";
+      [...layout]
+        .filter(node => node.type === "zone")
+        .forEach(zone => {
+          const contentName = zone.content ?? "default";
           zoneContent.set(
-            node.id,
-            Object.assign({}, this.getContent(contentName), {
+            zone.id,
+            Object.assign({}, getRegisteredContent(contentName), {
               ref: renderer.vue.ref(null),
-              options: { zoneId: node.id, ...node.options, key: node.id },
+              options: { ...zone.options, key: zone.id },
               name: contentName,
             })
           );
-        }
-      }
+        });
 
       return renderer.vue.h(
         "div",
@@ -101,7 +100,7 @@ function makeContentManager(renderer) {
      * @param {number} srcZoneId id of the source zone
      * @param {number} targetZoneId id of the target zone
      */
-    swap(srcZoneId, targetZoneId) {
+    async swap(srcZoneId, targetZoneId) {
       const srcContent = zoneContent.get(srcZoneId);
       const targetContent = zoneContent.get(targetZoneId);
 

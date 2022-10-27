@@ -18,7 +18,7 @@ function makeAreas(vue, layoutData) {
       renderer.destroy();
     },
     swap(srcZoneId, targetZoneId) {
-      return this.renderer.contentManager.swap(srcZoneId, targetZoneId);
+      this.renderer.contentManager.swap(srcZoneId, targetZoneId);
     },
     split(zoneId, ratio, direction, insertAfter) {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);
@@ -29,8 +29,8 @@ function makeAreas(vue, layoutData) {
     delete(zoneId) {
       return this.renderer.delete(zoneId);
     },
-    registerContent(name, content, options) {
-      return this.renderer.contentManager.setContent(name, content, options);
+    registerContent(name, content) {
+      this.renderer.contentManager.registerContent(name, content);
     },
     get layout() {
       return deepCopy(this.core.layout);
