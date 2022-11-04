@@ -19,9 +19,14 @@ function makeContentManager(renderer) {
   });
 
   function getRegisteredContent(name) {
-    return registeredContents.has(name)
-      ? registeredContents.get(name)
-      : registeredContents.get("default");
+    if (name && !registeredContents.has(name)) {
+      console.warn(
+        `[AREAS] Content with name ${name} is not registered, fallback to 'default'.`
+      );
+      name = "default";
+    }
+
+    return registeredContents.get(name);
   }
 
   const contentManager = {
@@ -42,13 +47,12 @@ function makeContentManager(renderer) {
       [...layout]
         .filter(node => node.type === "zone")
         .forEach(zone => {
-          const contentName = zone.content ?? "default";
           zoneContent.set(
             zone.id,
-            Object.assign({}, getRegisteredContent(contentName), {
+            Object.assign({}, getRegisteredContent(zone.content ?? "default"), {
               ref: renderer.vue.ref(null),
               options: { zoneId: zone.id, ...zone.options, key: zone.id },
-              name: contentName,
+              name: zone.content ?? "default",
             })
           );
         });

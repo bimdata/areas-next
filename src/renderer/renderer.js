@@ -54,8 +54,8 @@ function makeRenderer(core, vue) {
       this.core.splitZone(zoneId, ratio, direction, insertAfter);
       await this.coreLayoutSync(this.zones.value.length === 1);
     },
-    async splitLayout(ratio, direction, insertAfter) {
-      this.core.splitLayout(ratio, direction, insertAfter);
+    async splitLayout(ratio, direction, insertAfter, cfg) {
+      this.core.splitLayout(ratio, direction, insertAfter, cfg);
       await this.coreLayoutSync(true);
     },
     async delete(zoneId) {
