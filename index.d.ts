@@ -75,7 +75,8 @@ declare namespace Areas {
     splitLayout(
       ratio?: number,
       direction?: Direction,
-      insertAfter?: boolean
+      insertAfter?: boolean,
+      cfg?: { content?: string; options?: Object }
     ): Promise<void>;
     delete(zoneId: number): Promise<void>;
     registerContent(name: string, content: Component): void;
@@ -125,7 +126,8 @@ declare namespace Areas {
     splitLayout(
       ratio?: number,
       direction?: Direction,
-      insertAfter?: boolean
+      insertAfter?: boolean,
+      cfg?: { content?: string; options?: Object }
     ): Zone;
     swapZones(zoneId1: number, zoneId2: number): void;
   }
@@ -154,7 +156,8 @@ declare namespace Areas {
     splitLayout(
       ratio: number,
       direction: Direction,
-      insertAfter: boolean
+      insertAfter: boolean,
+      cfg?: { content?: string; options?: Object }
     ): Promise<void>;
     delete(zoneId: number): Promise<void>;
     contentManager: ContentManager;

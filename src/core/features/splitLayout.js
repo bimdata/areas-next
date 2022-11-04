@@ -1,7 +1,7 @@
 import { makeObjectIterable } from "../utils.js";
 
 function makeSplitLayoutFeature(core) {
-  return (ratio = 50, direction = "row", insertAfter = true) => {
+  return (ratio = 50, direction = "row", insertAfter = true, cfg = null) => {
     const layout = core.layout;
 
     if (typeof ratio !== "number" || ratio < 0 || ratio > 100) {
@@ -18,6 +18,7 @@ function makeSplitLayoutFeature(core) {
     const newZone = makeObjectIterable({
       id: core.zoneIdManager.nextId(),
       type: "zone",
+      ...cfg,
     });
 
     const newContainer = makeObjectIterable({

@@ -23,8 +23,8 @@ function makeAreas(vue, layoutData) {
     split(zoneId, ratio, direction, insertAfter) {
       return this.renderer.split(zoneId, ratio, direction, insertAfter);
     },
-    splitLayout(ratio, direction, insertAfter) {
-      return this.renderer.splitLayout(ratio, direction, insertAfter);
+    splitLayout(ratio, direction, insertAfter, cfg) {
+      return this.renderer.splitLayout(ratio, direction, insertAfter, cfg);
     },
     delete(zoneId) {
       return this.renderer.delete(zoneId);

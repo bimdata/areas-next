@@ -1,4 +1,4 @@
-import { getContainerChildStyleSizes } from "./container/utils.js";
+import { getContainerChildStyleSizes } from "./utils.js";
 
 /**
  * @param { Areas.Renderer } renderer

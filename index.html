@@ -33,7 +33,9 @@
               {
                 type: "zone",
                 ratio: 50,
-                content: "Content4",
+                options: {
+                  text: "coucou",
+                },
               },
             ],
           },
@@ -125,8 +127,14 @@
             vue.h("div", loading.value ? "LOADING !!!" : "Content 3");
         },
       });
-      areas.registerContent("Content4", {
-        template: `<div>Content 4</div>`,
+      areas.registerContent("default", {
+        template: `<div>Default component: {{text}}</div>`,
+        props: {
+          text: {
+            type: String,
+            default: "no props text specified.",
+          },
+        },
       });
 
       Vue.createApp({
