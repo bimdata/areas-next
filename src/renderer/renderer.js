@@ -1,6 +1,6 @@
 import renderZone from "./zone.js";
-import renderContainer from "./container/container.js";
-import makeContentManager from "./contentManager/contentManager.js";
+import renderContainer from "./container.js";
+import makeContentManager from "./contentManager.js";
 
 /**
  * @param { Areas.Core } core

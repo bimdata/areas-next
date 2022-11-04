@@ -1,6 +1,6 @@
-import renderSeparator from "../separator.js";
+import renderSeparator from "./separator.js";
 
-import renderZone from "../zone.js";
+import renderZone from "./zone.js";
 import { getContainerChildStyleSizes } from "./utils.js";
 
 /**
