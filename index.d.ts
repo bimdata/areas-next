@@ -50,7 +50,7 @@ declare namespace Areas {
      * @param { number } srcZoneId id of the source zone
      * @param { number } targetZoneId id of the target zone
      */
-    swap(srcZoneId: number, targetZoneId: number): void;
+    swap(srcZoneId: number, targetZoneId: number): Promise<void>;
     /**
      * Split zone.
      *
