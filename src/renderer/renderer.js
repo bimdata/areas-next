@@ -50,8 +50,8 @@ function makeRenderer(core, vue) {
       this.core.resize(containerChild, value);
       vue.triggerRef(this.layout);
     },
-    async split(zoneId, ratio, direction, insertAfter) {
-      this.core.splitZone(zoneId, ratio, direction, insertAfter);
+    async split(zoneId, ratio, direction, insertAfter, cfg) {
+      this.core.splitZone(zoneId, ratio, direction, insertAfter, cfg);
       await this.coreLayoutSync(this.zones.value.length === 1);
     },
     async splitLayout(ratio, direction, insertAfter, cfg) {

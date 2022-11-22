@@ -63,7 +63,8 @@ declare namespace Areas {
       zoneId: number,
       ratio?: number,
       direction?: Direction,
-      insertAfter?: boolean
+      insertAfter?: boolean,
+      cfg?: { content?: string; options?: Object }
     ): Promise<void>;
     /**
      * Split layout.

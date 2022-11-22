@@ -1,7 +1,13 @@
 import { makeObjectIterable } from "../utils.js";
 
 function makeSplitFeature(core) {
-  return (zoneId, ratio = 50, direction = "row", insertAfter = true) => {
+  return (
+    zoneId,
+    ratio = 50,
+    direction = "row",
+    insertAfter = true,
+    cfg = null
+  ) => {
     const zone = core.getZone(zoneId);
     if (!zone) {
       throw new Error(
@@ -23,6 +29,7 @@ function makeSplitFeature(core) {
     const newZone = makeObjectIterable({
       id: core.zoneIdManager.nextId(),
       type: "zone",
+      ...cfg,
     });
     if (container) {
       const zoneIndex = container.children.findIndex(child => child === zone);
