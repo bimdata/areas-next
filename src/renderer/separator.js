@@ -3,22 +3,43 @@
  * @param { Areas.Container } container
  */
 function renderSeparator(renderer, container, index) {
-  const cursor = container.direction === "column" ? "ns-resize" : "ew-resize";
+  const {
+    separatorSize,
+    separatorDetectionMargin,
+    separatorDetectionZIndex,
+  } = renderer;
+
+  const isColumn = container.direction === "column";
+
+  const cursor = isColumn ? "ns-resize" : "ew-resize";
   const options = {
     ref: `separator-${container.id}-${index + 1}`,
     class: "areas-separator",
     style: {
-      [container.direction === "column"
-        ? "height"
-        : "width"]: `${renderer.separatorSize}px`,
+      [isColumn ? "height" : "width"]: `${separatorSize}px`,
       cursor,
       backgroundColor: "var(--areas-separator-color, black)",
       flexShrink: 0,
+      position: "relative",
     },
     onMousedown: e => onMouseDown(renderer, container, index, e, cursor),
   };
 
-  return renderer.vue.h("div", options);
+  const detectionElement = renderer.vue.h("div", {
+    // detection margin
+    style: {
+      position: "absolute",
+      [isColumn ? "height" : "width"]: `${separatorDetectionMargin * 2}px`,
+      [isColumn ? "width" : "height"]: "100%",
+      [isColumn ? "top" : "left"]: `${
+        -separatorDetectionMargin + separatorSize / 2
+      }px`,
+      zIndex: separatorDetectionZIndex,
+      cursor,
+    },
+  });
+
+  return renderer.vue.h("div", options, [detectionElement]);
 }
 
 function onMouseDown(renderer, container, index, mouseEvent, cursor) {
@@ -50,7 +71,7 @@ function drag(renderer, container, index, e) {
     renderer.root.$refs[`separator-${container.id}-${index + 1}`];
 
   const separatorRect = separatorElement.getBoundingClientRect();
-  const separatorSize = separatorRect[dimension];
+  const { separatorSize } = renderer;
 
   const deltaSize =
     (container.direction === "column"
