@@ -5,11 +5,12 @@ import makeRenderer from "./renderer/renderer.js";
 /**
  * @param { Areas.Vue } vue Vue.js 3
  * @param { Areas.Layout } layoutData
+ * @param { { separatorSize: number, separatorDetectionMargin: number } } options
  * @returns { Areas.Areas }
  */
-function makeAreas(vue, layoutData) {
+function makeAreas(vue, layoutData, options) {
   const core = makeCore(layoutData);
-  const renderer = makeRenderer(core, vue);
+  const renderer = makeRenderer(core, vue, options);
 
   const areas = Object.freeze({
     core,

@@ -5,11 +5,18 @@ import makeContentManager from "./contentManager.js";
 /**
  * @param { Areas.Core } core
  * @param { Object } vue Vue.js 3
+ * @param { { separatorSize?: number, separatorDetectionMargin?: number, separatorDetectionZIndex?: number } } [options]
  * @return { Areas.Renderer }
  */
-function makeRenderer(core, vue) {
+function makeRenderer(core, vue, options = {}) {
   const widthRef = vue.ref(0);
   const heightRef = vue.ref(0);
+
+  const {
+    separatorSize = 2,
+    separatorDetectionMargin = 10,
+    separatorDetectionZIndex = 2,
+  } = options;
 
   const renderer = {
     vue: vue,
@@ -22,7 +29,13 @@ function makeRenderer(core, vue) {
       return heightRef.value;
     },
     get separatorSize() {
-      return 3;
+      return separatorSize;
+    },
+    get separatorDetectionMargin() {
+      return separatorDetectionMargin;
+    },
+    get separatorDetectionZIndex() {
+      return separatorDetectionZIndex;
     },
     getParent(containerChild) {
       return this.core.getParent(containerChild);

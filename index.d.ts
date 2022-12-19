@@ -3,7 +3,17 @@ declare module "@bimdata/areas-next" {
 }
 
 declare namespace Areas {
-  function AreasFactory(vue: Vue, layoutData: Object): Areas;
+  function AreasFactory(
+    vue: Vue,
+    layoutData: Object,
+    options: AreasOptions
+  ): Areas;
+
+  interface AreasOptions {
+    separatorSize?: number;
+    separatorDetectionMargin?: number;
+    separatorDetectionZIndex?: number;
+  }
 
   interface Destroyable {
     destroy(): void;
@@ -148,6 +158,8 @@ declare namespace Areas {
     readonly width: number;
     readonly heigth: number;
     readonly separatorSize: number;
+    readonly separatorDetectionMargin: number;
+    readonly separatorDetectionZIndex: number;
     split(
       zoneId: number,
       ratio: number,
