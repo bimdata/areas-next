@@ -64,12 +64,14 @@ function makeRenderer(core, vue, options = {}) {
       vue.triggerRef(this.layout);
     },
     async split(zoneId, ratio, direction, insertAfter, cfg) {
-      this.core.splitZone(zoneId, ratio, direction, insertAfter, cfg);
+      const coreResult = this.core.splitZone(zoneId, ratio, direction, insertAfter, cfg);
       await this.coreLayoutSync(this.zones.value.length === 1);
+      return coreResult;
     },
     async splitLayout(ratio, direction, insertAfter, cfg) {
-      this.core.splitLayout(ratio, direction, insertAfter, cfg);
+      const coreResult = this.core.splitLayout(ratio, direction, insertAfter, cfg);
       await this.coreLayoutSync(true);
+      return coreResult;
     },
     async delete(zoneId) {
       let layoutMustBeReassigned = false;
@@ -83,13 +85,16 @@ function makeRenderer(core, vue, options = {}) {
       }
 
       this.contentManager.deleteZoneContent(zoneId);
-      this.core.deleteZone(zoneId);
+      const coreResult = this.core.deleteZone(zoneId);
 
       await this.coreLayoutSync(layoutMustBeReassigned);
+
+      return coreResult;
     },
     async swap(zoneIdA, zoneIdB) {
-      this.core.swapZones(zoneIdA, zoneIdB);
+      const coreResult = this.core.swapZones(zoneIdA, zoneIdB);
       await this.coreLayoutSync();
+      return coreResult;
     },
     destroy() {
       this.resizeObserver?.disconnect();

@@ -44,7 +44,7 @@ function makeDeleteFeature(core) {
       }
     }
 
-    return zone;
+    return true;
   };
 }
 
