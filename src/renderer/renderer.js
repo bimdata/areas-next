@@ -64,12 +64,23 @@ function makeRenderer(core, vue, options = {}) {
       vue.triggerRef(this.layout);
     },
     async split(zoneId, ratio, direction, insertAfter, cfg) {
-      const coreResult = this.core.splitZone(zoneId, ratio, direction, insertAfter, cfg);
+      const coreResult = this.core.splitZone(
+        zoneId,
+        ratio,
+        direction,
+        insertAfter,
+        cfg
+      );
       await this.coreLayoutSync(this.zones.value.length === 1);
       return coreResult;
     },
     async splitLayout(ratio, direction, insertAfter, cfg) {
-      const coreResult = this.core.splitLayout(ratio, direction, insertAfter, cfg);
+      const coreResult = this.core.splitLayout(
+        ratio,
+        direction,
+        insertAfter,
+        cfg
+      );
       await this.coreLayoutSync(true);
       return coreResult;
     },

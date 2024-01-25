@@ -39,6 +39,11 @@ function makeAreas(vue, layoutData, options) {
     get layout() {
       return deepCopy(this.core.layout);
     },
+    set layout(layout) {
+      this.core.layout = layout;
+      this.renderer.contentManager.clean();
+      this.renderer.coreLayoutSync(true);
+    },
     get component() {
       return this.renderer.component;
     },

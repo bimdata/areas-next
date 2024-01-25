@@ -108,6 +108,10 @@ function makeContentManager(renderer) {
       zoneContent.delete(zoneId);
       zoneRefs.delete(zoneId);
     },
+    clean() {
+      zoneContent.clear();
+      zoneRefs.clear();
+    },
   };
 
   return contentManager;

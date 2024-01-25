@@ -11,7 +11,7 @@ import {
   makeSwapFeature,
 } from "./features/index.js";
 
-function make(layout) {
+function make(layout = { type: "zone" }) {
   const core = {
     _layout: null,
     get layout() {
@@ -27,9 +27,7 @@ function make(layout) {
     containerIdManager: makeIdManager(),
   };
 
-  if (layout) {
-    core.layout = layout;
-  }
+  core.layout = layout;
 
   core.deleteZone = makeDeleteFeature(core);
   core.getNodes = makeGetNodesFeature(core);
