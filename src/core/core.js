@@ -11,13 +11,17 @@ import {
   makeSwapFeature,
 } from "./features/index.js";
 
-function make(layout = { type: "zone" }) {
+function make(layout) {
   const core = {
     _layout: null,
     get layout() {
       return this._layout;
     },
     set layout(layout) {
+      if (!layout) {
+        layout = { type: "zone" }; // nullish layout fallback to a single zone
+      }
+
       makeObjectIterable(layout);
       validateLayout(layout);
       this._layout = layout;
