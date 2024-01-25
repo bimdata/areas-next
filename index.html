@@ -1,107 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Areas</title>
-    <link rel="stylesheet" href="./index.css" />
-    <script src="https://unpkg.com/vue@next"></script>
-  </head>
-  <body>
-    <div id="area" style="height: 500px"></div>
-    <script type="module">
-      import makeAreas from "./dist/areas.js";
 
-      const layout = {
-        type: "container",
-        direction: "row",
-        children: [
-          {
-            type: "container",
-            ratio: 50,
-            direction: "column",
-            children: [
-              {
-                type: "zone",
-                ratio: 50,
-                content: "Content1",
-                options: {
-                  text: "coucou",
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Areas</title>
+  <link rel="stylesheet" href="./index.css" />
+  <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+  <div id="area" style="height: 500px"></div>
+  <script type="module">
+    import makeAreas from "./dist/areas.js";
+
+    const layout = {
+      type: "container",
+      direction: "row",
+      children: [
+        {
+          type: "container",
+          ratio: 50,
+          direction: "column",
+          children: [
+            {
+              type: "zone",
+              ratio: 50,
+              content: "Content1",
+              options: {
+                text: "coucou",
+              },
+            },
+            {
+              type: "zone",
+              ratio: 50,
+              options: {
+                text: "coucou",
+              },
+            },
+          ],
+        },
+        {
+          type: "container",
+          ratio: 50,
+          direction: "column",
+          children: [
+            {
+              type: "zone",
+              ratio: 30,
+              content: "Content2",
+            },
+            {
+              type: "zone",
+              ratio: 30,
+            },
+            {
+              type: "container",
+              ratio: 40,
+              children: [
+                {
+                  type: "zone",
+                  ratio: 50,
                 },
-              },
-              {
-                type: "zone",
-                ratio: 50,
-                options: {
-                  text: "coucou",
+                {
+                  type: "zone",
+                  ratio: 50,
+                  content: "Content3",
                 },
-              },
-            ],
-          },
-          {
-            type: "container",
-            ratio: 50,
-            direction: "column",
-            children: [
-              {
-                type: "zone",
-                ratio: 30,
-                content: "Content2",
-              },
-              {
-                type: "zone",
-                ratio: 30,
-              },
-              {
-                type: "container",
-                ratio: 40,
-                children: [
-                  {
-                    type: "zone",
-                    ratio: 50,
-                  },
-                  {
-                    type: "zone",
-                    ratio: 50,
-                    content: "Content3",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      };
+              ],
+            },
+          ],
+        },
+      ],
+    };
 
-      const areas = makeAreas(Vue, layout);
+    const areas = makeAreas(Vue, null, { resizable: true });
 
-      areas.registerContent("Content1", {
-        template: `<div>Content 1 {{ text }}. Zone id {{ zoneId }}</div>`,
-        props: {
-          text: {
-            type: String,
-            default: "pas coucou",
-          },
-          zoneId: {
-            type: Number,
-          },
+    areas.layout = layout;
+
+    areas.registerContent("Content1", {
+      template: `<div>Content 1 {{ text }}. Zone id {{ zoneId }}</div>`,
+      props: {
+        text: {
+          type: String,
+          default: "pas coucou",
         },
-      });
-      areas.registerContent("Content2", {
-        mounted() {
-          console.log("mounted");
+        zoneId: {
+          type: Number,
         },
-        data() {
-          return {
-            text: "",
-          };
+      },
+    });
+    areas.registerContent("Content2", {
+      mounted() {
+        console.log("mounted");
+      },
+      data() {
+        return {
+          text: "",
+        };
+      },
+      props: {
+        zoneId: {
+          type: Number,
         },
-        props: {
-          zoneId: {
-            type: Number,
-          },
-        },
-        template: `
+      },
+      template: `
         <div>
           <div>Content 2</div>
           <div style="margin: 12px 0">
@@ -110,40 +114,43 @@
           <div>{{text}}</div>
           <div>Zone id {{ zoneId }}</div>
         </div>`,
-      });
-      areas.registerContent("Content3", {
-        setup() {
-          const vue = areas.renderer.vue;
+    });
+    areas.registerContent("Content3", {
+      setup() {
+        const vue = areas.renderer.vue;
 
-          const loading = vue.ref(true);
+        const loading = vue.ref(true);
 
-          vue.onMounted(() =>
-            setTimeout(() => {
-              loading.value = false;
-            }, 2000)
-          );
+        vue.onMounted(() =>
+          setTimeout(() => {
+            loading.value = false;
+          }, 2000)
+        );
 
-          return () =>
-            vue.h("div", loading.value ? "LOADING !!!" : "Content 3");
+        return () =>
+          vue.h("div", loading.value ? "LOADING !!!" : "Content 3");
+      },
+    });
+    areas.registerContent("default", {
+      template: `<div>Default component: {{text}}</div>`,
+      props: {
+        text: {
+          type: String,
+          default: "no props text specified.",
         },
-      });
-      areas.registerContent("default", {
-        template: `<div>Default component: {{text}}</div>`,
-        props: {
-          text: {
-            type: String,
-            default: "no props text specified.",
-          },
-        },
-      });
+      },
+    });
 
-      Vue.createApp({
-        render() {
-          return Vue.h(areas.component, { style: "height: 100%;" });
-        },
-      }).mount("#area");
+    Vue.createApp({
+      render() {
+        return Vue.h(areas.component, { style: "height: 100%;" });
+      },
+    }).mount("#area");
 
-      window.areas = areas;
-    </script>
-  </body>
+
+    window.areas = areas;
+    window.layout = layout;
+  </script>
+</body>
+
 </html>

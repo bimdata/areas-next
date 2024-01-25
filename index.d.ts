@@ -10,9 +10,22 @@ declare namespace Areas {
   ): Areas;
 
   interface AreasOptions {
+    /**
+     * @default 2
+     */
     separatorSize?: number;
+    /**
+     * @default 10
+     */
     separatorDetectionMargin?: number;
+    /**
+     * @default 2
+     */
     separatorDetectionZIndex?: number;
+    /**
+     * @default true
+     */
+    resisable?: boolean;
   }
 
   interface Destroyable {
@@ -53,7 +66,7 @@ declare namespace Areas {
   interface Areas extends Destroyable {
     readonly core: Core;
     readonly renderer: Renderer;
-    readonly layout: Layout;
+    layout: Layout;
     /**
      * Swap the contents of two zones.
      *
@@ -92,6 +105,7 @@ declare namespace Areas {
     delete(zoneId: number): Promise<boolean>;
     registerContent(name: string, content: Component): void;
     readonly component: VueComponentInstance;
+    resizable: boolean;
   }
 
   /**
@@ -153,6 +167,7 @@ declare namespace Areas {
     root: VueComponentInstance;
     vue: Vue;
     core: Core;
+    resizable: boolean;
     resize(containerChild: ContainerChild, value: number): void;
     getParent(containerChild: ContainerChild): Container;
     readonly width: number;

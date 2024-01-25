@@ -11,19 +11,18 @@ function renderSeparator(renderer, container, index) {
 
   const isColumn = container.direction === "column";
 
-  const cursor = isColumn ? "ns-resize" : "ew-resize";
   const options = {
     ref: `separator-${container.id}-${index + 1}`,
     class: "areas-separator",
     style: {
       [isColumn ? "height" : "width"]: `${separatorSize}px`,
-      cursor,
       backgroundColor: "var(--areas-separator-color, black)",
       flexShrink: 0,
       position: "relative",
     },
-    onMousedown: e => onMouseDown(renderer, container, index, e, cursor),
   };
+
+  const cursor = isColumn ? "ns-resize" : "ew-resize";
 
   const detectionElement = renderer.vue.h("div", {
     // detection margin
@@ -37,9 +36,14 @@ function renderSeparator(renderer, container, index) {
       zIndex: separatorDetectionZIndex,
       cursor,
     },
+    onMousedown: e => onMouseDown(renderer, container, index, e, cursor),
   });
 
-  return renderer.vue.h("div", options, [detectionElement]);
+  return renderer.vue.h(
+    "div",
+    options,
+    renderer.resizable ? [detectionElement] : null
+  );
 }
 
 function onMouseDown(renderer, container, index, mouseEvent, cursor) {

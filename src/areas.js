@@ -4,11 +4,11 @@ import makeRenderer from "./renderer/renderer.js";
 
 /**
  * @param { Areas.Vue } vue Vue.js 3
- * @param { Areas.Layout } layoutData
- * @param { { separatorSize: number, separatorDetectionMargin: number } } options
+ * @param { Areas.Layout } [layoutData=null]
+ * @param { Areas.AreasOptions } [options=null]
  * @returns { Areas.Areas }
  */
-function makeAreas(vue, layoutData, options) {
+function makeAreas(vue, layoutData = null, options = null) {
   const core = makeCore(layoutData);
   const renderer = makeRenderer(core, vue, options);
 
@@ -46,6 +46,12 @@ function makeAreas(vue, layoutData, options) {
     },
     get component() {
       return this.renderer.component;
+    },
+    get resizable() {
+      return this.renderer.resizable;
+    },
+    set resizable(value) {
+      this.renderer.resizable = value;
     },
   });
 

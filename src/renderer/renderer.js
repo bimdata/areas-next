@@ -5,10 +5,10 @@ import makeContentManager from "./contentManager.js";
 /**
  * @param { Areas.Core } core
  * @param { Object } vue Vue.js 3
- * @param { { separatorSize?: number, separatorDetectionMargin?: number, separatorDetectionZIndex?: number } } [options]
+ * @param { Areas.AreasOptions } [options]
  * @return { Areas.Renderer }
  */
-function makeRenderer(core, vue, options = {}) {
+function makeRenderer(core, vue, options) {
   const widthRef = vue.ref(0);
   const heightRef = vue.ref(0);
 
@@ -16,12 +16,21 @@ function makeRenderer(core, vue, options = {}) {
     separatorSize = 2,
     separatorDetectionMargin = 10,
     separatorDetectionZIndex = 2,
-  } = options;
+    resizable = true,
+  } = options ?? {};
+
+  const resizableRef = vue.ref(!!resizable);
 
   const renderer = {
     vue: vue,
     core,
     zones: vue.ref([]),
+    get resizable() {
+      return resizableRef.value;
+    },
+    set resizable(value) {
+      resizableRef.value = value;
+    },
     get width() {
       return widthRef.value;
     },
