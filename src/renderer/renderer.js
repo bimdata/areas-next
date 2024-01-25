@@ -51,6 +51,8 @@ function makeRenderer(core, vue, options = {}) {
      * @param { boolean } [triggerRef=false]
      */
     async coreLayoutSync(reassignedLayout = false) {
+      if (!this.layout) return; // not yet mounted but layout reassigned
+
       if (reassignedLayout) {
         this.layout.value = this.core.layout;
       } else {
