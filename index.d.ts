@@ -75,7 +75,7 @@ declare namespace Areas {
       direction?: Direction,
       insertAfter?: boolean,
       cfg?: { content?: string; options?: Object }
-    ): Promise<void>;
+    ): Promise<Zone>;
     /**
      * Split layout.
      *
@@ -88,8 +88,8 @@ declare namespace Areas {
       direction?: Direction,
       insertAfter?: boolean,
       cfg?: { content?: string; options?: Object }
-    ): Promise<void>;
-    delete(zoneId: number): Promise<void>;
+    ): Promise<Zone>;
+    delete(zoneId: number): Promise<boolean>;
     registerContent(name: string, content: Component): void;
     readonly component: VueComponentInstance;
   }
