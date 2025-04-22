@@ -36,7 +36,7 @@ function renderSeparator(renderer, container, index) {
       zIndex: separatorDetectionZIndex,
       cursor,
     },
-    onMousedown: e => onMouseDown(renderer, container, index, e, cursor),
+    onPointerdown: e => onPointerDown(renderer, container, index, e, cursor),
   });
 
   return renderer.vue.h(
@@ -46,17 +46,23 @@ function renderSeparator(renderer, container, index) {
   );
 }
 
-function onMouseDown(renderer, container, index, mouseEvent, cursor) {
-  mouseEvent.preventDefault();
-  mouseEvent.stopPropagation();
+function onPointerDown(renderer, container, index, pointerEvent) {
+  pointerEvent.preventDefault();
+  pointerEvent.stopPropagation();
 
-  document.body.style.cursor = cursor;
+  const separatorElement = pointerEvent.currentTarget;
 
-  const mousemoveFunc = e => drag(renderer, container, index, e);
-  const mouseupFunc = () => stopDrag(mousemoveFunc, mouseupFunc);
+  separatorElement.setPointerCapture(pointerEvent.pointerId);
 
-  document.addEventListener("mousemove", mousemoveFunc);
-  document.addEventListener("mouseup", mouseupFunc);
+  const pointerMoveFunc = e => drag(renderer, container, index, e);
+  const pointerUpFunc = () => {
+    separatorElement.removeEventListener("pointermove", pointerMoveFunc);
+  };
+
+  separatorElement.addEventListener("pointermove", pointerMoveFunc);
+  separatorElement.addEventListener("pointerup", pointerUpFunc, {
+    once: true,
+  });
 }
 
 /**
@@ -64,24 +70,18 @@ function onMouseDown(renderer, container, index, mouseEvent, cursor) {
  * @param { Areas.Renderer } renderer
  * @param { Areas.Container } container
  * @param { number } index
- * @param { MouseEvent} e
+ * @param { PointerEvent } e
  */
 function drag(renderer, container, index, e) {
   const containerChild = container.children[index];
 
   const dimension = container.direction === "column" ? "height" : "width";
 
-  const separatorElement =
-    renderer.root.$refs[`separator-${container.id}-${index + 1}`];
-
-  const separatorRect = separatorElement.getBoundingClientRect();
-  const { separatorSize } = renderer;
+  const { separatorDetectionMargin } = renderer;
 
   const deltaSize =
-    (container.direction === "column"
-      ? e.clientY - separatorRect.y
-      : e.clientX - separatorRect.x) -
-    separatorSize / 2;
+    (container.direction === "column" ? e.offsetY : e.offsetX) -
+    separatorDetectionMargin;
 
   const containerSize = renderer.root.$refs[
     `container-${container.id}`
@@ -90,13 +90,6 @@ function drag(renderer, container, index, e) {
   const deltaPercentage = (deltaSize / containerSize) * 100;
 
   renderer.resize(containerChild, deltaPercentage);
-}
-
-function stopDrag(mousemoveFunc, mouseupFunc) {
-  document.removeEventListener("mousemove", mousemoveFunc);
-  document.removeEventListener("mouseup", mouseupFunc);
-
-  document.body.style.cursor = "";
 }
 
 export default renderSeparator;
