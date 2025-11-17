@@ -13,7 +13,3 @@ npm run dev
 You then need to serve the `index.html` file using a web server of your choice.
 
 Then drink coffee: :coffee: :coffee: :coffee:
-
-## WIP
-
-- [ ] e2e cypress tests
